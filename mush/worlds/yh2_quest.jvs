@@ -1,0 +1,4699 @@
+set//--------------------------------------------------------------------------------
+var Dir_sh = {"east" : "e", "south" : "s", "west" : "w", "north" : "n", "southeast" : "se", "southwest" : "sw",
+		"northeast" : "ne", "northwest" : "nw", "eastup" : "eu", "eastdown" : "ed", "southup" : "su",
+		"southdown" : "sd", "westup" : "wu", "westdown" : "wd", "northup" : "nu", "northdown" : "nd",
+		"up" : "u", "down" : "d", "enter" : "enter", "out" : "out", "cross" : "cross"};
+
+var Dir_re = {"e" : "w", "s" : "n", "w" : "e", "n" : "s", "se" : "nw", "sw" : "ne", "ne" : "sw", "nw" : "se",
+		"eu" : "wd", "ed" : "wu", "su" : "nd", "sd" : "nu", "wu" : "ed", "wd" : "eu", "nu" : "sd",
+		"nd" : "su", "u" : "d", "d" : "u", "enter" : "out", "out" : "enter", "cross" : "cross"};
+//--------------------------------------------------------------------------------
+// 全局变量。
+var dbase_data = {
+	"walk"       : "null",
+	"info"       : {"id" : "", "list" : ""},
+	"other"      : {"next_step" : "", "loc" : "", "loc1" : "", "xiyu" : 0, "focus" : true, "exp" : 1,
+			"miss" : "", "heal" : "", "brief" : false, "jiqu" : true, "sleep" : "null",
+			"more" : false, "shangci" : false, "long" : ""},
+	"rumor"	: {"flag" : false, "type" : "", "case" : "", "npc1" : "", "npc2" : "",
+			"loc1" : "", "loc2" : "", "done" : ""},
+	"connect"    : {"cmds" : "", "auto" : false},
+	"dispel"     : {"flag" : "", "count" : 0, "count1" : 0},
+	"search"     : {"times" : 0, "time" : 0},
+	"maze"       : {"count" : 0, "dir" : "null", "sh" : 0},
+	"next_step"  : {"flag" : "", "cmds" : "", "loc" : -1},
+	"room"       : {"name" : "null", "id" : -1, "dir" : "", "cmd" : ""},
+	"pk"         : {"name" : "", "id" : "", "flag" : true, "delay" : false},
+	"askyou"     : {"flag" : false, "loc" : null, "index" : 0, "trace" : false, "idpt" : 0},
+	"quest"      : {"flag" : "null", "far" : 0, "info" : 0, "count" : 0, "master" : true,
+			"bunch" : false, "menpai" : false, "waidi" : false, "other" : false, "task" : false},
+	"npc"        : {"name" : "null", "id" : "", "loc" : "", "loc2" : "", "find" : 0, "coor" : -1,
+			"status" : "null"},
+	"timer"      : {"count" : 0, "time" : 0, "flag" : "null", "cmd" : "null",
+			"count3" : 0, "walk" : 0, "pfm" : 0, "idle" : false},
+	"item"       : {"buy" : "null", "silver" : 0, "gold" : 0, "money" : 0, "arrow" : 0,
+			"weapon" : 100, "weapon2" : 100, "gift" : "null", "pass" : 0, "flag" : false, "budai" : 0,
+			"food" : 0, "water" : 0, "shuidai" : 0, "laji" : "null", "ma" : "null",
+			"san" : false, "task" : "null", "taskid" : "null", "xh" : 0, "bow" : "null", "jcyao" : "null"},
+	"hp"         : {"exp" : 1, "pot" : 1, "neili" : 1, "qi" : 1, "max_qi" : 100, "eff_qi" : 100,
+			"food" : 1, "water" : 1, "jing" : 1, "max_jing" : 100, "eff_jing" : 100, "th" : 1, "nq" : 0,
+			"jingli" : 1, "max_neili" : 1, "max_jingli" : 1, "dispel" : false, "faint" : "null",
+			"jiali" : 0}
+	};
+
+var npc_id       = new Array();
+var cmd_count    = new Array();
+var step_walk    = new MyArray();
+var auto_search  = new MySearch(3);
+var mapper       = new ActiveXObject("mapper.path");
+var m_FAIL       = -333;
+
+//--------------------------------------------------------------------------------
+eval( Include( "yh2_quest_data.h" ) );
+eval( initcmdcount() );
+
+//--------------------------------------------------------------------------------
+function Include( FileName ) {
+	var FileScriptingObject = new ActiveXObject("Scripting.FileSystemObject");
+	var path = world.GetInfo(35);
+	path = path.substring(0, path.lastIndexOf("\\"));
+	var File = FileScriptingObject.OpenTextFile( path + "\\" + FileName, 1);
+	var Code = File.ReadAll();
+	world.Note("Include Script File: " + FileName);
+	File.Close();
+	return( Code );
+}
+
+function MySearch(dp)
+{
+	this.data = new Array(dp);
+	this.exit = new Array(dp+1);
+	this.index = 0;
+	this.depth = dp;
+	this.dir = "";
+
+	this.back = function() {
+		var ix = this.index;
+		var dr = dir_reverse(this.dir);
+		if (dr != m_FAIL)
+			this.data[ix] = dr;
+
+		return dr;
+	};
+
+	this.next = function(ex) {
+		var et = "";
+		var fg = false;
+		var ix = this.index;
+		if (this.exit[ix] == null)
+			this.exit[ix] = "";
+
+		//判断当前房间的出口是否已经走过。
+		for (var i=0; i<ex.length; i++)
+			if (this.exit[ix].indexOf(("-" + ex[i] + "-")) == -1) {
+				et = ex[i];
+				fg = true;
+				break;
+			}
+
+		//如果当前房间的出口都走过并且为起点房间则结束。
+		if (!fg && ix == 0)
+			return m_FAIL;
+
+		if (fg && ix < this.depth) {
+			this.data[ix] = et;
+			this.exit[ix] += "-" + et + "-";
+			this.exit[(ix + 1)] = "-" + dir_reverse(et) + "-";
+			this.dir = et;
+			this.index++;
+			return et;
+		}
+
+		et = dir_reverse(this.data[ix - 1]);
+		this.dir = et;
+		this.index--;
+		return et;
+	};
+}
+
+function MyArray(pra)
+{
+	this.data = pra;
+	this.index = 0;
+	this.dir = "";
+	this.stepnum = 0;
+	this.blockend = 0;
+
+	this.back = function() {
+		if (this.index <= 0)
+			return m_FAIL;
+
+		this.index--;
+		this.dir = dir_reverse(this.dir);
+		return this.dir;
+	};
+
+	this.eof = function() {
+		if (this.index >= this.data.length)
+			return true;
+		else
+			return false;
+	};
+
+	this.next = function() {
+		if (this.index >= this.data.length)
+			return m_FAIL;
+
+		this.dir = this.data[this.index++];
+		return this.dir;
+	};
+
+	this.block = function() {
+		var bk;
+		var num = 0;
+		var st = this.index;
+		var ed = world.GetVariable("num_step") - 0 + st;
+		if (ed >= this.data.length)
+			ed = this.data.length;
+
+		if (st >= ed)
+			return m_FAIL;
+
+		for (var i=st; i<ed; i++) {
+			num++;
+			if (this.data[i].indexOf("goto") != -1
+			|| this.data[i].indexOf("cross") != -1
+			|| this.data[i].indexOf("。") != -1) {
+				bk = this.data.slice(st, (i + 1));
+				this.stepnum = num;
+				this.blockend = i + 1;
+				return (bk.join(";"));
+			}
+		}
+
+		this.stepnum = num;
+		this.blockend = ed;
+		bk = this.data.slice(st, ed);
+		return (bk.join(";"));
+	};
+}
+//--------------------------------------------------------------------------------
+function initcmdcount()
+{
+	var num = world.GetVariable("num_cmds") - 0;
+	cmd_count = new Array(num);
+	for (var i=0; i<num; i++)
+		cmd_count[i] = 0;
+}
+
+function getcmddelay()
+{
+	var date = new Date();
+	var time = date.getTime();
+	var num = world.GetVariable("num_cmds") - 0;
+	if (cmd_count.length != num)
+		initcmdcount();
+
+	var delay = 1000 - (time - cmd_count[0]);
+	if (delay < 0)
+		delay = 0;
+
+	cmd_count[0] = time - 0 + delay;
+	cmd_count.sort();
+	return delay;
+}
+
+function query(str)
+{
+	if (str == null) {
+		var qr = "";
+		world.note("查询结果：--------------------=");
+		for (ky in dbase_data) {
+			if (dbase_data[ky].constructor == Object) {
+				qr += ky + " = {";
+				for (ky2 in dbase_data[ky])
+					qr += ky2 + " : " + dbase_data[ky][ky2] + ", ";
+
+				qr += "}\n";
+			} else
+				qr += ky + " = " + dbase_data[ky] + "\n";
+		}
+
+		world.note(qr + "=----------------------------------=");
+		return m_FAIL;
+	}
+
+	var re = new RegExp("[^\/]+", "g");
+	var ar = str.match(re);
+	if (ar.length < 1)
+		return m_FAIL;
+
+	var qr = dbase_data;
+	for (var i=0; i<ar.length; i++) {
+		qr = qr[ar[i]];
+		if (qr == null)
+			return m_FAIL;
+	}
+
+	return qr;
+}
+
+function set(flag, value)
+{
+	if (flag == null || flag == "")
+		return;
+
+	var re = new RegExp("[^\/]+", "g");
+	var ar = flag.match(re);
+	switch (ar.length) {
+		case 1:
+			dbase_data[ar[0]] = value;
+			break;
+		case 2:
+			dbase_data[ar[0]][ar[1]] = value;
+			break;
+		case 2:
+			dbase_data[ar[0]][ar[1]][ar[2]] = value;
+			break;
+		default:
+			world.note("err(set()):长度不能大于3!");
+			break;
+	}
+
+	if (ar[0] == "quest" || ar[0] == "npc" || ar[0] == "next_step")
+		setstatus();
+}
+
+function getexitid(id, dir)
+{
+	mapper.getroom(id);
+	var str = mapper.result;
+	if (str == "null")
+		return -1;
+
+	var re = /[。·！]/g;
+	dir = dir.replace(re, "");
+	if (dir.indexOf("、") != -1) {
+		dir = dir.split("、");
+		dir = dir[dir.length - 1];
+	}
+
+	var re = new RegExp("[^;|,:]+", "g");
+	var ar = str.match(re);
+	for (var i=0; i<ar.length; i++) {
+		if (ar[i] == dir) {
+			if (isNaN(ar[i+1])) {
+				addlog("room:" + id + ", exit:" + dir + "无效!");
+				return -1;
+			} else
+				return (ar[i+1] - 0);
+		}
+	}
+
+	return -1;
+}
+
+function getroomname(id)
+{
+	var re, str, ar;
+
+	re = new RegExp("[^;|,:]+", "g");
+	mapper.getroom(id);
+	str = mapper.result;
+	ar = str.match(re);
+	return ar[0];
+}
+
+function getidfrname(nm)
+{
+	mapper.getidfrname(nm);
+	var tmp = mapper.result;
+	if (tmp == "null" || tmp == null)
+		return m_FAIL;
+
+	var res = tmp.split(";");
+	if (isNaN(res[0])) {
+		send(tmp);
+		return m_FAIL;
+	}
+
+	return res;
+}
+
+function getpath(fl, tl)
+{
+	if (fl == tl)
+		return "";
+
+	if (tl < 0)
+		return m_FAIL;
+
+	var fm = world.GetVariable("id_family");
+//	var exp = query("hp/exp") - 0;
+	if (query("item/ma") != "null" && !(query("rumor/flag") && (query("rumor/type") == "trace2" || query("rumor/type") == "judge")))
+//		if (exp > 805000)
+//		fm += ",mq,family,center";
+//		else
+		fm += ",mq,center";
+	else if (fl == -1)
+		return m_FAIL;
+
+	if (fl == -1)
+		fl = coor_list["center"];
+
+	mapper.search(fl, tl, fm);
+	if ((tl + "").indexOf(",") != -1)
+		mapper.searchlist(fl, tl, fm);
+	else
+		mapper.search(fl, (tl - 0), fm);
+	var str = mapper.result;
+	if (str == "null") {
+		world.note("getpath:没有路径！");
+		addlog("getpath:" + fl + "->" + tl + "没有路径！");
+		return "null";
+	} else {
+		var re = /·/g;
+		str = str.replace(re, "");
+		re = /！/g;
+		str = str.replace(re, "。");
+//		re = /;#ride/gi;
+//		str = str.replace(re, "");
+//		world.note(getroomname(fl) + "->" + getroomname(tl) + " = " + str);
+		return str;
+	}
+}
+
+function getareapath(start, deep)
+{
+	mapper.getareapath(start, deep);
+	var str = mapper.result;
+	if (str == "null") {
+		world.note("getareapath:没有路径！");
+		addlog("getareapath:" + query("room/id") + " 没有路径！");
+		return m_FAIL;
+	} else {
+		var re = /·/g;
+		str = str.replace(re, "");
+		re = /！/g;
+		str = str.replace(re, "。");
+		return str;
+	}
+}
+
+function dir_short(dir)
+{
+	if (dir == null || dir == "")
+		return m_FAIL;
+
+	var re = /。/g;
+	dir = dir.replace(re, "");
+
+	var res;
+	if ((res = Dir_sh[dir]) != null)
+		return res;
+	else if (Dir_re[dir] != null)
+		return dir;
+
+	return m_FAIL;
+}
+
+function dir_reverse(dir)
+{
+	if (dir == null || dir == "")
+		return m_FAIL;
+
+	var re = /。/g;
+	dir = dir.replace(re, "");
+
+	var res;
+	if ((res = Dir_sh[dir]) != null)
+		dir = res;
+
+	if ((res = Dir_re[dir]) != null)
+		return res;
+
+	return m_FAIL;
+}
+
+function exitfilter(str)
+{
+	var id = query("room/id") - 0;
+	var nm = query("room/name");
+	var ex = new Array;
+	var re = new RegExp("[a-z]*[^、 和]", "g");
+	var rm = str.match(re);
+	for (var i=0; i<rm.length; i++) {
+		var dir = dir_short(rm[i]);
+		if (dir != m_FAIL && (nm != "门口" || dir != "enter")
+		&& (id == -1 || getexitid(id, dir) != -1))
+			ex[ex.length] = dir;
+	}
+
+	return ex;
+}
+
+function getinfokey(index)
+{
+	var cr = query("npc/coor");
+	if (cr != -1 && index == 0) {
+		var tmp;
+		for (key in info_list2) {
+			tmp = key.split("-");
+			if (cr >= tmp[0] && cr <= tmp[1])
+				return info_list2[key];
+		}
+
+		return m_FAIL;
+	}
+
+	var loc = query("npc/loc");
+	if (loc == "很远") {
+		var fx = query("quest/far");
+		loc = far_list[fx];
+	}
+
+	if (loc_list[loc] == null) {
+		world.note(loc + "是无效城市！");
+		return m_FAIL;
+	}
+
+	var il = loc_list[loc]["info"];
+	var io = il.split(";");
+	if (index >= io.length || index < 0)
+		return m_FAIL;
+
+	return io[index];
+}
+
+function send(str)
+{
+	if (str == "" || str == null || str == m_FAIL)
+		return;
+
+	var re = new RegExp("[^;、。]+", "g");
+	var cmds = str.match(re);
+	var fg = world.GetVariable("bool_echo");
+	if (fg == "true") {
+		fg = true;
+		EchoInput = 1;
+	} else {
+		fg = false;
+		EchoInput = 0;
+	}
+
+	for (var i=0; i<cmds.length; i++) {
+		var cmd = cmds[i];
+		if (cmd != "" && cmd != null) {
+			if (cmd.indexOf("#") == 0) {
+				cmd = cmd.split(" ");
+				switch(cmd[0]) {
+					case "#t+":
+						world.EnableTrigger(cmd[1], true);
+						break;
+					case "#t-":
+						world.EnableTrigger(cmd[1], false);
+						break;
+					case "#tg+":
+						world.EnableTriggerGroup(cmd[1], 1);
+						break;
+					case "#tg-":
+						world.EnableTriggerGroup(cmd[1], 0);
+						break;
+					case "#addtr":
+						if (cmd[1] == null || cmd[1] == "")
+							break;
+
+						world.DeleteTrigger(cmd[1]);
+						if (cmd[2] == null || cmd[2] == "")
+							break;
+
+						world.AddTriggerEx(cmd[1], cmd[2], cmd[3], 1|4|8|32, 14, 0, "",  "", 0, 149);
+						break;
+					case "#set":
+						set(cmd[1], cmd[2]);
+						break;
+					case "#var":
+						if (world.GetVariable(cmd[1]) == null)
+							break;
+
+						if (cmd[2] != "?") {
+							world.SetVariable(cmd[1], cmd[2]);
+						} else
+							world.queue("Var: " + cmd[1] + "=" + world.GetVariable(cmd[1]), false);
+						break;
+					case "#yanjiu":
+						var pot = query("hp/pot");
+						if (pot > 100)
+							pot = 100;
+
+						var yj = "yanjiu " + skill() + " " + pot;
+						world.queue(yj, fg);
+						break;
+					case "#spqt":
+						set("quest/flag", "null");
+						break;
+					case "#spwk":
+						stopwalk();
+						set("next_step/flag", "");
+						set("quest/flag", "null");
+						break;
+					case "#to":
+						goto(cmd[1]);
+						break;
+					case "#kl":
+						tokill2(cmd[1], cmd[2]);
+						break;
+					case "#clr":
+						world.DeleteOutput();
+						break;
+					case "#q":
+						world.speedwalkdelay = 0;
+						break;
+				}
+			} else {
+				var delay, delay2;
+				if (cmd == "guard" || cmd == "set no_teach maze") {
+					var lt = world.GetVariable("num_cmds") - 0;
+					if (step_walk.stepnum < 0)
+						step_walk.stepnum = 0;
+
+					var num = Math.floor(lt / (step_walk.stepnum + 1));
+					if (num <= 0)
+						num = 1;
+
+					delay2 = 1000 / num;
+					delay = getcmddelay();
+					world.speedwalkdelay = delay > delay2 ? delay : delay2;
+				} else {
+					delay = getcmddelay();
+					var wk = query("walk");
+					if (wk != "multi" && delay < 3)
+						world.speedwalkdelay = 3;
+					else if (wk == "multi")
+						world.speedwalkdelay = 0;
+					else
+						world.speedwalkdelay = delay;
+				}
+
+				world.queue(cmd, fg);
+			}
+		}
+	}
+
+	set("timer/idle", false);
+}
+
+function number(str)
+{
+	var num = {"一" : 1, "二" : 2, "三" : 3, "四" : 4, "五" : 5, "六" : 6,
+		 "七" : 7, "八" : 8, "九" : 9};
+	var unit = 1;
+	var wan = 1;
+	var result = 0;
+	var char;
+
+	for (var i=(str.length-1); i>=0; i--) {
+		char = str.charAt(i);
+		switch (char) {
+			case "十":
+				unit = 10 * wan;
+				if (i == 0)
+					result += unit;
+				else if (num[str.charAt(i-1)] == null)
+					result += unit;
+				break;
+			case "百":
+				unit = 100 * wan;
+				break;
+			case "千":
+				unit = 1000 * wan;
+				break;
+			case "万":
+				unit = 10000 * wan;
+				wan = 10000;
+				break;
+			default:
+				if (num[char] != null)
+					result += num[char] * unit;
+
+				break;
+		}
+	}
+
+	return result;
+}
+
+function steptrace(dir)
+{
+	if (dir == "" || dir == null)
+		return;
+
+	var id = query("room/id");
+	if (id != -1) {
+		var rmid = getexitid(id, dir);
+		set("room/id", rmid);
+		//if (rmid == -1)
+			//addlog("steptrace(err):" + id + " " + dir + ".");
+	}
+}
+
+function goto(tl)
+{
+	if (isNaN(tl)){
+		stopwalk();
+		world.note("err(goto()): tl为无效地点！");
+		addlog("err(goto()): " + tl + "为无效地点！");
+		return;
+	}
+
+	if (tl < 0 || tl > 15000) {
+		stopwalk();
+		world.note("err(goto()): tl为无效地点！");
+		return;
+	}
+
+	tl = tl - 0;
+	set("next_step/loc", tl);
+	var fl = query("room/id");
+	if ((fl == 2831 || fl == 2838) && fl != tl)
+		fl = 4178;
+
+	var pa = getpath(fl, tl);
+	if(pa == m_FAIL)
+		do_autosearch(5, "find");
+	else
+		do_walk(pa.split(";"));
+}
+
+function setstatus()
+{
+	if (!query("other/focus"))
+		return;
+
+	var str = "npc:" + query("npc/name") + "(" + query("npc/id") + ")"
+		 + ", loc:" + query("npc/loc");
+	if (query("npc/loc") == "很远") {
+		var fx = query("quest/far");
+		str += ", 当前" + fx + ":" + far_list[fx];
+	}
+
+	str += ", 完成:" +  query("quest/count") + ", quest:" + query("quest/flag") + ", ma:" + query("item/ma") + ", tl:" + query("tl");
+	world.InfoClear();
+	world.Info(str);
+}
+
+function addlog(str)
+{
+	if (str == null || str == "")
+		return;
+
+	var path = world.GetInfo(35);
+	path = path.substring(0, path.lastIndexOf("\\"));
+	var fname = path + "\\log(" + world.GetVariable("id") + ").txt";
+  	var dt = new Date();
+	str = dt.toLocaleString() + "> " + str;
+	world.openlog(fname, true);
+	world.writelog(str);
+	world.closelog();
+}
+//--------------------------------------------------------------------------------
+function stopwalk()
+{
+	walknoway("close");
+	set("pk/delay", false);
+	world.EnableTimer("timer1", false);
+	world.EnableTimer("timer2", false);
+	world.EnableTriggerGroup("gwk", 0);
+	world.EnableTriggerGroup("gsm", 0);
+	world.EnableTriggerGroup("gpe", 0);
+	world.EnableTriggerGroup("gyh", 0);
+	world.EnableTriggerGroup("gyd", 0);
+	world.EnableTrigger("io_ask", false);
+	world.EnableTrigger("io_nobody", false);
+	world.EnableTrigger("qt_you2", false);
+	world.EnableTrigger("step", false);
+	world.EnableTrigger("trace", false);
+}
+
+function stopall()
+{
+	world.DiscardQueue();
+	stopwalk();
+}
+
+function tokill2(npc, loc)
+{
+	var tl = -1;
+	if (npc != "this") {
+		world.SetVariable("name_npc", npc);
+		set("npc/name", npc);
+	}
+
+	set("pk/flag", false);
+	set("npc/find", 0);
+	set("npc/status", "start");
+	set("quest/far", 0);
+	set("quest/info", 0);
+	send("set wimpy 5");
+	if (loc == "far") {
+		set("npc/loc", "很远");
+		tl = loc_list[far_list[0]]["id"];
+	} else {
+		for (key in loc_list) {
+			if (loc_list[key]["sh"] == loc) {
+				set("npc/loc", key);
+				tl = loc_list[key]["id"];
+			}
+		}
+	}
+
+	if (tl == -1) {
+		world.note("别名格式: #kl npc loc");
+		return;
+	}
+
+	set("next_step/flag", "SEARCH");
+	goto(tl);
+	world.note("-----去" + query("npc/loc") + "刺杀" + query("npc/name") + "！-----");
+}
+
+function tokill()
+{
+	var tl;
+
+	world.EnableTriggerGroup("gkl", 0);
+	world.EnableTriggerGroup("gkl1", 0);
+	world.EnableTriggerGroup("bkl1", 0);
+	if (query("quest/waidi")) {
+		var npc = "八国联军";
+	} else {
+		if (query("quest/menpai"))
+			var npc = world.GetVariable("name_menpai");
+		else
+			var npc = world.GetVariable("name_bunch");
+
+		npc += "仇家";
+	}
+
+	if (!query("quest/bunch") && !query("quest/menpai") && !query("quest/waidi"))
+		var npc = query("npc/name");
+
+	var loc = query("npc/loc");
+	if (query("pk/flag") == true) {
+		set("pk/flag", false);
+		send("set wimpy 5");
+	}
+
+	if (!query("other/brief")) {
+		set("other/brief", true);
+		send("set brief 3");
+	}
+
+	set("npc/find", 0);
+	set("quest/far", 0);
+	set("quest/info", 0);
+	if (query("npc/status") == "disp") {
+		set("npc/status", "start");
+		do_askinfo();
+		world.EnableTimer("timer4", true);
+		return;
+	}
+
+	set("npc/status", "start");
+	set("next_step/flag", "SEARCH");
+	if (loc == "很远" || loc == "大理" || loc == "西域")
+		set("other/xiyu", 1);
+
+	if (loc == "很远")
+		tl = loc_list[far_list[0]]["id"];
+	else {
+		if (loc_list[loc] == null) {
+			world.note(loc + "是无效城市！");
+			return;
+		}
+
+		tl = loc_list[loc]["id"];
+	}
+
+	goto(tl);
+	world.EnableTimer("timer4", true);
+	world.note("-----去" + loc + "刺杀" + npc + "！-----");
+}
+
+function killnpc()
+{
+	stopwalk();
+	var cmd = killcmd();
+	var fl = query("room/id");
+	var tl = query("npc/coor");
+	var pa = getpath(fl, tl);
+	if (pa == m_FAIL || pa == "" || pa == "null") {
+		send(cmd);
+		return;
+	}
+
+	if (pa.indexOf("。") != -1 || pa.indexOf("goto") != -1) {
+		set("next_step/flag", "COMMANDS");
+		set("next_step/cmds", cmd);
+		set("npc/find", 0);
+		goto(tl);
+		return;
+	}
+
+	send(pa);
+	send(cmd);
+	set("room/id", tl);
+}
+
+function etdk()
+{
+	var cmd, tmp;
+
+	cmd = "";
+	if (query("hp/eff_jing") < 70)
+		cmd = "eatjqdan;mdan1;";
+
+	if (query("hp/maxfood") > query("hp/food") + 100)
+		cmd += "et;";
+
+	if (query("hp/maxwater") > query("hp/water") + 100)
+		cmd += "dk;";
+
+	if (cmd != "")
+		send(cmd + "hp");
+}
+
+function perform()
+{
+	var pfm = world.GetVariable("cmd_pfm");
+	var lt = world.GetVariable("cmd_pfm2");
+	if (pfm == "shot"){
+		pfm = "shot " + query("npc/id") + " with arrow";
+return pfm;}
+	else if (lt == null || lt == "")
+		return "";
+
+	var re = new RegExp("[^|,:]+", "g");
+	lt = lt.match(re);
+	var ix = Math.floor(Math.random() * lt.length);
+	return lt[ix];
+
+}
+function listma()
+{
+	var lt = world.GetVariable("list_ma");
+    if (lt == null || lt == ""){
+	world.note("=-----------请设置list_ma------------------=");
+        return "";
+	}
+	var re = new RegExp("[^|,:]+", "g");
+	lt = lt.match(re);
+	var ix = Math.floor(Math.random() * lt.length);
+	return lt[ix];
+}
+
+function telldm(flag)
+{
+	var dm = world.GetVariable("id_dummy");
+	if (dm == "")
+		return;
+
+	var cnt = flag;
+	switch (flag) {
+		case "faint":
+			cnt = "晕倒了:" + query("npc/loc") + "." + query("room/name")
+				+ "." + query("room/id");
+			addlog(cnt);
+			break;
+		case "dispel":
+			cnt = "中毒了:" + query("npc/loc") + "." + query("room/name")
+				+ "." + query("room/id");
+			addlog(cnt);
+			break;
+		case "pk":
+			cnt = "pker:" + query("room/name") + "." + query("room/id") + " "
+				+ query("pk/name") + "(" + query("pk/id") + ")";
+			addlog(cnt);
+			break;
+		case "idle":
+			cnt = "发呆了:" + query("room/id") + "." + query("other/next_step")
+				+ "." + query("next_step/flag") + "." + query("next_step/cmds");
+			addlog(cnt);
+			cnt = "发呆了！";
+			break;
+		default :
+			break;
+	}
+
+	var wdm = world.getworld(dm);
+	if (wdm != null)
+		wdm.note(world.GetVariable("id") + " " + cnt);
+	else
+		world.send("tell " + dm + " " + cnt);
+}
+
+function ydispel(par)
+{
+	if (par) {
+		stopwalk();
+		set("dispel/flag", "yd");
+		set("dispel/count", 0);
+		set("dispel/count1", 0);
+		set("next_step/flag", "COMMANDS");
+		set("next_step/cmds", "#tg+ gyd;dazuo");
+		goto(world.GetVariable("loc_dazuo"));
+	} else {
+		world.EnableTriggerGroup("gyd", 0);
+		set("hp/dispel", false);
+		set("dispel/flag", "");
+	}
+}
+
+function skill()
+{
+	var lt = world.GetVariable("list_skill");
+	if (lt == null || lt == "")
+		return "";
+
+	var re = new RegExp("[^;|,:]+", "g");
+	lt = lt.match(re);
+	var ix = Math.floor(Math.random() * lt.length);
+	return lt[ix];
+}
+
+function lian()
+{
+	var lt = world.GetVariable("list_lian");
+	if (lt == null || lt == "")
+		return "";
+
+	var re = new RegExp("[^;|,:]+", "g");
+	lt = lt.match(re);
+	var ix = Math.floor(Math.random() * lt.length);
+	return lt[ix];
+}
+
+function killcmd()
+{
+	if (query("rumor/flag")) {
+		if (query("rumor/type") == "judge") {
+			var cmd = "#t+ kl_nobody;give 1 gold to " + query("npc/id");
+			return cmd;
+		} else
+		if (query("rumor/type") == "trace1") {
+			var cmd = "#t+ kl_nobody;#t+ rm_follow2;#t+ rm_trace5;yun regenerate;ask " + query("npc/id")
+				+ " about " + query("rumor/npc2");
+			return cmd;
+		} else
+		if (query("rumor/type") == "trace2") {
+			var cmd = "#t+ kl_nobody;give 1 gold to " + query("npc/id");
+			return cmd;
+		}
+	}
+
+	var id = query("npc/id");
+	if (id == "" || id == null)
+		id = "no body";
+
+	var cmd = "#t+ kl_nobody;halt;" + world.GetVariable("cmd_exert2") + ";" + "kill " + id;
+	if (query("hp/eff_qi") > 70)
+		cmd += ";" + world.GetVariable("cmd_kill");
+
+	if (query("quest/waidi") && world.GetVariable("bool_waidi") != 0)
+		cmd += ";jiali " + query("hp/jiali");
+
+	cmd += ";" + perform() + ";#q";
+	return cmd;
+}
+
+function pksys(par)
+{
+	if (query("pk/delay"))
+		return;
+
+	send(perform());
+	var lt = world.GetVariable("list_pker");
+	if (lt != "all") {
+		var pkf = false;
+		lt = lt.split(",");
+		for (key in lt) {
+			if (lt[key] == par)
+				pkf = true;
+		}
+
+		if (!pkf) {
+			telldm("pker:" + par);
+			return;
+		}
+	}
+
+	stopwalk();
+	set("pk/flag", true);
+	set("pk/delay", true);
+	set("pk/name", par);
+	set("pk/id", "");
+	send("set wimpy 90;id here;set no_teach pk");
+	world.SetVariable("name_pker", par);
+	world.EnableTrigger("pk_id", true);
+	world.EnableTrigger("pk_die", true);
+	world.EnableTrigger("pk_flee", true);
+}
+
+function connect()
+{
+	//if (world.getinfo(108))
+		world.Connect();
+}
+
+function disconnect()
+{
+	//if (!world.getinfo(108))
+		world.Disconnect();
+}
+
+function reconnect(cmd)
+{
+	world.EnableTimer("timer1", false);
+	world.EnableTrigger("kl_help", false);
+	world.EnableTrigger("faint", false);
+	world.EnableTrigger("hurt", false);
+	set("connect/auto", false);
+	set("connect/cmds", cmd);
+	disconnect();
+	if (query("hp/faint") == "faint")
+		opentimer1(120, "con_delay", null);
+	else
+		opentimer1(3, "con_delay", null);
+}
+
+function autoconnect()
+{
+	if (!query("connect/auto") || query("quest/flag") == "null") {
+		world.EnableTimer("timer5", false);
+		return;
+	}
+
+	var cmd = world.GetVariable("id") + ";" + world.GetVariable("passw") + ";y";
+	if (query("quest/flag") != "null")
+		cmd += ";halt;hp;i;#t+ qt_none;quest;set no_teach auto connect";
+
+	set("room/id", -1);
+	set("connect/cmds", cmd);
+	world.DiscardQueue();
+	connect();
+}
+
+function atconnect()
+{
+	world.EnableTimer("timer5", false);
+	set("npc/find", 0);
+	send(query("connect/cmds"));
+	world.EnableTrigger("faint", true);
+	world.EnableTrigger("hurt", true);
+	world.EnableTrigger("connected", true);
+	world.EnableTrigger("connected1", true);
+	world.EnableTrigger("condelay", true);
+}
+
+function atdisconnect()
+{
+	world.EnableTimer("timer2", false);
+	world.EnableTimer("timer3", false);
+	world.EnableTimer("timer4", false);
+	world.EnableTrigger("pk_die", false);
+	world.EnableTrigger("pk_flee", false);
+	world.DiscardQueue();
+	world.EnableTimer("timer5", true);
+}
+
+function getfocus()
+{
+	set("other/focus", true);
+	setstatus();
+}
+
+function losefocus()
+{
+	set("other/focus", false);
+}
+
+function missend()
+{
+	var fl, mf;
+
+	mf = query("other/miss");
+	set("other/miss", "");
+	if (mf == "study") {
+		fl = world.GetVariable("loc_miss") - 0;
+		set("room/id", fl);
+		cmd = "#t+ pe_study;set no_teach study";
+		set("next_step/cmds", cmd);
+		goto(world.GetVariable("loc_study"));
+		return;
+	}
+
+	fl = world.GetVariable("loc_miss") - 0;
+	set("room/id", fl);
+	if (query("quest/flag") == "null") {
+		goto(world.GetVariable("loc_master"));
+		return;
+	}
+
+	send(world.GetVariable("cmd_miss"));
+	goto(world.GetVariable("loc_master"));
+}
+
+function walknoway(flag)
+{
+	if (flag == "open") {
+		var date = new Date();
+		var time = date.getTime() - 0;
+		set("timer/walk", time);
+		set("timer/count3", 0);
+		world.EnableTimer("timer3", true);
+	} else
+	if (flag == "close") {
+		world.EnableTrigger("wk_auto", false);
+		world.EnableTimer("timer3", false);
+		set("timer/count3", 0);
+	}
+}
+
+function entermaze(rn)
+{
+	var dir, dir2, tmp;
+
+	if (rn != "沙漠" && rn != "大沙漠" && rn != "南疆沙漠" && rn != "戈壁滩")
+		return false;
+
+	var rmid = query("room/id");
+	var wk = query("walk");
+	if (rmid != 2838 && rmid != 2831 && rmid != 2087) {
+		if (wk == "multi") {
+			step_walk.next();
+			dir = step_walk.dir;
+			if (step_walk.index >= step_walk.data.length)
+				dir2 = m_FAIL;
+			else
+				dir2 = step_walk.data[step_walk.index];
+		} else
+		if (wk == "step") {
+			dir = step_walk.dir;
+			dir2 = step_walk.next();
+		} else
+		if (wk == "auto") {
+			dir = auto_search.dir;
+			auto_search.next(dir);
+		}
+
+		steptrace(dir);
+		if (dir2 == m_FAIL) {
+			world.EnableTrigger("step", false);
+			walknoway("close");
+			do_nextstep();
+			return true;
+		}
+	} else {
+		if (wk == "auto") {
+			if (rmid == 2838 || rmid == 2087)
+				dir = "w";
+			else if (rmid == 2831)
+				dir = "sw";
+		} else
+			dir = step_walk.dir;
+	}
+
+	tmp = "|" + dir;
+	if (tmp.indexOf("|t ") != -1 || tmp.indexOf("|r、t1 ") != -1)
+		return false;
+
+	if (dir2 == "home" || dir2 == "home。")
+		dir = "home";
+
+	set("maze/dir", dir);
+	set("maze/count", 0);
+	send("hp;set no_teach maze");
+	world.EnableTrigger("step", false);
+	world.EnableTrigger("wk_bkgoon", false);
+	world.EnableTrigger("wk_bkbusy", false);
+	world.EnableTriggerGroup("gsm", 1);
+	return true;
+}
+
+function rumordone(str, flag)
+{
+	var dn = query("rumor/done");
+	if (dn.indexOf("," + str + ",") != -1)
+		return true;
+
+	var tmp = dn.split(",");
+	if (tmp.length > 15) {
+		dn = "";
+		set("rumor/done", "");
+	}
+
+	if (flag)
+		set("rumor/done", dn + "," + str);
+
+	return false;
+}
+
+function opentimer1(time, flag, cmd)
+{
+	if (cmd != "" && cmd != null)
+		set("timer/cmd", cmd);
+
+	set("timer/time", time);
+	set("timer/flag", flag);
+	set("timer/count", 0);
+	world.ResetTimer("timer1");
+	world.EnableTimer("timer1", true);
+}
+
+function incity(coor, city)
+{
+	for (var i=0; i < coor1_list.length; i++) {
+		if (coor == coor1_list[i])
+			return true;
+	}
+
+	return false;
+}
+
+function cansleep()
+{
+	var date = new Date();
+	var time = date.getTime();
+    var fml = world.GetVariable("id_family");
+    var stime = 52;
+	if (fml == "gb")
+        var stime = 22;
+	if (time < query("other/sleep") - 0 + stime*1000)
+		return false;
+	else
+		return true;
+}
+
+//--------------------------------------------------------------------------------
+function do_nextstep()
+{
+	stopwalk();
+	set("other/next_step", query("next_step/flag"));
+	switch (query("next_step/flag")) {
+		case "SEARCH":
+			set("next_step/flag", "");
+			do_search();
+			break;
+		case "PREPARE":
+			set("next_step/flag", "");
+			do_prepare();
+			break;
+		case "COLLECT_INFO":
+			set("next_step/flag", "");
+			do_askinfo();
+			break;
+		case "SEARCHAGAIN":
+			set("next_step/flag", "");
+			do_searchagain();
+			break;
+		case "AUTOSEARCH":
+			set("next_step/flag", "");
+			do_search2()
+			break;
+		case "AUTOSEARCH2":
+			set("next_step/flag", "SEARCH");
+			var rmid = query("room/id");
+			var rn = query("room/name");
+			if (rn != "大沙漠" && rn != "南疆沙漠"
+			&& rn != "戈壁滩" && rn != "沙漠" && rmid != -1) {
+				var path = getareapath(rmid, 3);
+				if (path != m_FAIL) {
+					do_walk(path.split(";"));
+					return;
+				}
+			}
+
+			do_autosearch(3, "auto");
+			break;
+		case "COMMANDS":
+			set("next_step/flag", "");
+			send(query("next_step/cmds"));
+			break;
+		default :
+			world.note("warning: next_step无效！");
+			break;
+	}
+}
+
+function do_walk(path)
+{
+	if (path == "" || path == null) {
+		do_nextstep();
+		return;
+	}
+
+	stopwalk();
+	if (path.length <= 0) {
+		world.note("err(do_walk): 路径无效！");
+		return;
+	}
+
+	if (world.GetVariable("bool_multistep") == "true")
+		set("walk", "multi");
+	else
+		set("walk", "step");
+
+	step_walk = new MyArray(path);
+	send("set no_teach walk start");
+	world.EnableTrigger("wk_start", true);
+}
+
+function do_autosearch(dp, flag)
+{
+	stopwalk();
+	switch (flag) {
+		case "auto":
+			set("walk", "auto");
+			world.note("-----autosearch: 开始搜索！-----");
+			break;
+		case "find":
+			set("walk", "find");
+			set("other/brief", false);
+			world.note("-----autosearch: 开始定位！-----");
+			break;
+	}
+
+	auto_search = new MySearch(dp);
+	send("set no_teach walk start");
+	world.EnableTrigger("wk_start", true);
+}
+
+function do_search()
+{
+	var loc, map;
+	set("search/times", 1);
+	if (query("npc/loc") == "很远") {
+		var fx = query("quest/far");
+		loc = far_list[fx];
+		map = "";
+	} else {
+		loc = query("npc/loc");
+		map = map_list1[loc_list[loc]["map"]];
+	}
+
+	if (map == "")
+		map = map_list[loc_list[loc]["map"]];
+
+	var tl = loc_list[loc]["id"];
+	if (query("room/id") != tl) {
+		set("next_step/flag", "SEARCH");
+		goto(tl);
+	} else {
+		set("next_step/flag", "SEARCHAGAIN");
+		etdk();
+		send(world.GetVariable("cmd_search"));
+		do_walk(map.split(";"));
+	}
+}
+
+function do_searchagain()
+{
+	var loc;
+	if (query("npc/loc") == "很远") {
+		var le = far_list.length;
+		var exp = query("hp/exp") - 0;
+		if (exp < 250000)
+			le = le - 4;
+		else if (exp < 700000)
+			le = le - 1;
+
+		var fx = query("quest/far") - 0 + 1;
+		if (fx >= le || fx < 0) {
+			do_quest("start");
+			addlog("很远没有找到哦！");
+			return;
+		}
+
+		set("next_step/flag", "SEARCH");
+		set("quest/far", fx);
+		loc = far_list[fx];
+		var tl = loc_list[loc]["id"];
+		goto(tl);
+		return;
+	}
+
+	var tms = query("search/times") - 0;
+	loc = query("npc/loc");
+	var map = loc_list[loc]["map"];
+	if (tms >= 4) {
+		if (loc == "西域")
+			do_askbei();
+		else {
+			do_askinfo();
+			addlog("城市" + loc + "没有找到哦！");
+		}
+
+		return;
+	}
+
+	set("next_step/flag", "SEARCHAGAIN");
+	var tl = loc_list[loc]["id"];
+	if (query("room/id") != tl) {
+		goto(tl);
+		return;
+	}
+
+	set("search/times", (tms + 1));
+	do_walk(map_list[map].split(";"));
+}
+
+function do_prepare()
+{
+	var tl;
+
+	stopwalk();
+	world.EnableTriggerGroup("gkl", 0);
+	world.EnableTriggerGroup("gkl1", 0);
+	world.EnableTriggerGroup("bkl", 0);
+	world.EnableTriggerGroup("bkl1", 0);
+	world.SetVariable("loc_ma", listma());
+	set("npc/status", "end");
+	set("next_step/flag", "COMMANDS");
+	if (query("item/ma") == "null"){
+    world.SetVariable("loc_ma", listma());
+		cmd = "#t+ wk_ride;#t+ can_ride;ride huangbiaoma;ride zaohongma;ride ziliuma";
+		set("next_step/cmds", cmd);
+		tl = world.GetVariable("loc_ma");
+    } else
+	if (query("hp/eff_qi") < 85) {
+		cmd = "#t+ pe_heal;#t+ pe_healf;yun heal";
+		tl = world.GetVariable("loc_dazuo");
+		set("next_step/cmds", cmd);
+	} else
+	if (query("item/gold") < world.GetVariable("min_gold") || query("item/silver") < 30) {
+		var num = world.GetVariable("min_gold")- query("item/gold");
+		if (num < 0)
+			num = 20;
+		else
+			num = num * 100 + 70
+
+		var cmd = "#t+ pe_silver;qu " + num + " silver";
+		set("next_step/cmds", cmd);
+		tl = coor_list["bank"];
+	} else
+	if (query("item/weapon") < 40) {
+		var wp = world.GetVariable("id_weapon");
+		var cmd = "#t+ pe_repair;repair " + wp + ";repair " + wp;
+		set("next_step/cmds", cmd);
+		tl = coor_list["repair"];
+	} else
+	if (query("item/weapon2") < 15) {
+		var wp = world.GetVariable("id_weapon2");
+		var cmd = "#t+ pe_repair;repair " + wp + ";repair " + wp;
+		set("next_step/cmds", cmd);
+		tl = coor_list["repair"];
+	} else
+	if (query("item/xh") < 1) {
+		set("item/buy", "xionghuang from huoji");
+		set("next_step/cmds", "#t+ pe_buy;#t+ pe_rebuy;buy xionghuang from huoji");
+		tl = coor_list["yao"];
+		} else
+	if (query("item/jcyao") != "jcyao" && world.GetVariable("bool_jcyao") == "true") {
+		//set("item/buy", "jinchuang yao from huoji");
+		//set("next_step/cmds", "#t+ pe_buy;#t+ pe_rebuy;buy jinchuang yao from huoji");
+		//tl = coor_list["yao"];
+		set("next_step/cmds", "#t+ pe_getjcyao;get 2 huanhun dan from budai;set no_teach getjcyao");
+		tl = world.GetVariable("loc_gift");
+	} else
+	if (query("item/food") < 50) {
+		set("item/buy", "99 gan liang from xiao er");
+		set("next_step/cmds", "#t+ pe_buy;#t+ pe_rebuy;buy 99 gan liang from xiao er;eat gan liang");
+		tl = coor_list["food"];
+	} else
+	if (query("item/shuidai") < 1) {
+		set("item/buy", "shui dai from xiao er");
+		set("next_step/cmds", "#t+ pe_buy;#t+ pe_rebuy;buy shui dai from xiao er;drink shui dai");
+		tl = coor_list["food"];
+	} else
+	if (query("item/water") < 1) {
+		set("next_step/cmds", "alias dk drink shui dai;#t+ pe_fill;fill shui dai");
+		tl = coor_list["fill"];
+	} else
+	if (query("item/arrow") < 15 && world.GetVariable("cmd_pfm") == "shot") {
+		set("item/buy", "50 狼牙箭 from tiejiang");
+		set("next_step/cmds", "#t+ pe_arrow;#t+ pe_rebuy;buy 50 狼牙箭 from tiejiang");
+		tl = coor_list["arrow"];
+	} else
+	//if (query("item/bow") != "bow" && world.GetVariable("cmd_pfm") == "shot") {
+	//	set("item/buy", "sheri gong from qi changfa");
+	//	set("next_step/cmds", "#t+ pe_bow;#t+ pe_rebuy;buy sheri gong from qi changfa");
+	//	tl = coor_list["info"];
+	//} else
+	if (query("item/pass") < 1 && world.GetVariable("bool_pass") == "true") {
+		set("next_step/cmds", "#t+ pe_pass;#t+ pe_nopass;get pass from budai");
+		tl = world.GetVariable("loc_gift");
+	} else
+	if (query("item/pass") < 1 && world.GetVariable("bool_pass") == "mkpass") {
+		set("next_step/cmds", "#t+ pe_mkpassok;sign");
+		tl = 4198;
+	} else
+	if (query("item/pass") > 0 && world.GetVariable("bool_pass") == "mkpass") {
+		world.SetVariable("bool_pass", "false");
+		set("next_step/cmds", "#t+ pe_mkpassend;tell " + world.GetVariable("bool_passid") + " pass ok;put pass in budai");
+		tl = world.GetVariable("loc_gift");
+	} else
+		if (query("quest/count") == 10 && world.GetVariable("loc_wenweapon") != "") {
+		set("next_step/cmds", "#t+ pe_wenweapon;askweapon;set no_teach wenweapon");
+		tl = world.GetVariable("loc_wenweapon");
+	} else
+	if (((query("quest/count") == 150 || query("quest/count") == 350 || query("quest/count") == 550 || query("quest/count") == 750 || query("quest/count") == 950)) && world.GetVariable("bool_dan") == "true") {
+		set("next_step/cmds", "#t+ pe_getdan;getdan1;getdan2;getdan3;getdan4;set no_teach getdan");
+		tl = world.GetVariable("loc_gift");
+	} else
+	if (query("item/silver") > world.GetVariable("max_silver") || query("item/gold") > (world.GetVariable("min_gold") - 0 + 150)) {
+		var cmd = "#t+ pe_cun;i;set no_teach cun money";
+		set("next_step/cmds", cmd);
+		tl = coor_list["bank"];
+	} else
+	if (query("other/shangci")) {
+		var num = world.GetVariable("bool_waidi");
+		if (num != 0 && num != 1 && num != 2 && num != 3 && num != 4 && num != 5) {
+			set("other/shangci", false);
+			do_prepare();
+			return;
+		}
+
+		set("room/id", -1);
+		set("next_step/cmds", "#t+ pe_waidi;ask shi wei about 赏赐");
+		tl = 3401;
+	} else
+	if (query("quest/task")) {
+		set("quest/task", false);
+		set("next_step/cmds", "get all;i;set no_teach prepare");
+		tl = world.GetVariable("loc_task");
+	} else
+	if (query("item/laji") != "null") {
+		set("next_step/cmds", "#t+ pe_drop;sell " + query("item/laji"));
+		tl = coor_list["laji"];
+	} else
+//	if (query("item/task") != "null") {
+//		var good = query("item/task");
+//		var id = task_list[good]["id"];
+//		var loc = task_list[good]["loc"];
+//		world.SetVariable("name_good", good);
+//		set("room/id", -1);
+//		set("next_step/cmds", "#t+ pe_task;give " + query("item/taskid") + " to " + id);
+//		tl = loc;
+//	} else
+	if (query("item/gift2") != "null" && world.GetVariable("bool_gift") == "true") {
+				var dm = world.GetVariable("id_dummy");
+		    set("next_step/cmds", "#t+ pe_drop;give " + query("item/gift2") + " to " + dm);
+		    tl = world.GetVariable("loc_gift");
+	} else 
+	if (query("item/gift2") != "null" && query("item/ruyidai") > 0){
+		    set("next_step/cmds", "#t+ pe_drop;store " + query("item/gift2"));
+		    tl = world.GetVariable("loc_gift");
+	} else
+	if (query("hp/exp") > world.GetVariable("max_exp") && (query("other/exp") - query("hp/exp")) < 150000 &&
+		!query("quest/bunch") && !query("quest/menpai") && !query("quest/waidi")) {
+		if (query("hp/exp") > query("other/exp"))
+			set("other/exp", query("hp/exp"));
+
+		set("next_step/cmds", "#t+ pe_fangqi;yun regenerate;yun recover;fangqi exp");
+		tl = world.GetVariable("loc_dazuo");
+	} else
+	if (query("hp/jingli") < world.GetVariable("min_jingli")) {
+		set("next_step/cmds", "#t+ pe_tuna;#t+ pe_tunab;mdan3;yun recover;yun regenerate;tuna " + world.GetVariable("num_tuna"));
+		tl = world.GetVariable("loc_dazuo");
+	} else
+	if (query("hp/pot") > world.GetVariable("max_pot") && !query("quest/bunch") && !query("quest/menpai") && !query("quest/waidi")) {
+		var cmd = world.GetVariable("cmd_study");
+		var pot = query("hp/pot");
+		if (cmd == "jingxiu") {
+			cmd = "#t+ pe_study;jingxiu " + (pot - 3) + ";hp;set no_teach study";
+			set("next_step/cmds", cmd);
+			tl = world.GetVariable("loc_study");
+			goto(tl);
+			return;
+		}
+
+		if (pot > 100)
+			pot = 100;
+
+		var sk = skill() + " " + pot;
+		if (cmd == "xue")
+			cmd += " " + world.GetVariable("id_study");
+
+		cmd = "#t+ pe_study;" + cmd + " " + sk + ";hp;set no_teach study";
+		set("next_step/cmds", cmd);
+		tl = world.GetVariable("loc_study");
+	} else
+	if (world.GetVariable("max_nuqi") != "" && query("hp/neili") > 1000 && (query("hp/nq") < (world.GetVariable("max_nuqi") - 500))) {
+				set("next_step/cmds", "#t+ pe_baofa;set no_teach baofa");
+				tl = world.GetVariable("loc_master");
+	} else
+	if (query("item/san") && query("hp/jingli") > 250 && query("hp/neili") < world.GetVariable("min_neili")) {
+	set("next_step/cmds","mtc0;set no_teach prepare");
+	tl = world.GetVariable("loc_sleep");
+	} else
+	if (query("hp/neili") < world.GetVariable("min_neili")) {
+		if (cansleep()) {
+		if (query("hp/dispel") == true) {
+		  world.EnableTrigger("pe_sleep", true);
+			set("next_step/cmds", "#t+ pe_sleep;sleep");
+			tl = world.GetVariable("loc_sleep");
+		} else {
+		  send(world.GetVariable("lian_sleep"));
+		  world.EnableTrigger("pe_sleep", true);
+			set("next_step/cmds", "#t+ pe_sleep;sleep");
+			tl = world.GetVariable("loc_sleep");}
+			}
+		  else {
+			set("next_step/cmds", "#t+ pe_dazuo;#t+ pe_dazuof;dazuo " + world.GetVariable("num_dazuo"));
+			tl = world.GetVariable("loc_dazuo");
+		}
+	} else
+	if (!query("quest/master")) {
+		set("quest/master", true);
+		if (query("npc/name") == "null") {
+			set("next_step/cmds", "set no_teach no master");
+			tl = coor_list["chat"];
+		} else {
+			tokill();
+			return;
+		}
+	} else
+	if (query("hp/th") > world.GetVariable("max_th") && query("other/jiqu") &&
+		!query("quest/bunch") && !query("quest/menpai") && !query("quest/waidi")) {
+		set("next_step/cmds", "#t+ pe_jiqu;#t+ pe_jiqu1;yun recover;yun regenerate;jiqu");
+		tl = world.GetVariable("loc_jiqu");
+	} else
+	if (query("quest/bunch") || query("quest/menpai") || query("quest/waidi")) {
+		if (query("quest/waidi")) {
+			var num = world.GetVariable("bool_waidi");
+			if (num != 0 && num != 1 && num != 2 && num != 3 && num != 4 && num != 5) {
+				set("quest/waidi", false);
+				do_prepare();
+				return;
+			}
+			set("npc/loc", "京城");
+			world.EnableTrigger("bk_npc", true);
+			world.EnableTrigger("bk_over", true);
+		} else
+		if (query("quest/menpai")) {
+			if (world.GetVariable("bool_menpai") != "true") {
+				set("quest/menpai", false);
+				do_prepare();
+				return;
+			}
+			var men = world.GetVariable("name_menpai");
+			var elt = {"少林派" : "少林", "桃花岛" : "桃花", "全真教" : "全真", "逍遥派" : "逍遥"};
+			var loc = elt[men];
+			if (loc == null) {
+				set("quest/menpai", false);
+				do_prepare();
+				return;
+			}
+			set("npc/loc", loc);
+			world.EnableTrigger("bk_npc1", true);
+			world.EnableTrigger("bk_over1", true);
+		} else
+		if (query("quest/bunch")) {
+			if (world.GetVariable("bool_bunch") != "true") {
+				set("quest/bunch", false);
+				do_prepare();
+				return;
+			}
+			var loc = query("other/loc1");
+			if (loc == "北京")
+				loc = "京城";
+			else if (loc == "大理")
+				loc = "理城";
+			else if (loc == "扬州")
+				loc = "扬城";
+
+			set("npc/loc", loc);
+			world.EnableTrigger("bk_npc2", true);
+			world.EnableTrigger("bk_over2", true);
+		}
+
+		world.EnableTriggerGroup("grm0", 0);
+		world.EnableTriggerGroup("grm", 0);
+		world.EnableTriggerGroup("grm1", 0);
+		world.EnableTriggerGroup("grm2", 0);
+		world.EnableTriggerGroup("gpe", 0);
+		world.EnableTrigger("qt_nobody", false);
+		world.EnableTrigger("qt_start", false);
+		set("other/more", false);
+		set("quest/other", true);
+		set("rumor/flag", false);
+		set("npc/coor", -1);
+		set("npc/id", "null");
+		tokill();
+		return;
+	} else {
+		set("next_step/flag", "");
+		world.EnableTriggerGroup("gpe", 0);
+		if (query("quest/flag") == "kill")
+			do_quest("start");
+
+		return;
+	}
+
+	goto(tl);
+}
+
+function do_quest(flag)
+{
+	var cmd, tl;
+	if (flag == "give")
+		cmd = "#t+ qt_nobody;give head to "+ world.GetVariable("id_master");
+	else if (flag == "start")
+		cmd = "quest " + world.GetVariable("id_master") + ";give head to " + world.GetVariable("id_master");
+    else if (flag == "cancel")
+        cmd = "quest cancel;drop head";
+	set("next_step/cmds", cmd);
+	set("next_step/flag", "COMMANDS");
+	tl = world.GetVariable("loc_master");
+	if (world.GetVariable("bool_miss") != "false") {
+		var loc = query("room/id");
+		if (loc == world.GetVariable("loc_miss") || loc == world.GetVariable("loc_study")) {
+			send("halt");
+			goto(tl);
+			return;
+		}
+
+		stopwalk();
+		set("other/miss", "quest_end");
+		send("mms0");
+		world.EnableTrigger("pe_miss", true);
+		world.EnableTrigger("pe_missb", true);
+		return;
+	}
+
+	goto(tl);
+}
+
+function do_askinfo()
+{
+	if (query("rumor/flag")) {
+		do_prepare();
+		return;
+	}
+
+	if (query("quest/waidi") && query("quest/other")) {
+		set("quest/waidi", false);
+		set("quest/other", false);
+		do_prepare();
+		return;
+	}
+
+	if (query("quest/menpai") && query("quest/other")) {
+		set("quest/menpai", false);
+		set("quest/other", false);
+		do_prepare();
+		return;
+	}
+
+	if (query("quest/bunch") && query("quest/other")) {
+		set("quest/bunch", false);
+		set("quest/other", false);
+		do_prepare();
+		return;
+	}
+
+	var ix = query("quest/info") - 0;
+	var ke = getinfokey(ix);
+	if (ke == m_FAIL) {
+		addlog("在" + query("npc/loc") + "失踪没有消息！");
+		set("npc/loc", "很远");
+		do_askbei();
+		return;
+	}
+
+	var io = info_list[ke];
+	var fl = query("room/id");
+	var tl = io["loc"];
+	if (fl == tl) {
+		world.SetVariable("name_info", io["name"]);
+		set("info/id", io["id"]);
+		var cmd = "#t+ io_nobody;ask " + io["id"] + " about " + query("npc/name");
+		send(cmd);
+		world.EnableTrigger("io_ask", true);
+	} else {
+		set("next_step/flag", "COLLECT_INFO");
+		goto(tl);
+	}
+}
+
+function do_askbei()
+{
+	if (world.GetVariable("bool_info") != "true") {
+		tokill();
+		return;
+	}
+
+	if (query("npc/id") == "null" || query("npc/id") == "") {
+		var sn = "";
+		var pt = 2;
+		var name = query("npc/name");
+		if ((sn = cn_sname[name.substr(0,2)]) == null) {
+			pt--;
+			if ((sn = cn_sname[name.substr(0,1)]) == null) {
+				addlog("do_askbei:找不到" + name + "的id。");
+				tokill();
+				return;
+			}
+		}
+
+		var tmp = new Array();
+		for (var i=pt; i<name.length; i++) {
+			tmp[i - pt] = new Array();
+			for (ky in cn_pname) {
+				if (cn_pname[ky].indexOf(name.substr(i, 1)) != -1)
+					tmp[i - pt][tmp[i - pt].length] = ky;
+			}
+		}
+
+		var tmp1, ct;
+		for (var i=0; i<tmp.length; i++) {
+			npc_id = new Array();
+			for (var j=0; j<tmp[i].length; j++) {
+				if (i == 0)
+					npc_id[npc_id.length] = tmp[i][j];
+				else {
+					ct = tmp1.length;
+					for (var k=0; k<ct; k++)
+						npc_id[npc_id.length] = tmp1[k] + tmp[i][j];
+				}
+			}
+
+			tmp1 = new Array();
+			for (var l=0; l<npc_id.length; l++)
+				tmp1[tmp1.length] = npc_id[l];
+		}
+
+		for (var i=0; i<npc_id.length; i++)
+			npc_id[i] = sn + " " + npc_id[i];
+
+		set("askyou/idpt", 0);
+		set("npc/id", npc_id[0]);
+
+	}
+
+	set("next_step/flag", "COMMANDS");
+	set("next_step/cmds", "#t+ qt_you;#t+ qt_chou;#t+ qt_you2;yun regenerate;ask bei chou about " + query("npc/id"));
+	goto(coor_list["info"]);
+}
+
+function do_search2()
+{
+	set("askyou/trace", false);
+	var ix = query("askyou/index") - 0;
+	var lc = query("askyou/loc");
+	if (ix >= lc.length || lc == null) {
+		set("askyou/loc", null);
+		set("askyou/index", 0);
+		set("askyou/flag", false);
+		set("npc/loc", "很远");
+		tokill();
+		addlog("do_search2:ask bei" + query("other/loc") + "没有找到。");
+		return;
+	}
+
+	if (lc[ix] == -1 || lc[ix] == null){
+		set("askyou/index", (ix + 1));
+		do_search2();
+		return;
+	}
+
+	set("next_step/flag", "AUTOSEARCH");
+	var fl = query("room/id");
+	var tl = lc[ix];
+	if (fl == tl) {
+		set("askyou/index", (ix + 1));
+		set("askyou/trace", true);
+		var rn = query("room/name");
+		if (rn == "大沙漠" || rn == "南疆沙漠" || rn == "沙漠"
+		|| rn == "戈壁滩") {
+			do_autosearch(3, "auto");
+			return;
+		}
+
+		var pa = getareapath(tl, 3);
+		if (pa != m_FAIL)
+			do_walk(pa.split(";"));
+		else
+			do_autosearch(3, "auto");
+
+		return;
+	}
+
+	var pa = getpath(fl, tl);
+	if (pa == m_FAIL || pa == "null") {
+		set("askyou/index", (ix + 1));
+		do_search2();
+		return;
+	}
+
+	goto(tl);
+}
+
+//--------------------------------------------------------------------------------
+// 触发函数。
+// ^    这里(.*)的出口是(.*)。
+function on_step(name, output, wildcards)
+{
+	var wcs = VBArray(wildcards).toArray();
+	if (query("item/flag")) {
+		world.EnableTriggerGroup("gim", 0);
+		set("item/flag", false);
+	}
+
+	if (query("maze/sh") == 1) {
+		set("maze/sh", 0);
+		if (query("room/name") == "圣湖") {
+			var res;
+			walknoway("close");
+			switch (query("walk")) {
+				case "auto":
+				case "find":
+					res = auto_search.dir;
+					break;
+				case "multi":
+					res = step_walk.block();
+					break;
+				case "step":
+					res = step_walk.dir;
+					break;
+			}
+
+			send(res);
+			return;
+		}
+	}
+
+	if (name == "trace") {
+		switch (query("walk")) {
+			case "auto":
+				steptrace(auto_search.dir);
+				break;
+			case "step":
+				steptrace(step_walk.dir);
+				break;
+			case "multi":
+				step_walk.next();
+				steptrace(step_walk.dir);
+				break;
+		}
+
+		return;
+	}
+
+	switch (query("walk")) {
+		case "auto":
+			var rn = query("room/name");
+			if (entermaze(rn))
+				return;
+
+			steptrace(auto_search.dir);
+			var ex = exitfilter(wcs[1]);
+			var dir = auto_search.next(ex);
+			if (dir == m_FAIL) {
+				world.note("-----autosearch end!-----");
+				world.EnableTrigger("step", false);
+				walknoway("close");
+				if (query("askyou/flag")) {
+					do_search2();
+					return;
+				}
+
+				if (query("npc/loc") == "很远") {
+					var fx = query("quest/far");
+					var loc = far_list[fx];
+				} else
+					var loc = query("npc/loc");
+
+				if (loc_list[loc] == null) {
+					do_quest("start");
+					addlog("autosearch没有找到:" + query("npc/loc") + "。");
+					return;
+				}
+
+				set("next_step/flag", "SEARCH");
+				var tl = loc_list[loc]["id"];
+				goto(tl);
+				return;
+			}
+
+			if (query("askyou/flag") && query("room/id") != -1
+			&& query("askyou/trace")) {
+				var ix = query("askyou/index");
+				var lc = query("askyou/loc");
+				for (var i=ix; i<lc.length; i++)
+					if (lc[i] == query("room/id"))
+						lc[i] = -1;
+			}
+
+			send(dir);
+			walknoway("open");
+			break;
+		case "step":
+			var rn = query("room/name");
+			if (rn == "渡船" || rn == "小舟") {
+				walknoway("close");
+				return;
+			}
+
+			if (entermaze(rn))
+				return;
+
+			steptrace(step_walk.dir);
+			var cmd = query("room/cmd");
+			if (cmd != "") {
+				world.send(cmd);
+				set("room/cmd", "");
+			}
+
+			if (query("askyou/flag") && query("room/id") != -1
+			&& query("askyou/trace")) {
+				var ix = query("askyou/index");
+				var lc = query("askyou/loc");
+				for (var i=ix; i<lc.length; i++)
+					if (lc[i] == query("room/id"))
+						lc[i] = -1;
+			}
+
+			var dir = step_walk.next();
+			if (dir == m_FAIL) {
+				world.EnableTrigger("step", false);
+				walknoway("close");
+				do_nextstep();
+			} else {
+				send(dir);
+				walknoway("open");
+			}
+			break;
+		case "multi":
+			var rn = query("room/name");
+			if (rn == "渡船" || rn == "小舟")
+				return;
+
+			if (entermaze(rn))
+				return;
+
+			step_walk.next();
+			steptrace(step_walk.dir);
+			if (query("askyou/flag") && query("room/id") != -1
+			&& query("askyou/trace")) {
+				var ix = query("askyou/index");
+				var lc = query("askyou/loc");
+				for (var i=ix; i<lc.length; i++)
+					if (lc[i] == query("room/id"))
+						lc[i] = -1;
+			}
+
+			var cmd = query("room/cmd");
+			if (cmd != "") {
+				world.send(cmd);
+				set("room/cmd", "");
+			}
+
+			if (step_walk.index == step_walk.blockend)
+				send("guard");
+			break;
+		case "find":
+			world.EnableTrigger("step", false);
+			var res = 0;
+			var ex = exitfilter(wcs[1]);
+			ex = ex.sort();
+			var rm = query("room/name");
+			for (var i=0; i<ex.length; i++)
+				rm += "|" + ex[i];
+
+			mapper.getrmid(rm);
+			res = mapper.result;
+			if (isNaN(res))
+				res = -1;
+			else
+				res = res - 0;
+
+			var dir = auto_search.next(ex);
+			if (res == -1 && dir != m_FAIL) {
+				send(dir);
+				walknoway("open");
+				return;
+			}
+
+			send("set brief 3");
+			walknoway("close");
+			if (dir == m_FAIL) {
+				world.EnableTrigger("step", false);
+				world.note("---无法定位---");
+				return;
+			}
+
+			world.note("---当前位置<" + res + ">---");
+			set("room/id", res);
+			goto(query("next_step/loc"));
+			break;
+	}
+}
+
+function on_maze(name, output, wildcards)
+{
+	switch (name) {
+		case "sm_exit":	// ^    这里(.*)的出口是(.*)。
+			var rn = query("room/name");
+			if (rn == "戈壁滩" || rn == "大沙漠"
+			|| rn == "南疆沙漠" || rn == "沙漠") {
+				walknoway("close");
+				send("set no_teach maze");
+			} else
+				world.EnableTriggerGroup("gsm", 0);
+			break;
+		case "sm_step":	// ^(> )*设定环境变数：no_teach = "maze"
+			var rn = query("room/name");
+			var dir = query("maze/dir");
+			var ct = query("maze/count") - 0;
+			if (rn == "大沙漠") {
+				if (dir == "w" || dir == "w。") {
+					dir = "w";
+				} else
+				if (dir == "home" || dir == "home。")
+					dir = "home";
+				else
+					dir = "e";
+
+				if (query("walk") == "auto") {
+					var num = Math.floor(Math.random() * 5);
+					if (num == 1)
+						dir = "n";
+				}
+
+				if (query("hp/maxfood") > query("hp/food") + 100)
+					send("et");
+				if (query("hp/maxwater") > query("hp/water") + 100)
+					send("dk");
+
+				if (query("hp/qi") < (query("hp/max_qi") * 0.7))
+					send("yun recover");
+
+				if (query("hp/jing") < (query("hp/max_jing") * 0.7))
+					send("yun regenerate");
+
+				if (query("hp/neili") < world.GetVariable("min_neili")) {
+					send("mtc0;dazuo " + world.GetVariable("num_dazuo"));
+					world.doafter(3, dir);
+					world.doafter(3, "hp");
+				} else {
+					send(dir);
+					send("hp");
+					step_walk.stepnum = 5;
+				}
+
+				if (query("walk") == "auto")
+					auto_search.dir = dir;
+			} else
+			if (rn == "沙漠") {
+				dir = "s";
+				if (query("hp/maxfood") > query("hp/food") + 100)
+					send("et");
+				if (query("hp/maxwater") > query("hp/water") + 100)
+					send("dk");
+
+				if (query("hp/qi") < (query("hp/max_qi") * 0.7))
+					send("yun recover");
+
+				if (query("hp/jing") < (query("hp/max_jing") * 0.7))
+					send("yun regenerate");
+
+				if (query("hp/neili") < world.GetVariable("min_neili")) {
+					send("mtc0;dazuo " + world.GetVariable("num_dazuo"));
+					world.doafter(3, dir);
+					world.doafter(3, "hp");
+				} else {
+					send(dir);
+					send("hp");
+					step_walk.stepnum = 5;
+				}
+
+				if (query("walk") == "auto")
+					auto_search.dir = dir;
+			} else
+			if (rn == "南疆沙漠") {
+				if (dir == "sw" || dir == "sw。")
+					dir = "sw";
+				else
+					dir = "nw";
+
+				if (query("hp/maxfood") > query("hp/food") + 100)
+					send("et");
+				if (query("hp/maxwater") > query("hp/water") + 100)
+					send("dk");
+
+				if (dir == "sw") {
+					if ((ct % 2))
+						dir = "n";
+					else
+						dir = "e";
+
+					set("maze/count", (ct + 1));
+				}
+
+				var num = Math.floor(Math.random() * 3);
+				if (num == 1)
+					dir = "w";
+
+				send(dir + ";hp");
+				step_walk.stepnum = 3;
+				if (query("walk") == "auto") {
+					if (dir == "e" || dir == "n")
+						auto_search.dir = "sw";
+					else
+						auto_search.dir = dir;
+				}
+			} else
+			if (rn == "戈壁滩") {
+				if (dir == "w" || dir == "w。")
+					dir = "w";
+				else
+					dir = "e";
+
+				if (dir == "e") {
+					if (ct < 2) send("s");
+					else if ((ct % 2)) send("e");
+					else send("s");
+				} else
+				if (dir == "w") {
+					if (ct < 2) send("w");
+					else if ((ct % 2)) send("n");
+					else send("w");
+				}
+
+				set("maze/count", (ct + 1));
+				step_walk.stepnum = 1;
+				if (query("walk") == "auto")
+					auto_search.dir = dir;
+			}
+			break;
+		case "sm_out":	// ^(> )*(深山|昆仑山下|戈壁|丝绸之路|天山脚下|东门)$
+			world.EnableTriggerGroup("gsm", 0);
+			if (query("walk") == "multi") {
+				if (step_walk.index < step_walk.data.length)
+					step_walk.blockend = step_walk.index + 1;
+
+				world.EnableTrigger("wk_bkgoon", true);
+				world.EnableTrigger("wk_bkbusy", true);
+			}
+
+			world.EnableTrigger("step", true);
+			break;
+	}
+}
+
+function on_walk(name, output, wildcards)
+{
+	var wcs = VBArray(wildcards).toArray();
+	switch (name) {
+		case "wk_start":	// ^设定环境变数：no_teach = "walk start"
+			world.EnableTrigger("wk_start", false);
+			world.EnableTrigger("trace", false);
+			if (query("walk") == "multi") {
+				send("guard");
+				world.EnableTrigger("wk_bkgoon", true);
+				world.EnableTrigger("wk_bkbusy", true);
+			} else
+			if (query("walk") == "step") {
+				var dir = step_walk.next();
+				if (dir == m_FAIL)
+					send("look");
+				else
+					send(dir);
+			} else
+				send("look");
+
+			world.EnableTrigger("step", true);
+			world.EnableTrigger("wk_noexit", true);
+			world.EnableTrigger("wk_busy", true);
+			world.EnableTrigger("wk_shhu", true);
+			world.EnableTrigger("wk_sh", true);
+			world.EnableTrigger("wk_wd", true);
+			world.EnableTrigger("wk_rideto", true);
+			break;
+		case "wk_bkbusy":	// ^(> )*你现在没有办法分心去做这类事！
+			step_walk.stepnum = 0;
+			opentimer1(1, "busy", "guard");
+			break;
+		case "wk_bkgoon":	// ^指令格式：guard
+			if (query("npc/find") == -1) {
+				killnpc();
+				return;
+			}
+
+			var res = step_walk.block();
+			if (res == m_FAIL)
+				do_nextstep();
+			else
+				send(res);
+			break;
+		case "wk_busy":	// ^(> )*你(的动作还没有完成，不能移动|逃跑失败)。$
+			var dir;
+			var wk = query("walk");
+			var rn = query("room/name");
+			if (wk == "auto" || wk == "find")
+				dir = auto_search.dir;
+			else if ( rn == "大沙漠" || rn == "南疆沙漠"
+			|| rn == "沙漠" || rn == "戈壁滩" || wk == "step")
+				dir = step_walk.dir;
+			else if (wk == "multi")
+				dir = "guard";
+
+			if (wk != "multi")
+				walknoway("open");
+
+			world.EnableTrigger("wk_busy", false);
+			var cmd = dir + ";#t+ wk_busy";
+			opentimer1(1, "busy", cmd);
+			break;
+		case "wk_noexit":	// ^(> )*这个方向没有出路。
+			if (query("quest/flag") != "null") {
+				addlog("没有出路：" + query("room/id") + " " + step_walk.dir);
+			}
+
+			set("room/id", -1);
+			set("search/times", 1);
+			if (query("quest/flag") != "null") {
+
+				world.EnableTrigger("wk_noexit", false);
+				do_autosearch(5, "find");
+			} else
+				world.EnableTimer("timer3", false);
+			break;
+		case "wk_auto":	// ^(> )*设定环境变数：no_teach = "walk noway (.*)"
+			var fg = wcs[1] - 0;
+			if (fg == query("timer/walk")) {
+				var dir;
+				world.EnableTrigger("wk_auto", false);
+				if (query("walk") != "step") {
+					dir = auto_search.dir;
+					auto_search.index--;
+					auto_search.dir = "";
+				} else
+					dir = step_walk.dir;
+
+				send("l");
+				addlog("wk_auto:" + query("room/id") + " " + dir + ".");
+			}
+			break;
+		case "wk_shhu":	// ^(> )*你(突然发现眼前的景象有些迷乱|纵身而起，离瀑布顶只差一点点了，再加把劲)。
+			var res;
+			walknoway("close");
+			switch (query("walk")) {
+				case "auto":
+				case "find":
+					res = auto_search.dir;
+					break;
+				case "multi":
+					res = step_walk.block();
+					break;
+				case "step":
+					res = step_walk.dir;
+					break;
+			}
+
+			send(res);
+			break;
+		case "wk_sh":	// ^(> )*突然间你发现眼前的景象有些迷乱
+			set("maze/sh", 1);
+			break;
+		case "wk_bar":		// ^(> )*(摘星子|虚通|虚明)(喝道：这位|伸手拦住你白眼一翻说道|拦住你说道|迈步挡在你身前)
+			var wk = query("walk");
+			if (wk == "auto" || wk == "find")
+				return;
+
+			var npc = wcs[1];
+			var exp = query("hp/exp");
+			var elt = {"亲兵" : 10, "衙役" : 10, "官兵" : 10, "宋兵" : 10, "大汉" : 10,
+				"拓跋" : 30, "摘星子" : 80000, "虚通" : 10, "虚明" : 10, "劳德诺" : 100000,
+				"打手" : 10, "李力世" : 10, "康府侍卫" : 10};
+			var num = elt[npc];
+			walknoway("close");
+			if (num == null)
+				num = 100;
+
+			if (exp < (num * 5000)) {
+				telldm("Help kill " + npc);
+				return;
+			}
+
+			var list = {"安健刚" : "an jiangang", "孟健雄" : "meng jianxiong", "心砚" : "xin yan", "大汉" : "da han",
+				"周绮" : "zhou yi", "蒋四根" : "jiang sigen", "石双英" : "shi shuangying", "拓跋" : "tuoba",
+				"卫春华" : "wei chunhua", "杨成协" : "yang chengxie", "徐天宏" : "xu tianhong",
+				"常伯志" : "chang bozhi", "常赫志" : "chang hezhi", "赵半山" : "zhao banshan",
+				"周仲英" : "zhou zhongying", "陆菲青" : "lu feiqing", "无尘" : "wuchen daozhang",
+				"摘星子" : "zhaixing zi", "虚通" : "xu tong", "虚明" : "xu ming", "劳德诺" : "lao denuo",
+				"李力世" : "li lishi", "江百胜" : "jiang baisheng", "官兵" : "guan bing", "衙役" : "ya yi",
+				"宋兵" : "song bing", "侍女" : "shi nu", "亲兵" : "qin bing", "褚万里" : "chu wanli",
+				"打手" : "da shou", "李力世" : "li lishi", "康府侍卫" : "shi wei"};
+			send("kill " + list[npc]);
+			world.EnableTrigger("wk_bkgoon", false);
+			world.EnableTrigger("wk_bkbusy", false);
+			world.EnableTrigger("wk_die", true);
+			break;
+		case "wk_die":	// ^(> )*(虚通|虚明|摘星子)扑在地上挣扎了几下，腿一伸，口中喷出几口鲜血，死了！$
+			world.EnableTrigger("wk_die", false);
+			if (query("walk") == "multi") {
+				send("guard");
+				world.EnableTrigger("wk_bkgoon", true);
+				world.EnableTrigger("wk_bkbusy", true);
+			} else
+				send(step_walk.dir);
+			break;
+		case "wk_wd":	// ^请不要装备武器。
+			var wk = query("walk");
+			if (wk == "auto" || wk == "find")
+				return;
+
+			var res;
+			if (wk == "multi")
+				res = step_walk.block();
+			else
+				res = step_walk.dir;
+
+			var wp = world.GetVariable("id_weapon");
+			send("unwield " + wp);
+			send(res);
+			send("wield " + wp);
+			break;
+		case "wk_cross":	// ^(> )*(船厂里走出一个船夫，瞪着眼看着你|船夫在旁边拿眼瞪......
+			walknoway("close");
+			var wk = query("walk");
+			if (wk == "multi") {
+				step_walk.next();
+				steptrace(step_walk.dir);
+				step_walk.blockend ++;
+				send("cross");
+			} else
+			if (wk == "step") {
+				steptrace(step_walk.dir);
+				step_walk.next();
+				send("cross");
+			}
+			break;
+		case "wk_crossf":	// ^(> )*你的内力不够，还是休息一下再说吧。
+			walknoway("close");
+			world.doafter(2, "cross");
+			world.doafter(2, "piao");
+			break;
+		case "wk_yell":	// ^(> )*你(.*)一声：“船家！”
+			if (query("npc/find") == -1) {
+				if (query("room/name") == "multi")
+					killnpc();
+
+				return;
+			}
+
+			walknoway("close");
+			world.EnableTrigger("wk_dcbusy", true);
+			world.EnableTrigger("wk_dcready", true);
+			break;
+		case "wk_dcbusy":	// ^(> )*只听得湖面上隐隐传来：“别急嘛，这儿正忙着呐……”
+			world.EnableTrigger("wk_dcbusy", false);
+			world.doafter(1, "yell boat");
+			break;
+		case "wk_dcout":	// ^(> )*艄公说“到啦，上岸吧”，随即把一块踏脚板搭上堤岸。
+			world.EnableTrigger("wk_dcbusy", false);
+			send("halt;out");
+			step_walk.stepnum = 0;
+			if (query("npc/status") == "retire") {
+				set("npc/status", "end");
+				send("hp;set no_teach prepare");
+			}
+			break;
+		case "wk_dcready":	// ^一叶扁舟缓缓地驶了过来，艄公将一块踏脚板搭上堤岸
+			world.EnableTrigger("wk_dcbusy", false);
+			world.EnableTrigger("wk_dcready", false);
+			set("room/name", "渡船");
+			send("enter;jiqu");
+			break;
+		case "wk_mache":		// ^(> )*马夫一声招呼，开过来一辆大车，你上了车就出发了。
+			walknoway("close");
+			set("room/name", "马车");
+			if (query("hp/dispel"))
+				send("yun dispel");
+			else if (query("hp/eff_qi") < 95)
+				send("yun heal");
+			else
+				send("jiqu");
+			break;
+		case "wk_mcout":	// ^(> )*你到了(.*)，下了车。
+			send("halt");
+			step_walk.stepnum = 0;
+			if (query("npc/status") == "retire") {
+				set("npc/status", "end");
+				send("set no_teach prepare");
+			}
+			break;
+		case "wk_rideto":	//^(> )*你骑在马上，大喝一声“走喽”，飞奔而去。。。
+		    world.EnableTrigger("im_ma", false);	
+            set("room/id", coor_list["center"]);
+			break;
+		case "wk_ride":		// ^(> )*这里没有这样东西可骑。
+			send("i;set no_teach prepare");
+			break;
+	    case "can_ride":    //^(> )*你飞身跃上(.*)，身手很是矫捷。
+			world.EnableTrigger("wk_ride", false);
+			send("i;set no_teach prepare");
+			break;
+		case "wk_zhen":	// ^(> )*玄难大师也挥了挥手， 般若堂长老们随即也离开练武场。
+			goto(query("next_step/loc"));
+			break;
+		case "wk_ssl":		// ^象一蓬蓬巨伞般伸向天空，把阳光遮得丝毫也无。尺把厚的松针
+			if (query("walk") != "find")
+				return;
+
+			stopwalk();
+			send("set brief 3");
+			set("room/id", 3945);
+			goto(query("next_step/loc"));
+			break;
+	}
+}
+
+function on_quest(name, output, wildcards)
+{
+	var wcs = VBArray(wildcards).toArray();
+	switch (name) {
+		case "qt_sl":	// ^最近(.*)在(.*)作恶多端，你去把(他|她)除了，提头来见。”
+			world.SetVariable("name_npc", wcs[0]);
+			set("npc/name", wcs[0]);
+			set("quest/master", true);
+			send("quest");
+			world.EnableTrigger("qt_start", true);
+			break;
+		case "qt_kl2":	// ^(> )*(@master_name)对你道：“(.*)(这个败类打家劫舍，无恶不......
+		case "qt_kl1":	// ^(> )*(@master_name)对你道：“我早就看(.*)不顺眼，听说(他|她)最......
+			world.SetVariable("name_npc", wcs[2]);
+			set("npc/name", wcs[2]);
+			set("quest/master", true);
+			send("quest");
+			world.EnableTrigger("qt_start", true);
+			break;
+		case "qt_num":	// ^(> )*师长交给你的任务，你已经连续完成了(.*)个。
+			var ct = wcs[1] - 0;
+			set("quest/count", ct);
+			var ct1 = ct / 220;
+			if (ct1 == 1 || ct1 == 2 || ct1 == 3 || ct1 == 4)
+				send("kick");
+			if (ct == 1)
+				addlog("count(1):----------------------------------");
+			break;
+		case "qt_npc":	// ^(@master_name)吩咐你在(.*)之前割下(.*)\(.*)\)的人头，回(.*)交差。
+			set("npc/id", "null");
+			set("npc/name", wcs[2]);
+			set("npc/id", wcs[3]);
+			world.SetVariable("name_npc", wcs[2]);
+			break;
+		case "qt_start":	// ^据说此人前不久曾经在(.*)出没。
+			world.EnableTriggerGroup("grm0", 0);
+			world.EnableTriggerGroup("grm", 0);
+			world.EnableTriggerGroup("grm1", 0);
+			world.EnableTriggerGroup("grm2", 0);
+			world.EnableTrigger("qt_nobody", false);
+			world.EnableTrigger("qt_start", false);
+			set("rumor/flag", false);
+			set("npc/coor", -1);
+			set("npc/loc", wcs[0].substr(0, 2));
+			if (!query("quest/master"))
+				return;
+
+			tokill();
+			break;
+			case "qt_quest":	// ^(> )*(@name_master)(不肯要你的|一脸怒容对你道：我不是让你|说道：这东西看上去也没啥特别的)
+			world.EnableTrigger("qt_none", false);
+			var ns = query("npc/status");
+			if (ns == "faint" || query("npc/find") == 1) {
+				send(killcmd());
+			} else
+			if (ns == "dead") {
+				send("cut head from corpse");
+			} else
+			if (ns == "head") {
+				set("quest/accept", "false");
+				do_quest("give");
+			} else
+				do_askbei();
+			break;
+		case "qt_disp":	// (@name_npc)在(.*)失踪了！现在不知道去了哪里！”
+			set("npc/status", "disp");
+			break;
+		case "qt_give":	// ^(> )*(@master_name)(.*)，(对|看了看)你道：“(又除了一害，很好！|好极了！......
+			world.EnableTrigger("qt_nobody", false);
+			if (output.indexOf("算了") != -1)
+				addlog("count(" + query("quest/count") + "):" + output);
+
+			send("hp;i;set no_teach quest end");
+			break;
+		case "qt_end":	// ^(> )*设定环境变数：no_teach = "quest end"
+			send(world.GetVariable("cmd_exert"));
+			do_prepare();
+			break;
+		case "qt_busy1":	// ^(> )*(@master_name)正忙着呢，没功夫理你。
+		case "qt_busy":	// ^你还是有空了再和(@master_name)谈这些问题吧！
+			opentimer1(1, "busy", "quest " + world.GetVariable("id_master"));
+			break;
+		case "qt_nomaster":	//这里没有这个人，你怎么领任务？
+			if (query("quest/flag") != "kill")
+				return;
+
+			set("next_step/flag", "COMMANDS");
+			set("next_step/cmds", "set no_teach no master");
+			telldm("掌门被砍死啦！");
+			addlog("掌门被砍死啦！");
+			goto(coor_list["chat"]);
+			break;
+		case "qt_nobody":	// ^(这里没有这个人。|给你下任务的那个人现在不在这里吧？)
+			world.EnableTrigger("qt_nobody", false);
+			if (query("quest/flag") != "kill")
+				break;
+
+			set("npc/name", "null");
+			set("npc/id", "null");
+			set("quest/master", false);
+			send("l letter");
+			do_prepare();
+			break;
+		case "qt_none":	// ^你现在没有领任何任务！
+			set("npc/status", "none");
+			break;
+		case "qt_you":	// 北丑在你的耳边悄声说道：据可靠消息，这个人刚才在(.*)。
+			world.EnableTrigger("qt_you2", false);
+			world.EnableTrigger("qt_you", false);
+			world.EnableTrigger("qt_chou", false)
+			set("other/loc", wcs[1]);
+			var loc = getidfrname(wcs[1]);
+			if (loc == m_FAIL) {
+				world.note("trigger(askyou):没有 " + wcs[1] + " 这个地方！");
+				set("askyou/loc", null);
+				set("askyou/index", 0);
+				set("askyou/flag", false);
+				set("npc/loc", "很远");
+				tokill();
+				return;
+			}
+
+			if (loc.length > 1) {
+				for (var i=0; i<loc.length; i++)
+					if (!incity(loc[i], "很远"))
+						loc[i] = -1;
+			}
+
+			set("askyou/loc", loc);
+			set("askyou/index", 0);
+			set("askyou/flag", true);
+			do_search2();
+			break;
+			case "chou_cancel"://ask bei chou about cancel
+			do_quest("start");
+			break;
+			case "qt_chou":	// ^(> )*北丑(嘿嘿奸笑两声，对你小声道：
+			world.EnableTrigger("qt_you2", false);
+			world.EnableTrigger("qt_you", false);
+			world.EnableTrigger("qt_chou", false);
+			set("other/loc", wcs[1]);
+			var loc = getidfrname(wcs[1]);
+			if (loc == m_FAIL) {
+				world.note("trigger(askchou):NPC还在！全地图搜索");
+				set("askyou/loc", null);
+				set("askyou/index", 0);
+				set("askyou/flag", false);
+				set("npc/loc", "很远");
+				tokill();
+				return;
+			}
+
+			if (loc.length > 1) {
+				for (var i=0; i<loc.length; i++)
+					if (!incity(loc[i], "很远"))
+						loc[i] = -1;
+			}
+
+			set("askyou/loc", loc);
+			set("askyou/index", 0);
+			set("askyou/flag", true);
+			do_search2();
+			break;
+		case "qt_you1":	// 北丑(摇摇头，说道：没听说过。|疑惑地看着你，摇了摇头。|睁大眼睛望
+			var ix = query("askyou/idpt") + 1;
+			if (ix >= npc_id.length) {
+				world.EnableTrigger("qt_you2", false);
+				addlog("qt_you1:找不到" + query("npc/name") + "的id。");
+				do_quest("cancel");
+				return;
+			}
+
+			set("askyou/idpt", ix);
+			set("npc/id", npc_id[ix]);
+			send("ask bei chou about " + npc_id[ix]);
+			break;
+		case "qt_you2":	// ^(> )*你(没有那么多的白银|身上没有这样东西)。
+			world.EnableTrigger("qt_you2", false);
+			send("give 10 gold to bei chou");
+			break;
+		case "qt_rumor":	// ^(> )*^你突然想到：现在江湖正值动乱，何不四处走访，也许可提高自己的经验阅历。
+			world.EnableTriggerGroup("grm0", 1);
+			set("rumor/flag", true);
+			set("next_step/flag", "COMMANDS");
+			set("next_step/cmds", "ask xiao er about rumor");
+			goto(world.GetVariable("loc_rumor"));
+			break;
+		case "qt_gift":	// ^(> )*(@name_master)对你微笑道：我这里有一(..)(.*)，如果你用得着就拿去吧
+			var lt = "," + world.GetVariable("list_gift") + ",";
+			if (lt.indexOf("," + wcs[3] + ",") != -1) {
+				send("answer Y");
+				addlog("获得奖励" + wcs[3] + "。");
+			}
+
+			break;
+	}
+}
+
+function on_kill(name, output, wildcards)
+{
+	var wcs = VBArray(wildcards).toArray();
+	switch (name) {
+		case "kl_npc":		// ^  (@name_npc)\((.*)\)$
+			if (query("rumor/flag") && query("rumor/type") == "shan")
+				return;
+
+			set("npc/id", wcs[1]);
+		case "kl_npc1":		// ^  (@name_npc)正坐在地下
+			set("npc/coor", query("room/id"));
+			if (query("npc/find") == -1)
+				return;
+
+			set("npc/find", -1);
+			if (name == "kl_npc1" || name == "kl_npc")
+				world.EnableTriggerGroup("gkl", 1);
+
+			var wk = query("walk");
+			var rn = query("room/name");
+			if (rn == "大沙漠" || rn == "南疆沙漠" || rn == "戈壁滩"
+			|| rn == "渡船" || rn == "小舟" || rn == "沙漠" || wk != "multi") {
+				stopall();
+				world.EnableTrigger("trace", true);
+				send(killcmd());
+			}
+			break;
+		case "kl_fight1":	// ^(> )*你对著(@name_npc)喝道：(.*)
+			var fg = query("rumor/type");
+			if (query("rumor/flag") && (fg == "judge" || fg == "trace2")) {
+				stopall();
+				world.EnableTriggerGroup("gkl", 0);
+				world.EnableTriggerGroup("gkl1", 0);
+				set("npc/find", 1);
+				opentimer1(3, "busy", "hp;set no_teach prepare");
+				return;
+			}
+
+			var num = Math.floor(Math.random() * 5);
+			if (name == "kl_fight1" && num == 0 && world.GetVariable("bool_pking") == "true")
+				send("pretend " + query("npc/id"));
+		case "kl_fight2":	// ^(> )*你正在和人家生死相扑呢。
+			world.EnableTrigger("kl_nobody", false);
+			set("npc/find", 1);
+			set("askyou/flag", false);
+			world.EnableTimer("timer2", true);
+			break;
+		case "kl_fight4":	// ^(> )*你现在没有力气战斗了。
+			world.EnableTrigger("kl_nobody", false);
+			set("npc/find", 0);
+			world.EnableTimer("timer2", false);
+			send("hp;set no_teach heal");
+			break;
+		case "kl_nobody":	// ^(这里没有这个人。|这里不准战斗。|看清楚一点，那并不是活物。)
+			world.EnableTrigger("kl_nobody", false);
+			world.EnableTrigger("kl_help", false);
+			world.EnableTrigger("kl_corpse", true);
+			set("npc/find", 0);
+			var pk = world.GetVariable("bool_pking");
+			if (pk == "pretend" && query("walk") != "multi") {
+				send("set no_teach walk start");
+				if (query("walk") == "step")
+					step_walk.back();
+
+				world.EnableTrigger("wk_start", true);
+				return;
+			}
+
+			set("next_step/flag", "SEARCH");
+			var rmid = query("room/id");
+			var rn = query("room/name");
+			if (rn != "大沙漠" && rn != "南疆沙漠"
+			&& rn != "戈壁滩" && rn != "沙漠" && rmid != -1) {
+				var path = getareapath(rmid, 2);
+				if (path != m_FAIL) {
+					do_walk(path.split(";"));
+					return;
+				}
+			}
+
+			do_autosearch(2, "auto");
+			break;
+		case "kl_fight3":	// ^(> )*(@name_npc)(一见到你|和你一碰面|对著你大喝|喝道：「你|一眼瞥见你|和你仇人相见分外眼红)
+			stopall();
+			world.EnableTriggerGroup("gkl", 1);
+			send(killcmd());
+			break;
+		case "kl_flee":	// (@name_npc)(摇摇欲坠|身负重伤|狂叫一声|晃了两下|再退一步|已是避|深吸一口气|只有招架之功)(.*)
+			world.EnableTimer("timer2", false);
+			world.EnableTriggerGroup("gkl", 0);
+			world.EnableTriggerGroup("gkl1", 0);
+			set("quest/info", 0);
+			set("npc/find", 0);
+			set("npc/status", "flee");
+			if (query("hp/dispel")) {
+				ydispel(true);
+				return;
+			}
+
+			send("hp;set no_teach heal");
+			break;
+		case "kl_weft":	// ^(> )*(@name_npc)(大声喝道：“好一个|忽然撮舌吹哨，你听了不禁微微一愣。|一声长啸......
+			world.EnableTrigger("kl_help", true);
+			break;
+		case "kl_help":	// ^(> )*说时迟，那时快！突然转出(.*)个人，一起冲上前来，看来是早有防备！$
+			var cmd = world.GetVariable("id") + ";" + world.GetVariable("passw")
+				+ ";y;cut head from corpse;" + killcmd();
+			reconnect(cmd);
+			break;
+		case "kl_faint":	// ^(> )*(@name_npc)脚下一个不稳，跌在地上一动也不动了。
+			world.EnableTimer("timer2", false);
+			world.EnableTrigger("weapon2", false);
+			world.EnableTrigger("weapon", true);
+			set("npc/status", "faint");
+			var cmd = "get silver from " + query("npc/id") + ";" + "get lun from " + query("npc/id") + ";"
+				+ world.GetVariable("cmd_npcfaint") + ";hp;i;l "
+				+ world.GetVariable("id_weapon") + " of me";
+			if (Math.floor(Math.random() * 10) == 1)
+				cmd += ";drop head";
+
+			if (Math.floor(Math.random() * 20) == 1)
+				cmd += ";open bag;drop bag";
+
+			send(cmd);
+			break;
+		case "kl_die":	// ^(> )*(@name_npc)扑在地上挣扎了几下，腿一伸，口中喷出几口鲜血，死了！$
+			world.EnableTrigger("kl_help", false);
+			world.EnableTimer("timer2", false);
+			world.EnableTrigger("weapon", false);
+			world.EnableTrigger("weapon2", true);
+			set("npc/find", 0);
+			set("npc/status", "dead");
+			var loc = query("npc/loc");
+			if (loc == "很远")
+				loc = far_list[query("quest/far")];
+
+			send(world.GetVariable("cmd_npcdie"));
+			if (query("rumor/flag")) {
+				do_prepare();
+				return;
+			}
+
+			send("cut head from corpse;l " + world.GetVariable("id_weapon2") + " of me");
+			world.EnableTrigger("kl_nohead", true);
+			world.EnableTrigger("kl_head", true);
+			break;
+		case "kl_head":	// ^(> )*你捡起一颗(.*)的人头。
+			var npc = world.GetVariable("name_npc");
+			if (query("npc/status") != "dead" && npc != wcs[0]) {
+				send("drop head;get head 2");
+				return;
+			}
+			world.EnableTriggerGroup("gkl", 0);
+			world.EnableTriggerGroup("gkl1", 0);
+			var ed = "cancel";
+			if (npc == wcs[0]) {
+				set("npc/status", "head");
+				ed = "give";
+			}
+
+			if (query("hp/dispel")) {
+				ydispel(true);
+				return;
+			}
+
+			do_quest(ed);
+			break;
+		case "kl_nohead":	// ^(> )*(头已经被割走了|你没有地方下手|你附近没有这样东西|你身上的东西......
+			send("cut head from corpse 2");
+			if (query("npc/status") == "head") {
+				ed = "give";
+				break;
+			}
+			world.EnableTriggerGroup("gkl", 0);
+			world.EnableTriggerGroup("gkl1", 0);
+			if (query("hp/dispel")) {
+				ydispel(true);
+				return;
+			}
+
+			do_quest("start");
+			break;
+		case "kl_fail":		// ^(> )*【谣言四起】某人：听说(@name_npc)
+			if (query("quest/flag") != "kill")
+				return;
+
+			addlog(output);
+			var rn = query("room/name");
+			if (rn == "马车" || rn == "渡船" || rn == "小舟") {
+				set("npc/status", "retire");
+				return;
+			}
+
+			set("npc/status", "end");
+			do_quest("start");
+			break;
+		case "kl_corpse":		// ^  (@name_npc)的尸体\(Corpse\)
+			if (query("item/flag")) {
+				set("npc/status", "head");
+				return;
+			}
+
+			world.EnableTrigger("kl_corpse", false);
+			set("npc/status", "dead");
+			addlog(output);
+			do_quest("start");
+			break;
+	}
+}
+
+function on_bunch(name, output, wildcards)
+{
+	var wcs = VBArray(wildcards).toArray();
+	switch (name) {
+		case "bk_task":	// ^(> )*【笑谈中华】紫虚道人\[Zixu daoren\]：请注意，宝镜任务将于三分种后重新分布。
+			if (world.GetVariable("bool_task") == "true")
+				set("quest/task", true);
+
+			break;
+		case "bk_come":	// ^【外敌入侵】请各位大虾速至北京抵御外敌！打开waidi频道可获知战况。
+			var num = world.GetVariable("bool_waidi");
+			if (num == 0 || num == 1 || num == 2 || num == 3 || num == 4 || num == 5)
+				set("quest/waidi", true);
+
+			break;
+		case "bk_come1":	// ^(> )*【门派入侵】【(@name_menpai)】还不一起行动起来，歼灭来犯之敌？
+			if (world.GetVariable("bool_menpai") == "true")
+				set("quest/menpai", true);
+
+			break;
+		case "bk_come2":	// ^(> )*【帮派挑衅】据说(.*)正在(.*)集结，气势汹汹，决意要铲平【(@name_bunch)】！
+			if (world.GetVariable("bool_bunch") == "true") {
+				set("quest/bunch", true);
+				set("other/loc1", wcs[2].substr(0, 2));
+			}
+			break;
+		case "bk_over":	// ^           本次入侵之外敌被我方义士全歼，皇上龙颜大乐，
+			if (!query("quest/waidi"))
+				return;
+
+			set("quest/waidi", false);
+			set("quest/other", false);
+			set("other/shangci", true);
+			world.EnableTriggerGroup("bkl", 0);
+			world.EnableTriggerGroup("bkl1", 0);
+			stopwalk();
+			send("set no_teach prepare");
+			break;
+		case "bk_over1":	// ^(> )*所有入侵的敌人都给打退了，由于你也参与了战斗，因此现在你也一起分享胜利果实！
+			set("quest/menpai", false);
+			set("quest/other", false);
+			world.EnableTriggerGroup("bkl", 0);
+			world.EnableTriggerGroup("bkl1", 0);
+			stopwalk();
+			send("set no_teach prepare");
+			break;
+		case "bk_over2":	// ^(> )*所有入侵的敌人都给打退了，由于你也参与了战斗，因此现在你也一起分享胜利果实！
+			set("quest/bunch", false);
+			set("quest/other", false);
+			world.EnableTriggerGroup("bkl", 0);
+			world.EnableTriggerGroup("bkl1", 0);
+			stopwalk();
+			send("set no_teach prepare");
+			break;
+		case "bk_npc":	// ^  八国联军(.*) 「(.*)」(.*)\((.*)\)
+			if (query("npc/find") == -1) {
+				set("other/more", true);
+				return;
+			}
+
+			var lvl = wcs[0];
+			var elt = {"总司令" : 1, "副司令" : 2, "大头目" : 3, "小头目" : 4, "雇佣兵" : 5};
+			var num = elt[lvl];
+			if (world.GetVariable("bool_waidi") > num)
+				return;
+
+			set("npc/find", -1);
+			if (lvl != "总司令" && lvl != "副司令")
+				set("hp/jiali", "max");
+			else
+				set("hp/jiali", 0);
+
+			set("npc/name", wcs[2]);
+			set("npc/id", wcs[3]);
+			set("npc/coor", query("room/id"));
+			var npc = query("npc/name");
+			world.SetVariable("name_npc", npc);
+			if (name == "bk_npc1" || name == "bk_npc" || name == "bk_npc2")
+				world.EnableTriggerGroup("bkl1", 1);
+
+			var wk = query("walk");
+			var rn = query("room/name");
+			if (rn == "大沙漠" || rn == "南疆沙漠" || rn == "戈壁滩"
+			|| rn == "渡船" || rn == "小舟" || rn == "沙漠" || wk != "multi") {
+				stopall();
+				world.EnableTrigger("trace", true);
+				send(killcmd());
+			}
+			break;
+		case "bk_npc1":	// ^  (@name_menpai)仇家 (.*)「(.*)」(.*)\((.*)\)
+			if (query("npc/find") == -1) {
+				set("other/more", true);
+				return;
+			}
+
+			set("npc/find", -1);
+			set("npc/name", wcs[3]);
+			set("npc/id", wcs[4]);
+			set("npc/coor", query("room/id"));
+			var npc = query("npc/name");
+			world.SetVariable("name_npc", npc);
+			if (name == "bk_npc1" || name == "bk_npc" || name == "bk_npc2")
+				world.EnableTriggerGroup("bkl1", 1);
+
+			var wk = query("walk");
+			var rn = query("room/name");
+			if (rn == "大沙漠" || rn == "南疆沙漠" || rn == "戈壁滩"
+			|| rn == "渡船" || rn == "小舟" || rn == "沙漠" || wk != "multi") {
+				stopall();
+				world.EnableTrigger("trace", true);
+				send(killcmd());
+			}
+			break;
+		case "bk_npc2":	// ^  (@name_bunch)仇家 (.*)「(.*)」(.*)\((.*)\)
+			if (query("npc/find") == -1) {
+				set("other/more", true);
+				return;
+			}
+
+			set("npc/find", -1);
+			set("npc/name", wcs[3]);
+			set("npc/id", wcs[4]);
+			set("npc/coor", query("room/id"));
+			var npc = query("npc/name");
+			world.SetVariable("name_npc", npc);
+			if (name == "bk_npc1" || name == "bk_npc" || name == "bk_npc2")
+				world.EnableTriggerGroup("bkl1", 1);
+
+			var wk = query("walk");
+			var rn = query("room/name");
+			if (rn == "大沙漠" || rn == "南疆沙漠" || rn == "戈壁滩"
+			|| rn == "渡船" || rn == "小舟" || rn == "沙漠" || wk != "multi") {
+				stopall();
+				world.EnableTrigger("trace", true);
+				send(killcmd());
+			}
+			break;
+		case "bk_fight1":	// ^(> )*你对著(.*)喝道：(.*)
+			var fg = query("rumor/type");
+			if (query("rumor/flag") && (fg == "judge" || fg == "trace2")) {
+				stopall();
+				world.EnableTriggerGroup("bkl1", 0);
+				set("npc/find", 1);
+				opentimer1(3, "busy", "hp;set no_teach prepare");
+				return;
+			}
+
+			var num = Math.floor(Math.random() * 5);
+			if (name == "kl_fight1" && num == 0 && world.GetVariable("bool_pking") == "true")
+				send("pretend " + query("npc/id"));
+		case "bk_fight2":	// ^(> )*你正在和人家生死相扑呢。
+			world.EnableTrigger("bk_nobody", false);
+			set("npc/find", 1);
+			set("askyou/flag", false);
+			world.EnableTimer("timer2", true);
+			break;
+		case "bk_fight4":	// ^(> )*你现在没有力气战斗了。
+			world.EnableTrigger("bk_nobody", false);
+			set("npc/find", 0);
+			world.EnableTimer("timer2", false);
+			send("hp;set no_teach heal");
+			break;
+		case "bk_nobody":	// ^(这里没有这个人。|这里不准战斗。|看清楚一点，那并不是活物。)
+			world.EnableTrigger("bk_nobody", false);
+			world.EnableTrigger("bk_corpse", true);
+			set("npc/find", 0);
+			var pk = world.GetVariable("bool_pking");
+			if (pk == "pretend" && query("walk") != "multi") {
+				send("set no_teach walk start");
+				if (query("walk") == "step")
+					step_walk.back();
+
+				world.EnableTrigger("wk_start", true);
+				return;
+			}
+
+			set("next_step/flag", "SEARCH");
+			var rmid = query("room/id");
+			var rn = query("room/name");
+			if (rn != "大沙漠" && rn != "南疆沙漠"
+			&& rn != "戈壁滩" && rn != "沙漠" && rmid != -1) {
+				var path = getareapath(rmid, 2);
+				if (path != m_FAIL) {
+					do_walk(path.split(";"));
+					return;
+				}
+			}
+
+			do_autosearch(2, "auto");
+			break;
+		case "bk_fight3":	// ^(> )*(@name_npc)(一见到你|和你一碰面|对著你大喝|喝道：「你|一眼瞥见你|和你仇人相见分外眼红)
+			stopall();
+			world.EnableTriggerGroup("bkl1", 1);
+			send(killcmd());
+			break;
+		case "bk_faint":	// ^(> )*(@name_npc)脚下一个不稳，跌在地上一动也不动了。
+			world.EnableTimer("timer2", false);
+			set("npc/status", "faint");
+			var cmd = "get silver from " + query("npc/id") + ";"
+				+ world.GetVariable("cmd_npcfaint") + ";hp;i;l "
+				+ world.GetVariable("id_weapon") + " of me";
+
+			send(cmd);
+			break;
+		case "bk_die":	// ^(> )*(@name_npc)扑在地上挣扎了几下，腿一伸，口中喷出几口鲜血，死了！$
+			world.EnableTimer("timer2", false);
+			set("npc/find", 0);
+			set("npc/status", "dead");
+			var cmd = world.GetVariable("cmd_npcdie");
+			if (query("quest/waidi"))
+				cmd += ";hp;i;l " + world.GetVariable("id_weapon")
+					+ " of me";
+
+			cmd += ";" + world.GetVariable("cmd_exert");
+			cmd += ";set no_teach prepare";
+			if (query("other/more")) {
+				set("other/more", false);
+				cmd += ";look";
+			}
+
+			send(cmd);
+			break;
+	}
+}
+
+function on_rumor(name, output, wildcards)
+{
+	var wcs = VBArray(wildcards).toArray();
+	switch (name) {
+		case "rm_ee":		// > 你现在的精神不太好，没法和别人套瓷。
+			if (!query("rumor/flag"))
+				return;
+
+			opentimer1(2, "busy", "yun regenerate;ask xiao er about rumor");
+			break;
+		case "rm_ask":	// 你向店小二打听有关『rumor』的消息。
+			set("rumor/type", "rumor");
+			world.EnableTriggerGroup("grm", 1);
+			world.EnableTrigger("rm_fail2", true);
+			break;
+		case "rm_ask4":	// 你向店小二打听有关『寻找(@name_npc)』的消息。
+		case "rm_ask3":	// 你向店小二打听有关『(@name_npc)和(.*)的事』的消息。
+		case "rm_ask2":	// 你向店小二打听有关『(@name_npc)』的消息。
+			world.EnableTriggerGroup("grm1", 1);
+			world.EnableTrigger("rm_fail2", true);
+			break;
+		case "rm_all":	// 店小二说道：
+			world.EnableTrigger("rm_fail2", false);
+			if (output.indexOf("『追杀") != -1)
+				return;
+
+			if (output.indexOf("和") != -1 && output.indexOf("的事』") != -1 )
+				return;
+
+			if (output.indexOf("『寻找") != -1)
+				return;
+
+			world.EnableTriggerGroup("grm", 0);
+			send("ask xiao er about rumor");
+			break;
+		case "rm_shen":	// 店小二说道：你可曾听过最近有关『追杀(.*)』的传闻？
+			world.EnableTriggerGroup("grm", 0);
+			var fq = "追杀" + wcs[2];
+			var tmp = world.GetVariable("list_freequest");
+			if (tmp.indexOf("shen") == -1 || rumordone(fq, false)) {
+				send("ask xiao er about rumor");
+				return;
+			}
+
+			set("npc/name", wcs[2]);
+			world.SetVariable("name_npc", wcs[2]);
+			set("rumor/case", fq);
+			set("rumor/type", "shen");
+			send("ask xiao er about " + fq + "." + wcs[2]);
+			break;
+		case "rm_judge":	// ^(> )*店小二说道：(.*)『(.*)和(.*)的事』(.*)
+			world.EnableTriggerGroup("grm", 0);
+			var fq = wcs[2] + "和" + wcs[3] + "的事";
+			var tmp = world.GetVariable("list_freequest");
+			if (tmp.indexOf("judge") == -1 || rumordone(fq, false)) {
+				send("ask xiao er about rumor");
+				return;
+			}
+
+			set("npc/name", wcs[2]);
+			world.SetVariable("name_npc", wcs[2]);
+			set("rumor/case", fq);
+			set("rumor/type", "shan");
+			send("ask xiao er about " + fq);
+			break;
+		case "rm_trace":	// 店小二说道：你可曾听过最近有关『寻找(.*)』的传闻？
+			world.EnableTriggerGroup("grm", 0);
+			var fq = "寻找" + wcs[2];
+			var tmp = world.GetVariable("list_freequest");
+			if (tmp.indexOf("trace") == -1 || rumordone(fq, false)) {
+				send("ask xiao er about rumor");
+				return;
+			}
+
+			var str = ",白金鹤,白玉笔,金瓜,金葫芦,金镂花,鸡血石,乾坤帽,青铜鼎,四剪瓶,"
+				+ "铁观音,铁如意,铜喜鹊,夜光杯,银镂花,玉带,玉葫芦,玉瓶,紫金锤,紫云纱,";
+			if (str.indexOf("," + wcs[2] + ",") == -1) {
+				set("rumor/case", fq);
+				set("rumor/type", "trace");
+				world.SetVariable("name_npc", wcs[2]);
+				send("ask xiao er about 寻找" + wcs[2]);
+			} else
+				send("ask xiao er about rumor");
+			break;
+		case "rm_loc":	// 店小二说道：哦，听说最近六大门派已经上(.*)找他去了，我看他这次是小命不保罗。
+			world.EnableTriggerGroup("grm1", 0);
+			set("npc/loc", wcs[2].substr(0, 2));
+			set("rumor/type", "shen");
+			tokill();
+			break;
+		case "rm_other":	// ^(> )*店小二接着说道：现在又传出消息，上次扰乱六大门派的...
+			world.EnableTriggerGroup("grm1", 0);
+			set("npc/name", wcs[2]);
+			world.SetVariable("name_npc", wcs[2]);
+			send("ask xiao er about " + query("rumor/case") + "." + wcs[2]);
+			break;
+		case "rm_over":	// 店小二接着说道：啧啧啧，谁叫他们把该惹的和不该惹的都惹完了啊，这下都把命出脱就高兴了。
+			world.EnableTriggerGroup("grm1", 0);
+			rumordone(query("rumor/case"), true);
+			opentimer1(1, "busy", "ask xiao er about rumor");
+			break;
+		case "rm_end":	// ^(> )*店小二(接着说道：唉，做人就得图个太平，何必去惹那么多麻烦呢？|又说道：你来说说看，人有几个脑袋？|接着说道：不过前两天倒是有一伙人在店里歇脚|轻哼一声，接着道：我说吧，人总归会有倒霉的一天)
+			world.EnableTriggerGroup("grm1", 0);
+			break;
+		case "rm_high":	// ^(> )*店小二悄悄的对你说：(.*)，我看你就别趟这浑水了，(.*)厉害着呢！
+			world.EnableTriggerGroup("grm1", 0);
+			opentimer1(1, "busy", "ask xiao er about rumor");
+			break;
+		case "rm_loc2":	// ^(> )*店小二说道：听说(.*)和(.*)在(.*)发生了纠纷，不知道为什么
+			world.EnableTriggerGroup("grm1", 0);
+			set("npc/loc", wcs[3].substr(0, 2));
+			if (query("npc/loc") == "关外") {
+				opentimer1(1, "busy", "ask xiao er about rumor");
+				return;
+			}
+
+			set("next_step/flag", "COMMANDS");
+			var cmd = "#t+ rm_follow;#t+ rm_unware;#t+ rm_gooff;ask shan zheng about "
+				+ query("rumor/case");
+			set("next_step/cmds", cmd);
+			goto(coor_list["shan zheng"]);
+			break;
+		case "rm_start0":	// 店小二说道：听说(.*)和(.*)在(.*)被仇家围追堵杀，双方火拼了几个时辰，真是壮烈。
+			world.EnableTriggerGroup("grm1", 0);
+			set("rumor/npc1", wcs[1]);
+			set("rumor/npc2", wcs[2]);
+			world.SetVariable("name_npc", wcs[1]);
+			send("ask xiao er about " + query("rumor/case") + "." + wcs[1]);
+			break;
+		case "rm_over2":	// 店小二说道：嘿嘿，据说(.*)和(.*)哥俩终于见面了。啧啧，真不错。
+			world.EnableTriggerGroup("grm1", 0);
+			rumordone(query("rumor/case"), true);
+			opentimer1(1, "busy", "ask xiao er about rumor");
+			break;
+		case "rm_loc3":	// 店小二说道：那人跟他兄弟(.*)失散后，担心得不得了。喏，现在还在(.*)等他兄弟呢。
+			world.EnableTriggerGroup("grm1", 0);
+			set("rumor/loc1", wcs[2].substr(0, 2));
+			var npc = query("rumor/npc2");
+			world.SetVariable("name_npc", npc);
+			send("ask xiao er about " + query("rumor/case") + "." + npc);
+			break;
+		case "rm_loc4":	// 店小二又接着道：今上午听吃饭的几个家伙提起(.*)，据说是躲到(.*)去了
+			world.EnableTriggerGroup("grm1", 0);
+			var npc = query("rumor/npc1");
+			var loc = query("rumor/loc1");
+			set("rumor/loc2", wcs[2].substr(0, 2));
+			set("rumor/type", "trace1");
+			set("npc/name", npc);
+			set("npc/loc", loc);
+			world.SetVariable("name_npc", npc);
+			rumordone(query("rumor/case"), true);
+			tokill();
+			break;
+		case "rm_fail":	// 店小二说道：(这个... 这个...
+			world.EnableTriggerGroup("grm1", 0);
+			var tp = query("rumor/type");
+			if (tp == "shan")
+				send("ask xiao er about " + query("rumor/case"));
+			else if (tp == "shen")
+				send("ask xiao er about " + query("rumor/case") + "." + query("npc/name"));
+			else
+				send("ask xiao er about rumor");
+			break;
+		case "rm_fail2":	// 店小二(疑惑地看着你，摇了摇头|摇摇头，说道：没听...
+			world.EnableTriggerGroup("grm", 0);
+			world.EnableTriggerGroup("grm1", 0);
+			send("ask xiao er about rumor");
+			return;
+		case "rm_follow":	// ^(> )*单正决定开始跟随你一起行动。
+			world.EnableTriggerGroup("grm2", 0);
+			set("rumor/type", "judge");
+			rumordone(query("rumor/case"), true);
+			tokill();
+			break;
+		case "rm_unware":	// ^(> )*单正说道：(.*)(不过你说的这个我实在不太清楚
+		case "rm_gooff":	// ^(> )*这里没有这个人。
+			world.EnableTriggerGroup("grm2", 0);
+			world.SetVariable("name_npc", "");
+			set("npc/find", 0);
+			send("hp;i;set no_teach prepare");
+			break;
+		case "rm_follow2":	// ^(> )*@name_npc决定开始跟随你一起行动。
+			stopall();
+			world.EnableTriggerGroup("gkl", 0);
+			world.EnableTriggerGroup("gkl1", 0);
+			world.EnableTrigger("rm_follow2", false);
+			world.EnableTrigger("rm_trace5", false);
+			var npc = query("rumor/npc2");
+			var loc = query("rumor/loc2");
+			set("rumor/type", "trace2");
+			set("npc/find", 0);
+			set("npc/name", npc);
+			set("npc/loc", loc);
+			world.SetVariable("name_npc", npc);
+			tokill();
+			break;
+		case "rm_trace5":	// ^[> ]*(@name_npc)说道：唉，你也一样有要事在身，我怎么好麻烦你
+			stopall();
+			world.EnableTriggerGroup("gkl", 0);
+			world.EnableTriggerGroup("gkl1", 0);
+			world.EnableTrigger("rm_follow2", false);
+			world.EnableTrigger("rm_trace5", false);
+			world.SetVariable("name_npc", "");
+			set("npc/find", 0);
+			send("hp;i;set no_teach prepare");
+			break;
+	}
+}
+
+function on_info(name, output, wildcards)
+{
+	var wcs = VBArray(wildcards).toArray();
+	world.EnableTriggerGroup("gio", 0);
+	switch (name) {
+		case "io_nobody":	// ^这里没有这个人。
+		case "io_next":	// ^(> )*(@info_name)(摇摇头，说道：没听说过。|疑惑地看着你，摇了摇头。|睁大眼睛望......
+			var ix = query("quest/info") - 0;
+			set("quest/info", (ix + 1));
+			set("npc/coor", -1);
+			do_askinfo();
+			break;
+		case "info":		// ^(> )*(@info_name)说道：(.*)(好像听人说过是在|他不是在|据说是躲到|好像去了|已......
+			var lo = wcs[4].substr(0, 2);
+			set("npc/loc", lo);
+			set("npc/coor", -1);
+			if (lo == "很远")
+				do_askbei();
+			else
+				tokill();
+			break;
+		case "io_again":	// ^(> )*(@info_name)(说道：阿嚏！有点感冒，不好意思。|说道：等...等等，你说什么？没......
+			send("ask " + query("info/id") + " about " + query("npc/name"));
+			break;
+		case "io_ask":	// ^(> )*你向(.*)打听有关『(@name_npc)』的消息。$
+			world.EnableTriggerGroup("gio", 1);
+			break;
+	}
+}
+
+function on_prepare(name, output, wildcards)
+{
+	var wcs = VBArray(wildcards).toArray();
+	switch (name) {
+		case "pe_drop":	// ^(> )*你丢下(.*)(仙丹|洗髓丹|火红仙.....
+			world.EnableTrigger("pe_drop", false);
+			send("i;set no_teach prepare");
+			break;
+		case "pe_pass":	// ^(> )*你从(.*)中拿出(.*)手谕
+			world.EnableTrigger("pe_pass", false);
+			world.EnableTrigger("pe_nopass", false);
+			world.SetVariable("loc_study", 4200);
+			send("i;set no_teach prepare");
+			break;
+		case "pe_nopass":	// ^(> )*你告诉vvvv* no pass
+			world.EnableTrigger("pe_pass", false);
+			world.EnableTrigger("pe_nopass", false);
+			world.SetVariable("bool_pass", "true");
+			world.SetVariable("loc_study", world.GetVariable("loc_master"));
+			send("i;set no_teach prepare");
+			break;
+		case "pe_mkpassok":	// ^你写好一份手谕。
+			send("i;set no_teach prepare");
+			break;
+		case "pe_mkpassend":	// ^你将一张.*手谕放进麻布袋。
+			send("i;set no_teach prepare");
+			break;
+		case "pe_repair":		// ^(> )*铁匠道：“好了！”随手把(.*)还给了你，你看了看，满意的掏出了一些钱付了帐。$
+			world.EnableTrigger("pe_repair", false);
+			set("item/weapon", 100);
+			set("item/weapon2", 100);
+			do_prepare();
+			break;
+		case "pe_wenweapon":		// 问武器
+			world.EnableTrigger("pe_wenweapon", false);
+			set("quest/count", 150);
+			do_prepare();
+			break;
+		case "pe_getdan":		// 来取丹
+			world.EnableTrigger("pe_getdan", false);
+			set("quest/count", 0);
+			do_prepare();
+			break;
+		case "pe_getjcyao":		// 来取还魂丹
+			world.EnableTrigger("pe_getjcyao", false);
+			set("item/jcyao", "jcyao");
+			do_prepare();
+			break;
+		case "pe_arrow":	// ^(> )*你从(铁匠|药铺伙计)那里买下了(.*)(根狼牙箭|包雄黄)
+			world.EnableTrigger("pe_arrow", false);
+			set("item/buy", "null");
+			send("i;set no_teach prepare");
+			break;
+		case "pe_bow":	// ^(> )*你从朱饮那里买下了一张长弓
+			world.EnableTrigger("pe_bow", false);
+			set("item/buy", "null");
+			set("item/bow", "bow");
+			send("i;set no_teach prepare");
+			break;
+		case "im_ma":		// ^  (.*)(马|驹)\((.*)\)
+			world.EnableTrigger("wk_ride", true);
+			world.EnableTrigger("can_ride", true);
+			var ma = wcs[3];
+			set("item/ma ", ma);
+			break;
+		case "pe_buy":		// ^(> )*你从店小二那里买下了
+			if (query("item/buy") == "gan liang from xiao er") {
+				var ct = query("item/food") - 0 + 1;
+				if (ct < 5) {
+					set("item/food", ct);
+					world.DoAfter(1, "buy gan liang from xiao er");
+					return;
+				}
+			}
+
+			world.EnableTrigger("pe_buy", false);
+			world.EnableTrigger("pe_rebuy", false);
+			set("item/buy", "null");
+			send("i");
+			send("set no_teach prepare");
+			break;
+		case "pe_rebuy":	// ^(> )*店小二不耐烦道：“没看见我这儿正忙着么？”
+			if (query("item/buy") != "null")
+				opentimer1(1, "busy", "buy " + query("item/buy"));
+			break;
+		case "pe_fill":		// ^(> )*你将牛皮水袋装满清水。
+			world.EnableTrigger("pe_fill", false);
+			set("item/water", 1);
+			do_prepare();
+			break;
+		case "pe_cun":	// ^(> )*设定环境变数：no_teach = "cun money"
+			world.EnableTrigger("pe_silver", true);
+			world.EnableTrigger("pe_cunb", true);
+			var num1 = query("item/silver") - 30;
+			var num2 = query("item/gold") - world.GetVariable("min_gold") - 5;
+			if (num1 > 0)
+				send("cun " + num1 + " silver");
+			else if (num2 > 0)
+				send("cun " + num2 + " gold");
+			else {
+				world.EnableTrigger("pe_silver", false);
+				world.EnableTrigger("pe_cunb", false);
+				send("set no_teach prepare");
+			}
+			break;
+		case "pe_cunb":	// ^(> )*你还是等有空了再说吧！
+			world.EnableTrigger("pe_silver", false);
+			world.EnableTrigger("pe_cunb", false);
+			world.doafter(1, "set no_teach cun money");
+			break;
+		case "pe_silver":	// ^(> )*你从银号里取出(.*)。
+			world.EnableTrigger("pe_silver", false);
+			world.EnableTrigger("pe_cunb", false);
+			send("i;set no_teach prepare");
+			break;
+		case "pe_jiqu1":	// ^(> )*你感觉自己的实战经验还有欠缺，还无法领会更高境界的(.*)修养。
+			set("other/jiqu", false);
+		case "pe_jiqu":	// ^(> )*你将实战中获得的体会心得充分的消化吸收了。
+			world.EnableTrigger("pe_jiqu", false);
+			world.EnableTrigger("pe_jiqu1", false);
+			send("hp;set no_teach prepare");
+			world.EnableTimer("timer4", true);
+			break;
+		case "pe_fangqi":	// ^(> )*(你抬头仰望天空，发现它明亮透析，说不出的娇媚，令你身心俱化。|你又想起了很......
+			var num = world.GetVariable("max_exp") - world.GetVariable("num_fangqi");
+			if (query("hp/exp") < num || (query("other/exp") - query("hp/exp")) > 150000) {
+				world.EnableTrigger("pe_fangqi", false);
+				do_prepare();
+				return;
+			}
+
+			opentimer1(1, "busy", "hp;fangqi exp");
+			break;
+		case "pe_study":		// ^(> )*(设定环境变数：no_teach = "study"|你要向谁求教？)
+			if (query("quest/bunch") || query("quest/menpai") ||
+				query("quest/waidi") || query("quest/task")) {
+				send("halt;set no_teach prepare");
+				return;
+			}
+
+			if (output.indexOf("向谁求教") != -1) {
+				world.EnableTrigger("pe_study", false);
+				set("next_step/flag", "COMMANDS");
+				set("next_step/cmds", "set no_teach no master");
+				telldm("老师被砍啦！");
+				addlog("老师被砍啦！");
+				goto(coor_list["chat"]);
+				return;
+			}
+			if (query("item/san") && query("hp/jingli") > 250 && query("hp/neili") < world.GetVariable("min_neili")) {
+				send("mtc0");
+			} else
+			
+			if (query("hp/neili") < 30) {
+                if (cansleep()) {
+				world.EnableTrigger("pe_study", false);
+				set("next_step/flag", "COMMANDS");
+				world.EnableTrigger("pe_sleep", true);
+				send(world.GetVariable("lian_sleep"));
+				set("next_step/cmds", "#t+ pe_sleep;sleep");
+				tl = world.GetVariable("loc_sleep");
+			    }
+                else {
+				world.EnableTrigger("pe_study", false);
+				set("next_step/flag", "COMMANDS");
+				world.EnableTrigger("pe_dazuo", true);
+				world.EnableTrigger("pe_dazuof", true);
+			    set("next_step/cmds", "#t+ pe_dazuo;#t+ pe_dazuof;dazuo " + world.GetVariable("num_dazuo"));
+			    tl = world.GetVariable("loc_dazuo");
+                }
+				send("halt");
+				goto(tl);
+				return;
+			  }
+			var pot = query("hp/pot") - 0;
+			if (pot < 10) {
+				world.EnableTrigger("pe_study", false);
+				var cmd = "halt;yun regenerate";
+				cmd += ";hp;set no_teach prepare";
+				send(cmd);
+				return;
+			}
+
+			if (pot >= 100)
+				pot = 100;
+
+			var cmd = world.GetVariable("cmd_study");
+			var sk = " " + skill() + " " + pot;
+			if (cmd == "jingxiu")
+				cmd = "jingxiu " + pot;
+			else if (cmd == "xue")
+				cmd = "halt;xue " + world.GetVariable("id_study") + sk
+					+ ";yun regenerate";
+			else
+				cmd = "halt;" + cmd + sk + ";yun regenerate";
+
+			if (query("item/san") && (world.GetVariable("list_lian") != "" || world.GetVariable("cmd_lian") != "")) {
+				if (world.GetVariable("cmd_lian") != "")
+					cmd += ";" + world.GetVariable("cmd_lian");
+				else
+					cmd += ";lian " + lian() + " 50;yun recover";
+			}
+
+			cmd += ";jiqu;hp";
+			send(cmd);
+			world.doafter(1, "set no_teach study");
+			break;
+		case "pe_baofa":	//set no_teach baofa爆发怒气
+			world.EnableTrigger("pe_baofa", false);
+			cmd = "yun recover;baofa;yun recover;hp;set no_teach prepare";
+			send(cmd);
+			break;
+		case "pe_heal":		// ^你运功完毕，吐出一口瘀血，脸色看起来好多了。
+			world.EnableTrigger("pe_heal", false);
+			world.EnableTrigger("pe_healf", false);
+			send("hp;set no_teach prepare");
+			break;
+		case "pe_healf":		// ^(> )*(等你忙完了手头的事情再说！|你的真气不够。)
+			world.doafter(3, "yun heal");
+			break;
+		case "pe_sleep":	//^(>)*你(一觉醒来，只觉精力充沛|迷迷糊糊的睁开双眼，爬了起来)。
+			var fg = query("dispel/flag");
+			var nt = query("npc/status");
+			var qf = query("quest/flag");
+			if (query("other/sleep") == "heal") {
+			    set("other/sleep", "");
+  		        world.EnableTriggerGroup("gyh", 1);
+  		        world.EnableTriggerGroup("gyh0", 1);
+  		        world.SetVariable("name_npc", query("npc/name"));
+  		        send("hp;set no_teach heal")
+  		    }
+  		    else
+  		        if (query("hp/dispel")) {
+  		           	ydispel(true);
+			        world.EnableTriggerGroup("gyd", 1);
+			        send("yun regenerate;yun recover;hp;yun dispel;dazuo");
+				}
+			    else
+					if ((query("rumor/flag") || nt == "end") && qf != "null")
+						do_quest("start");
+					else if (nt == "head")
+						do_quest("give");
+					else if (nt == "flee" || nt == "disp")
+						do_askinfo();
+					else if (nt == "start" && query("npc/loc") != "很远")
+						tokill();
+					else if (qf != "null")
+						do_askbei();
+			        if (output.indexOf("迷迷糊糊") != -1) {
+				        set("next_step/flag", "COMMANDS");
+				        set("next_step/cmds", "#t+ pe_dazuo;#t+ pe_dazuof;dazuo " + world.GetVariable("num_dazuo"));
+				        goto(world.GetVariable("loc_dazuo"));
+				        return;
+			        }
+			        else {
+				        var date = new Date();
+				        var time = date.getTime();
+				        set("other/sleep", time);
+			        }
+		    break;
+
+//			        send("hp;set no_teach prepare");
+//			        if (output.indexOf("迷迷糊糊") != -1) {
+//				        set("next_step/flag", "COMMANDS");
+//				        set("next_step/cmds", "#t+ pe_dazuo;#t+ pe_dazuof;dazuo " + world.GetVariable("num_dazuo"));
+//				        goto(world.GetVariable("loc_dazuo"));
+//				        return;
+//			        }
+//			        else {
+//				        var date = new Date();
+//				        var time = date.getTime();
+//				        set("other/sleep", time);
+//			        }
+//		    break;
+		case "pe_dazuo":		// ^(> )*你运功完毕，深深吸了口气，站了起来。
+			world.EnableTrigger("pe_dazuo", false);
+			world.EnableTrigger("pe_dazuof", false);
+			send("hp;set no_teach prepare");
+			break;
+		case "pe_dazuof":	// ^(> )*你(现在精不够，无法控制内息的流动|现在的气太少了，无法产生内息运行全身经脉)
+			world.doafter(1,"yun regenerate");
+			world.doafter(1,"yun recover");
+			world.doafter(1,"dazuo " + world.GetVariable("num_dazuo"));
+			break;
+		case "pe_tuna":		// ^(> )*你吐纳完毕，睁开双眼，站了起来。
+			world.EnableTrigger("pe_tuna", false);
+			world.EnableTrigger("pe_tunab", false);
+			send("hp;set no_teach prepare");
+			break;
+		case "pe_tunab":	// 你现在正忙着呢！
+			world.doafter(1,"tuna " + world.GetVariable("num_tuna"));
+			break;
+		case "pe_miss":		// ^(> )*你追寻到了(.*)，落下遁光。
+			world.EnableTrigger("pe_miss", false);
+			world.EnableTrigger("pe_missb", false);
+			missend();
+			break;
+		case "pe_missb":	// 等你忙完了再说吧。
+			var mf = query("other/miss");
+			world.doafter(1, "mms0");
+			break;
+		case "pe_task":	// ^(> )*(你拿出(@name_good)\((.*)\)给(.*)|这里没有这个人|你身上没有这样东西)
+			world.EnableTrigger("pe_task", false);
+			if (output.indexOf("没有这个人") != -1)
+				send("drop " + query("item/taskid"));
+
+			set("room/id", -1);
+			send("i;set no_teach prepare");
+			break;
+		case "pe_waidi":	// ^(> )*你向御前侍卫打听有关『赏赐』的消息。
+			world.EnableTrigger("pe_waidi1", true);
+			break;
+		case "pe_waidi1":	// ^(> )*御前侍卫(说道：你的赏赐已经过期了！|大步地走进皇宫大殿，你紧随其后。)
+			world.EnableTrigger("pe_waidi1", false);
+			set("other/shangci", false);
+			if (output.indexOf("过期") != -1 || output.indexOf("并无八国联军入侵") != -1) {
+				do_prepare();
+				return;
+			}
+
+			world.EnableTrigger("sc_ans", true);
+			world.send("ask kangxi dadi about 赏赐");
+			break;
+	}
+}
+
+function on_hp(name, output, wildcards)
+{
+	var wcs = VBArray(wildcards).toArray();
+	switch (name) {
+		case "hp_1":	// ^【 精 气 】(.*)/(.*)\((.*)%\)(.*)【 精 力 】(.*)/(.*)$
+			set("hp/jing", (wcs[0] - 0));
+			set("hp/max_jing", (wcs[1] - 0));
+			set("hp/eff_jing", (wcs[2] - 0));
+			set("hp/jingli", (wcs[4] - 0));
+			set("hp/max_jingli", (wcs[5] - 0));
+			break;
+		case "hp_2":	// ^【 气 血 】(.*)/(.*)\((.*)%\)(.*)【 内 力 】(.*)/(.*)$
+			set("hp/qi", (wcs[0] - 0));
+			set("hp/max_qi", (wcs[1] - 0));
+			set("hp/eff_qi", (wcs[2]) - 0);
+			set("hp/neili", (wcs[4] - 0));
+			set("hp/max_neili", (wcs[5] - 0));
+			if (query("pk/flag") && query("hp/neili") < query("hp/max_neili") - 3000)
+				send("mtc0");
+
+			break;
+		case "hp_3":	// ^【 食 物 】(.*)/(.*)【 潜 能 】(.*)$
+			set("hp/food", (wcs[0] - 0));
+			set("hp/maxfood", (wcs[1] - 0));
+			set("hp/pot", (wcs[2] - 0));
+			break;
+		case "hp_4":	// ^【 饮 水 】(.*)/(.*)【 体 会 】(.*)$
+			set("hp/water", (wcs[0] - 0));
+			set("hp/maxwater", (wcs[1] - 0));
+			set("hp/th", (wcs[2] - 0));
+			break;
+		case "hp_5":	// ^(【 平 和 】|【 愤 怒 】)(.*)【 经 验 】(.*)$
+			set("hp/exp", (wcs[2] - 0));
+			break;
+		case "hp_6":	// ^【 平 和 】
+			set("hp/nq", 0);
+			break;
+		case "hp_7":	// ^【 愤 怒 】(.*)/(.*)
+			set("hp/nq", (wcs[0] - 0));
+			break;
+		case "hp_8":	// ^【 愤 怒 】max
+			set("hp/nq", world.GetVariable("max_nuqi"));
+			break;
+	}
+}
+
+function on_item(name, output, wildcards)
+{
+	var wcs = VBArray(wildcards).toArray();
+	switch (name) {
+		case "im_start":	// ^(> )*你身上带著下列这些东西		
+			set("item/pass", 0);
+			set("item/gold", 0);
+			set("item/silver", 0);
+			set("item/money", 0);
+			set("item/arrow", 0);
+			set("item/budai", 0);
+			set("item/ruyidai", 0);
+			set("item/food", 0);
+			set("item/xh", 0);
+			set("item/bow", "null");
+			set("item/jcyao", "null");
+			set("item/shuidai", 0);
+			set("item/gift", "null");
+			set("item/gift2", "null");
+			set("item/laji", "null");
+			set("item/task", "null");
+			set("item/flag", true);
+			if (world.GetVariable("pet") != "")
+				set("item/ma", world.GetVariable("pet"));
+			else
+				set("item/ma", "null");
+			world.EnableTriggerGroup("gim", 1);
+			break;
+		case "item":		// ^  (.*)(白银\(Silver\)|黄金\(Gold\)|干粮\(Gan liang\)|牛皮水袋\(shui dai\)|狼牙箭\(Wolf arrow\)|雄黄\(xionghuang\)|长弓\(long bow\))
+			var num = number(wcs[0]);
+			if (num == 0) num = 1;
+
+			if (output.indexOf("白银") != -1) {
+				var my = query("item/money") - 0;
+				my += num;
+				set("item/money", my);
+				set("item/silver", num);
+			} else
+			if (output.indexOf("黄金") != -1) {
+				var my = query("item/money") - 0;
+				my += num * 100;
+				set("item/money", my);
+				set("item/gold", num);
+			} else
+			if (output.indexOf("狼牙箭") != -1)
+				set("item/arrow", num);
+			else if (output.indexOf("手谕") != -1)
+				set("item/pass", num);
+			else if (output.indexOf("麻布袋") != -1)
+				set("item/budai", num);
+			else if (output.indexOf("如意乾坤袋") != -1)
+				set("item/ruyidai", num);
+			else if (output.indexOf("牛皮水袋") != -1)
+				set("item/shuidai", num);
+			else if (output.indexOf("干粮") != -1)
+				set("item/food", num);
+			else if (output.indexOf("雄黄") != -1)
+				set("item/xh", num);
+			else if (output.indexOf("还魂丹") != -1)
+				set("item/jcyao", "jcyao");
+			else if (output.indexOf("射日弓") != -1)
+				set("item/bow", "bow");
+			else if (output.indexOf("枣红马") != -1)
+				set("item/ma", "zaohongma");
+			else if (output.indexOf("黄骠马") != -1)
+				set("item/ma", "huangbiaoma");
+			else if (output.indexOf("紫骝马") != -1)
+				set("item/ma", "ziliuma");
+			break;
+		case "bow": //射日弓
+			if (output.indexOf("射日弓") != -1)
+				set("item/bow", "bow");
+			break;
+		case "im_gift":	// (仙丹|洗髓丹|火红仙丹|神力丸|菩提子|九转金丹|天香玉露|金块|玄冰寒铁|乌金丝|补天石|冰蚕丝)
+			var gt = wcs[1].toLowerCase();
+			var lt = world.GetVariable("list_laji");
+			var wt = world.GetVariable("list_gift");
+			var wt2 = world.GetVariable("list_gift2");
+			if (lt.indexOf(wcs[0]) != -1)
+				set("item/laji", gt);
+			if (wt.indexOf(wcs[0]) != -1)
+				set("item/gift", gt);
+			if (wt2.indexOf(wcs[0]) != -1)
+				set("item/gift2", gt);
+			break;
+		case "im_task":	// ^  (阿含经|云龙鞭法|布衣|春宫图|丹玉磨|道德经|芙蓉金针|长安府官印|唐家家谱|金缕玉衣|木剑|杀猪刀|檀香扇|国子监学规|胭脂水粉|“宝贝”|镔铁长剑|九阴残篇|尘拂|五虎刀法|丽春院地契|郭府令牌|金刚经|家信|天地会令牌|神龙令|三字经|箫谱|旱烟袋|账本)\((.*)\)
+			set("item/taskid", wcs[1]);
+			var tid = query("item/taskid");
+			var elt = {"ahjing" : "阿含经", "bianfa" : "云龙鞭法", "buyi" : "布衣", "cgtu" : "春宫图", "danyumo" : "丹玉磨",
+				"ddjing" : "道德经", "frjz" : "芙蓉金针", "guanyin" : "长安府官印", "jiapu" : "唐家家谱", "jlyy" : "金缕玉衣",
+				"mujian" : "木剑", "szdao" : "杀猪刀", "txshan" : "檀香扇", "xuegui" : "国子监学规", "yanzhi" : "胭脂水粉",
+				"baobei" : "“宝贝”", "btjian" : "镔铁长剑", "canpian" : "九阴残篇", "chenfu" : "尘拂", "daofa" : "五虎刀法",
+				"diqi" : "丽春院地契", "gflp" : "郭府令牌", "jgjing" : "金刚经", "jiaxin" : "家信", "lingpai" : "天地会令牌",
+				"slling" : "神龙令", "szjing" : "三字经", "xiaopu" : "箫谱", "yandai" : "旱烟袋", "zhangben" : "账本"};
+			var nam = elt[tid];
+			set("item/task", nam);
+			break;
+		case "im_end":	// ^目前携带了(.*)件物品。
+			world.EnableTriggerGroup("gim", 0);
+			set("item/flag", false);
+			break;
+	}
+}
+
+function on_global(name, output, wildcards)
+{
+	var wcs = VBArray(wildcards).toArray();
+	switch (name) {
+		case "prepare":	// ^(> )*设定环境变数：no_teach = "prepare"
+			set("rumor/type", "");
+			do_prepare();
+			break;
+		case "touch":		// ^[> ]*你(感到一股温和的热浪袭来|只觉一股热气至丹田冉冉升起)
+			set("item/san", true);
+			set("hp/neili", query("hp/max_neili"));
+			break;
+		case "pass_id":	//告诉你 no pass
+			world.SetVariable("bool_passid", wcs[2].toLowerCase());
+			break;
+		case "hurt":		// ^(> )*\( 你(动作似乎开始有点不太灵光
+			if (!world.GetTimerInfo ("timer2", 6))
+				world.EnableTimer("timer2", true);
+
+			if (query("timer/pfm") == 0) {
+				set("timer/pfm", 1);
+				send(perform());
+			}
+			break;
+		case "pfmf":		// ( 你上一个动作还没有完成，不能施用外功。)
+			set("timer/pfm", 0);
+			break;
+		case "pfmf1":		// ^(> )*对方都已经这样了，用不着这么费力吧？
+			world.EnableTimer("timer2", false);
+			break;
+		case "nomaster":	// ^(> )*设定环境变数：no_teach = "no master"
+			world.EnableTimer("timer4", false);
+			opentimer1(180, "quest_later", null);
+			break;
+		case "drinkout":	// ^(> )*你已经将牛皮水袋里的(.*)喝得一滴也不剩了。
+			set("item/water", 0);
+			break;
+		case "weapon":	// ^耐久度：(.*)%
+			set("item/weapon", wcs[0] - 0);
+			break;
+		case "weapon2":	// ^耐久度：(.*)%
+			set("item/weapon2", wcs[0] - 0);
+			break;
+		case "flee":	// 看来该找机会逃跑了...
+			set("room/id", -1);
+			if (query("npc/status") == "faint")
+				set("npc/status", "start");
+			if (query("pk/flag"))
+				send("quit");
+			else
+				send("yun recover;yun regenerate;hp;set no_teach heal");
+			break;
+		case "beast":		// ^(> )*看起来(野猪|山猪|饿狼|野狼|东北虎|灰熊|老虎|突
+			if (query("hp/exp") > 600000)
+				return;
+
+			var cmd = world.GetVariable("id") + ";" + world.GetVariable("passw")
+				+ ";y;cut head from corpse;" + killcmd();
+			stopall();
+			set("connect/auto", false);
+			set("connect/cmds", cmd);
+			disconnect();
+			opentimer1(3, "con_delay", null);
+			reconnect(cmd);
+			break;
+		case "faint":		// ^(> )*\( 你摇头晃脑、歪歪斜斜地站都站不稳，眼看就要......
+			if (query("pk/flag")) {
+				send("eat huogu lingyao;eat duoming dan");
+				return;
+			}
+
+			stopall();
+			world.EnableTrigger("faint", false);
+			world.EnableTrigger("hurt", false);
+			var cmd = world.GetVariable("id") + ";" + world.GetVariable("passw")
+				+ ";y;mdan2;yun recover;yun regenerate;hp;set no_teach heal" + ";ride " + query("item/ma");
+			set("connect/auto", false);
+			set("connect/cmds", cmd);
+			set("hp/faint", "hurt");
+			disconnect();
+			opentimer1(2, "con_delay", null);
+			addlog(output);
+			break;
+		case "faint1":	// ^(> )*你的眼前一黑，接著什么也不知道了....
+			stopall();
+			var cmd = world.GetVariable("id") + ";" + world.GetVariable("passw")
+				+ ";y;yun recover;yun regenerate;hp;set no_teach heal";
+			set("connect/auto", false);
+			set("connect/cmds", cmd);
+			set("hp/faint", "faint");
+			disconnect();
+			opentimer1(120, "con_delay", null);
+			addlog(output);
+			break;
+		case "dead":		// ^[> ]*你请先用 enable 指令选择你要使用的内功。
+			stopall();
+			set("connect/auto", false);
+			disconnect();
+			break;
+		case "autocon":	// ^(> )*设定环境变数：no_teach = "auto connect"
+			world.EnableTrigger("qt_none", false);
+			var ns = query("npc/status");
+			if (ns == "faint" || query("npc/find") == 1) {
+				send(killcmd());
+			} else
+			if (ns == "dead") {
+				send("cut head from corpse");
+			} else
+			if (ns == "head") {
+				set("quest/accept", "false");
+				do_quest("give");
+			} else
+			if (ns == "none" || ns == "end") {
+				set("npc/status", "end");
+				do_prepare();
+			} else
+				do_askbei();
+
+			break;
+		case "connected":	// (你连线进入|重新连线完毕。)
+			world.EnableTrigger("connected", false);
+			world.EnableTrigger("condelay", false);
+			world.EnableTimer("timer1", false);
+			world.EnableTimer("timer4", true);
+			var ma = world.GetVariable("pet");
+			set("connect/cmds", "");
+			set("hp/faint", "null");
+			send("quest;time");
+			if (query("connect/auto"))
+				addlog("autoconnect to world!");
+			else
+				set("connect/auto", true);
+			if (output.indexOf("连线进入") != -1)
+				send("remove cloth;drop cloth;wear all;summon ruyi dai;e;s;e;ask bei chou about cancel;whistle " + world.GetVariable("pet"));
+				set("quest/count", 10);
+			if (world.GetVariable("pet") != "")
+				send("ride " + world.GetVariable("pet"));
+			else
+				send("ride " + query("item/ma"));
+			break;
+		case "connected1":	// 请输入密码：
+			world.EnableTrigger("connected1", false);
+			var hf = query("hp/faint");
+			if (hf == "hurt" || hf == "faint")
+				opentimer1(1, "faint", null);
+			break;
+		case "quit":	// ^(> )*(你暂时离线，人物不退出|欢迎下次再来！)
+			set("connect/auto", false);
+			if (output.indexOf("别处") != -1)
+				addlog(output);
+			break;
+		case "condelay":	// 你不能在 30 秒钟......
+			opentimer1(32, "con_delay", null);
+			set("connect/auto", false);
+			set("quest/accept", "false");
+			disconnect();
+			break;
+		case "tell":		// ^(> )*(.*)\((.*)\)告诉你：exe:(.*)
+			var pne = wcs[1];
+			if (pne.length > 6 || pne.length < 1)
+				return;
+
+			var re = new RegExp("[a-zA-Z0-9、 ()【】.。,，:：;；?？!！]", "g");
+			if (pne.search(re) != -1)
+				return;
+
+			var id = wcs[2].toLowerCase();
+			if (id == null || id == "")
+				return;
+
+			var flag = false;
+			var idlt = world.GetVariable("list_control");
+			idlt = idlt.split(",");
+			for (key in idlt) {
+				if (idlt[key] == id)
+					flag = true;
+			}
+
+			if (!flag)
+				return;
+
+			var cot = wcs[3].split(" ");
+			switch (cot[0]) {
+				case "#spqt":
+					set("quest/flag", "null");
+					break;
+				case "#spwk":
+					stopwalk();
+					set("next_step/flag", "");
+					set("quest/flag", "null");
+					break;
+				case "#to":
+					goto(cot[1]);
+					break;
+				case "#kl":
+					tokill2(cot[1], cot[2]);
+					break;
+				case "#var":
+					if (world.GetVariable(cot[1]) != null) {
+						if (cot[2] != "?") {
+							var cot2 = wcs[3].split(" " + cot[1] + " ");
+							world.SetVariable(cot[1], cot2[1]);
+						}
+
+						world.queue("变量: " + cot[1] + "=" + world.GetVariable(cot[1]), false);
+					} else
+						world.queue("不存在这个变量!", false);
+					break;
+				case "#con":
+					var cmd = cot[1] + ";" + cot[2] + ";y";
+					reconnect(cmd);
+					break;
+				case "#world":
+					if (cot[1] == null || cot[1] == "") {
+						send("命令格式无效！");
+						return;
+					}
+
+					if (cot[1] == "?") {
+						var nl = "worldlist: ";
+						var wl = new VBArray(world.GetworldList()).toArray();
+						for (i = 0; i < wl.length; i++)
+							nl += wl[i] + ", ";
+
+						send(nl);
+					} else
+					if (cot[2] == null || cot[2] == "") {
+						send("命令格式无效！");
+					} else
+					if (cot[2] == "#con") {
+						var wd = world.getworld(cot[1]);
+						wd.connect();
+					} else {
+						var wd = world.getworld(cot[1]);
+						wd.send(cot[2]);
+					}
+					break;
+				case "#start":
+					set("room/name", "");
+					set("room/id", -1);
+					set("other/jiqu", true);
+					set("hp/faint", "null");
+					set("connect/auto", true);
+					set("quest/flag", "kill");
+					var cmd = "mtc0;hp;i;" + world.GetVariable("cmd_exert");
+					send(cmd);
+					world.doafter(1, "set no_teach prepare");
+					break;
+				default :
+					send(wcs[3]);
+					break;
+			}
+
+			addlog(output);
+			break;
+		case "room":		// ^(> )*(.*)
+			var rne = wcs[1];
+			if (rne == null || rne.length < 2)
+				return;
+
+			if (getidfrname(rne) != m_FAIL) {
+				set("room/name", rne);
+			} else
+			if (query("walk") == "find") {
+				if (rne.length > 8)
+					return;
+
+				var re = new RegExp("[a-zA-Z0-9、 ()【】.。,，:：;；?？!！]", "g");
+				if (rne.search(re) != -1)
+					return;
+
+				set("room/name", rne);
+				addlog("room name:[" + rne + "]无效！");
+			}
+			break;
+	}
+}
+
+function on_dispel(name, output, wildcards)
+{
+	var wcs = VBArray(wildcards).toArray();
+	switch (name) {
+		case "yd_dispel":	// ^(> )*(忽然浑身一阵剧痛，你中的化骨绵掌毒发了！|忽然你觉得四肢百赅是似乎有无......
+			set("hp/dispel", true);
+			break;
+		case "yd_ok":		// ^结果你没发现自己有任何异常。$
+			ydispel(false);
+			break;
+		case "yd_goon":	// ^(> )*你运用内功，驱散了一些...
+			if (query("dispel/flag") != "end")
+				return;
+
+			set("dispel/flag", "dan");
+			send("dazuo");
+			break;
+		case "yd_fail":	// ^(> )*你的内力不足，无法运满一个周天...
+			var fg = query("dispel/flag");
+			if (fg == "end" || fg == "") {
+				set("connect/auto", false);
+				ydispel(false);
+				telldm("dispel");
+				disconnect();
+			} else
+			if (fg == "yd") {
+				set("dispel/flag", "dan");
+			} else
+			if (fg == "sleep1") {
+				set("next_step/cmds", "#tg+ gyd;sleep");
+				set("next_step/flag", "COMMANDS");
+				goto(4200);
+			}
+			break;
+		case "yd_sleep":	// ^[> ]*你一觉醒来，只觉精力充沛。该活动一下了。
+			send("yun regenerate;yun recover;yun dispel;dazuo");
+			break;
+		case "yd_ok1":	// ^结果你没发现自己有任何异常。$
+			send("hp;set no_teach heal");
+			break;
+		case "yd_busy":	// 你现在正忙着呢。
+			world.EnableTrigger("yd_busy", false);
+			opentimer1(1, "busy", "dazuo;#t+ yd_busy");
+			break;
+		case "yd_nobusy":	// 你要花多少气练功？
+			switch (query("dispel/flag")) {
+				case "yd":
+					set("dispel/flag", "yd");
+					send("yun dispel;dazuo");
+					break;
+				case "dan":
+					set("dispel/flag", "ydr");
+					if (world.GetVariable("bool_miss") == "true") {
+						var cmd = "mms0";
+						set("room/id", world.GetVariable("loc_miss") - 0);
+					} else
+						var cmd = "mdan0";
+
+					send(cmd + ";dazuo");
+					break;
+				case "ydr":
+					set("dispel/flag", "dazuo1");
+					send("yun recover;yun regenerate;yun dispel;dazuo");
+					break;
+				case "dazuo1":
+					var num = world.GetVariable("num_dazuo");
+					set("dispel/flag", "dazuo2");
+					var cmd = "yun recover;yun regenerate";
+					if (query("hp/neili") < world.GetVariable("min_neili"))
+						cmd += ";mtc0";
+
+					cmd += ";hp;dazuo " + num + ";dazuo";
+					send(cmd);
+					break;
+				case "dazuo2":
+					var ct = query("dispel/count") - 0 + 1;
+					if (ct < 255)
+						set("dispel/flag", "dazuo1");
+					else
+						set("dispel/flag", "end");
+
+					set("dispel/count", ct);
+					var eq = query("hp/eff_qi");
+					var ej = query("hp/eff_jing");
+					if (eq < 20 || ej < 70) {
+						var ct1 = query("dispel/count1") - 0;
+						if (ct1 < 3) {
+							if (eq < 20)
+								send("yun recover;yun regenerate;mdan2;dazuo");
+							else
+								send("yun recover;yun regenerate;yun inspire;eatjqdan;mdan1;dazuo");
+
+							set("dispel/count1", ct1 + 1);
+						} else
+						if (eq > 30 && ej > 30) {
+							send("yun recover;yun regenerate;mdan2;dazuo");
+						} else {
+							set("connect/auto", false);
+							ydispel(false);
+							telldm("dispel");
+							disconnect();
+							return;
+						}
+					} else
+					if (eq < 65)
+						send("yun recover;yun regenerate;yun heal;dazuo");
+					else
+						send("yun recover;yun regenerate;yun dispel;dazuo");
+					break;
+				case "sleep1":
+					set("dispel/flag", "sleep2");
+					send("sleep");
+					break;
+				case "sleep2":
+					set("dispel/flag", "end");
+					send("sleep");
+					break;
+			}
+			break;
+	}
+}
+
+function on_heal(name, output, wildcards)
+{
+	var wcs = VBArray(wildcards).toArray();
+	switch (name) {
+		case "yh_start":		// ^(> )*设定环境变数：no_teach = "heal"
+			stopwalk();
+			if (query("hp/eff_qi") < 21)
+				send("mdan2;hp");
+
+			if (query("hp/dispel")) {
+				ydispel(true);
+				return;
+			}
+
+			if (query("hp/neili") < world.GetVariable("min_neili")) {
+				if (query("item/san") && query("hp/jingli") > 250) {
+					send("mtc0");
+				} else {
+					set("other/sleep", "heal");
+					set("next_step/flag", "COMMANDS");
+					set("next_step/cmds", "#t+ pe_sleep;sleep");
+					goto(world.GetVariable("loc_sleep"));
+					return;
+				}
+			}
+		
+			if (query("hp/eff_qi") < 90) {
+				if (query("room/id") != world.GetVariable("loc_dazuo")) {
+					set("next_step/flag", "COMMANDS");
+					set("next_step/cmds", "hp;set no_teach heal");
+					goto(world.GetVariable("loc_dazuo"));
+					return;
+				}
+
+				set("other/heal", "heal1");
+			} else
+				set("other/heal", "heal2");
+
+			send("dazuo");
+			world.EnableTriggerGroup("gyh", 1);
+			break;
+		case "yh_busy":	// 你现在正忙着呢。
+			world.EnableTrigger("yh_busy", false);
+			opentimer1(1, "busy", "dazuo;#t+ yh_busy");
+			break;
+		case "yh_nobusy":	// 你要花多少气练功？
+			switch (query("other/heal")) {
+				case "heal1":
+					if (query("hp/eff_qi") < 21) {
+						world.EnableTriggerGroup("gyh", 0);
+						set("connect/auto", false);
+						telldm("faint");
+						disconnect();
+						return;
+					}
+
+					set("other/heal", "heal2");
+					send("yun recover;yun heal;dazuo");
+					break;
+				case "heal2":
+					world.EnableTriggerGroup("gyh", 0);
+					set("other/heal", "");
+					send("yun recover;yun regenerate");
+
+					var nt = query("npc/status");
+					var qf = query("quest/flag");
+					if ((query("rumor/flag") || nt == "end") && qf != "null")
+						do_quest("start");
+					else if (nt == "head")
+						do_quest("give");
+					else if (nt == "flee" || nt == "disp")
+						do_askinfo();
+					else if (nt == "start" && query("npc/loc") != "很远")
+						tokill();
+					else if (qf != "null")
+						do_askbei();
+
+					break;
+			}
+			break;
+	}
+}
+
+function on_pk(name, output, wildcards)
+{
+	var wcs = VBArray(wildcards).toArray();
+	switch (name) {
+		case "pk_kill":	// ^(> )*如果你要和(.*)性命相搏，请你也对这个人\((.*)\)下一次 kill 指令。
+			pksys(wcs[1]);
+			break;
+		case "pk_hit":	// ^(> )*(.*)对著你大喝一声：看招！
+			var pne = wcs[1];
+			if (pne.length > 6 || pne.length < 1)
+				return;
+
+			var re = new RegExp("[a-zA-Z0-9、 ()【】.。,，:：;；?？!！]", "g");
+			if (pne.search(re) != -1)
+				return;
+
+			pksys(pne);
+			break;
+		case "pk_touxi":	// ^(> )*(你大吃一惊，叫道：“好你个|你一定神，原来是)(.*)(！真不要脸！”|在暗算我！)
+			pksys(wcs[2]);
+			break;
+		case "pk_id":		// ^(@pk_name)( )*= (.*)
+			set("pk/id", wcs[2]);
+			break;
+		case "pk":	// ^(> )*设定环境变数：no_teach = "pk"
+			world.EnableTrigger("pk_id", false);
+			if (query("pk/id") != "") {
+				telldm("pk");
+				world.EnableTimer("timer2", true);
+				return;
+			}
+		case "pk_flee":	// ^(> )*(@pk_name)往(.*)落荒而逃了。
+		case "pk_die":	// ^(> )*(@pk_name)扑在地上挣扎了几下，腿一伸，口中喷出几口鲜血，死了！
+			world.EnableTimer("timer2", false);
+			world.EnableTrigger("pk_die", false);
+			world.EnableTrigger("pk_flee", false);
+			set("pk/flag", false);
+			send("set wimpy 5");
+			if (query("next_step/flag") == "")
+				set("next_step/flag", query("other/next_step"));
+
+			goto(query("next_step/loc"));
+			break;
+	}
+}
+
+function on_timer(name)
+{
+	switch(name) {
+		case "timer1":
+			var num = query("timer/count") - 0 + 1;
+			if (num >= query("timer/time")) {
+				world.EnableTimer("timer1", false);
+				set("timer/count", 0);
+				switch (query("timer/flag")) {
+					case "busy":
+						send(query("timer/cmd"));
+						break;
+					case "con_delay":
+						world.DiscardQueue();
+						disconnect();
+						connect();
+						opentimer1(3, "con_delay", null);
+						break;
+					case "quest_later":
+						world.EnableTimer("timer4", true);
+						set("room/id", -1);
+						send("hp;i");
+						do_prepare();
+						break;
+					case "quest_end":
+						set("quest/accept", "false");
+						send("halt");
+						if (query("npc/status") == "head")
+							do_quest("give");
+						else
+							do_quest("start");
+
+						addlog("quest_end:no letter!");
+						break;
+					case "ask_f":
+						send("yun regenerate");
+						if (query("next_step/flag") == "")
+							set("next_step/flag", query("other/next_step"));
+
+						goto(query("next_step/loc"));
+						break;
+					case "faint":
+						world.DiscardQueue();
+						var cmd = world.GetVariable("id") + ";" + world.GetVariable("passw")
+							+ ";y;yun recover;yun regenerate;hp;set no_teach heal";
+						set("connect/cmds", cmd);
+						set("connect/auto", false);
+						disconnect();
+						opentimer1(120, "con_delay", null);
+						break;
+				}
+			} else
+				set("timer/count", num);
+			break;
+		case "timer2":
+			send(perform());
+			break;
+		case "timer3":
+			var ct = query("timer/count3") - 0 + 1;
+			set("timer/count3", ct);
+			if (ct >= 3) {
+				world.EnableTimer("timer3", false);
+				set("timer/count3", 0);
+				send("set no_teach walk noway " + query("timer/walk"));
+				world.EnableTrigger("wk_auto", true);
+			}
+			break;
+		case "timer4":
+			var qf = query("quest/flag");
+			if (qf == "null")
+				return;
+
+			if (query("timer/idle")) {
+				if (query("npc/status") == "end") {
+					set("npc/find", 0);
+					world.SetVariable("name_npc", "");
+					send("halt");
+					do_quest("start");
+				} else {
+					telldm("idle");
+					do_askbei();
+				}
+
+				return;
+			}
+
+			set("timer/idle", true);
+			break;
+		case "timer5":
+			autoconnect();
+			break;
+	}
+}
+
+function on_alias(name, line, wildcards)
+{
+	var wcs = VBArray(wildcards).toArray();
+	switch (name) {
+		case "stop":
+			set("quest/flag", "null");
+			break;
+		case "start":
+			world.setalphaoption ("name", world.GetVariable("id"));
+			var lm = "," + world.GetVariable("loc_master") + ",";
+			var ld = "," + world.GetVariable("loc_dazuo") + ",";
+			var lj = "," + world.GetVariable("loc_jiqu") + ",";
+			if (ld.indexOf(lm) != -1 || ld.indexOf(lj) != -1 || lj.indexOf(lm) != -1) {
+				world.note("-----loc_dazuo与loc_master与loc_jiqu有重复!-----");
+				return;
+			}
+			set("room/id", -1);
+			set("other/jiqu", true);
+			set("hp/faint", "null");
+			set("quest/flag", "kill");
+			set("connect/auto", true);
+			set("quest/count", 10);
+		  set("item/ma","null");
+			if (world.GetVariable("pet") != "") {
+				send("whistle " + world.GetVariable("pet"));
+			}
+			var cmd = "set auto_get;alias t rideto $1;alias t1 rideto1 $1;alias r ride 000;alias et eat gan liang;alias dk drink shui dai;summon ruyi dai;mtc0;hp;i;"
+				+ world.GetVariable("cmd_exert");
+			send(cmd);
+			opentimer1(1, "busy", "set no_teach prepare");
+			break;
+		case "spwk":
+			stopwalk();
+			set("next_step/flag", "");
+			set("quest/flag", "null");
+			break;
+		case "goto":
+			var tmp;
+			var tl = wcs[0];
+			var lt = world.GetVariable("list_to");
+			lt = lt.split(",");
+			for (key in lt) {
+				tmp = lt[key].split(":");
+				if (tmp[0] == wcs[0]) {
+					tl = tmp[1];
+					break;
+				}
+			}
+
+			goto(tl);
+			break;
+		case "kill":
+			tokill2(wcs[0], wcs[1]);
+			break;
+		case "search":
+			do_autosearch(wcs[0] - 0, "auto");
+			break;
+		case "areasearch":
+			var loc = getidfrname(wcs[0]);
+			if (loc == m_FAIL) {
+				world.note("trigger(askyou):没有这个地方！");
+				set("askyou/loc", null);
+				set("askyou/index", 0);
+				set("askyou/flag", false);
+				set("npc/loc", "很远");
+				tokill();
+				return;
+			}
+
+			if (loc.length > 1) {
+				for (var i=0; i<loc.length; i++)
+					if (!incity(loc[i], "很远"))
+						loc[i] = -1;
+			}
+
+			set("askyou/loc", loc);
+			set("askyou/index", 0);
+			set("askyou/flag", true);
+			do_search2();
+			break;
+		case "answer":
+			var ans = wcs[0];
+			addans(ans);
+			break;
+	}
+}
+
+//--------------------------------------------------------------------------------
+function matching(str1, str2)
+{
+	if (str1.length != str2.length)
+		return false;
+
+	for (var i=0; i<str1.length; i++) {
+		if (str1.charAt(i) != str2.charAt(i))
+			return false;
+	}
+
+	return true;
+}
+
+function addans(str)
+{
+	var path = world.GetInfo(35);
+	path = path.substring(0, path.lastIndexOf("\\"));
+	var fname = path + "\\log(ans).txt";
+	str = "'" + query("other/long") + "' : '" + str + "',";
+	world.openlog(fname, true);
+	world.writelog(str);
+	world.closelog();
+}
+
+function on_shangci(name, output, wildcards)
+{
+	var wcs = VBArray(wildcards).toArray();
+	switch(name) {
+		case "sc_ans":	// ^(> )*你向康熙大帝打听有关『赏赐』的消息。
+			world.EnableTrigger("sc_ans0", true);
+			break;
+		case "sc_ans0":	// ^康熙大帝说道：你看看朕写的这两个是什么字？\(可用answer xxx 作答\)
+			world.EnableTrigger("sc_ans0", false);
+			world.EnableTrigger("sc_ans1", true);
+			world.EnableTrigger("sc_ans2", true);
+			set("other/long", "");
+			world.send("set no_teach 赏赐");
+			break;
+		case "sc_ans1":	// ^(.*)
+			if (wcs[0] == "" || wcs[0] == null)
+				return;
+
+			if (wcs[0].indexOf("环境变数") != -1 || wcs[0].indexOf(">") == 0) {
+				world.EnableTrigger("sc_ans1", false);
+				return;
+			}
+
+			var tmp = wcs[0];
+			if (query("other/long") != "")
+				tmp = query("other/long") + "|" + tmp;
+
+			set("other/long", tmp);
+			break;
+		case "sc_ans2":	// ^(> )*设定环境变数：no_teach = "赏赐"
+			world.EnableTrigger("sc_ans2", false);
+			var ans = "";
+			var tmp = query("other/long");
+			for (ky in ans_list) {
+				if (matching(tmp, ky))
+					ans = ans_list[ky];
+			}
+
+			if (ans == "") {
+				addans("未知");
+				world.EnableTrigger("sc_ans", true);
+				world.DoAfter(1, "ask kangxi dadi about 赏赐");
+			} else {
+				send("answer " + ans);
+				set("room/id", -1);
+				send("set no_teach prepare");
+			}
+
+			break;
+	}
+}
+
+//--------------------------------------------------------------------------------
