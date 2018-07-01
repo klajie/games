@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE muclient>
-<!-- Saved on ÐÇÆÚËÄ, ÁùÔÂ 28, 2018, 1:20 ÏÂÎç -->
+<!-- Saved on ÐÇÆÚÈÕ, ÆßÔÂ 01, 2018, 2:21 ÏÂÎç -->
 <!-- MuClient version 5.05 -->
 <!-- Written by Nick Gammon -->
 <!-- Home Page: http://www.mushclient.com/ -->
@@ -8,7 +8,7 @@
 <world
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-06-28 13:20:42"
+   date_saved="2018-07-01 14:21:24"
 
    auto_say_override_prefix="-"
    auto_say_string="say "
@@ -118,7 +118,7 @@
 <triggers
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-06-28 13:20:42"
+   date_saved="2018-07-01 14:21:24"
   >
   <trigger
    enabled="y"
@@ -227,13 +227,9 @@ do_quest("start")</send>
   >
   </trigger>
   <trigger
-   enabled="y"
    keep_evaluating="y"
    match="^    ÕâÀï(Î¨Ò»µÄ³ö¿ÚÊÇ|Ã÷ÏÔµÄ³ö¿ÚÊÇ|Ã»ÓÐÈÎºÎÃ÷ÏÔµÄ³öÂ·)(.*)"
-   match_bold="y"
-   match_inverse="y"
-   match_italic="y"
-   name="step"
+   name="trace"
    omit_from_output="y"
    regexp="y"
    script="on_step"
@@ -241,9 +237,13 @@ do_quest("start")</send>
   >
   </trigger>
   <trigger
+   enabled="y"
    keep_evaluating="y"
    match="^    ÕâÀï(Î¨Ò»µÄ³ö¿ÚÊÇ|Ã÷ÏÔµÄ³ö¿ÚÊÇ|Ã»ÓÐÈÎºÎÃ÷ÏÔµÄ³öÂ·)(.*)"
-   name="trace"
+   match_bold="y"
+   match_inverse="y"
+   match_italic="y"
+   name="step"
    omit_from_output="y"
    regexp="y"
    script="on_step"
@@ -2278,21 +2278,21 @@ drop head</send>
   >
   </trigger>
   <trigger
-   enabled="y"
    group="ggl"
    keep_evaluating="y"
    match="^ÄÍ¾Ã¶È£º(.*)%"
-   name="weapon2"
+   name="weapon"
    regexp="y"
    script="on_global"
    sequence="130"
   >
   </trigger>
   <trigger
+   enabled="y"
    group="ggl"
    keep_evaluating="y"
    match="^ÄÍ¾Ã¶È£º(.*)%"
-   name="weapon"
+   name="weapon2"
    regexp="y"
    script="on_global"
    sequence="130"
@@ -2364,7 +2364,7 @@ drop head</send>
    enabled="y"
    group="gyd0"
    keep_evaluating="y"
-   match="ÄãÒ»¸ö²»É÷£¬»ðÐÇ¶ÙÊ±|ÄãÖ»ÎÅÒ»¹É¶ñ³ô´«À´|ÄãÉÔ²»ÁôÉñ|Äã¼ûÕÐÊ½±ä»»Äª²â£¬Ö»ÊÇÎ¢Î¢Ò»ã¶£¬ÒÑ±»|ÄãÉÁ±Ü²»¼°£¬µÇ±»(.*)£¬ÉË¿Ú¾¹|ÄãÖ»¾õó¸¹Æ¶¾¹¥ÐÄ|ÄãÖ»¾õµ¤Ìï´¦ÓÐÈç»ð·Ù|ÄãÖ»¾õ¶¾Æø¹¥ÐÄ|Äã¸Ðµ½ÐØ¿Ú´¦´«À´ÕóÕó´ÌÍ´|Äãºö¾õÐÄ¿ÚÌÛÍ´Íò·Ö|ÄãÖ»¸Ðµ½ÎåÔàÁù¸­·­ÌÚ²»Ö¹£¬¾ç¶¾¹¥ÐÄ|ÄãÖ»¾õ¼«º®¹¥ÐÄ|Äã¾õµÃ¾ÍÏñµôµ½ÁË±ù½ÑÀïÒ»Ñù|Äã¾õµÃÖ«ÌåÄ©¶Ë|ÄãµÄÁ³µ°ÉÕµÃÍ¨ºì|ÄãË»ÑÆ×ÅÉ¤×Ó¿È|Äã´òÁË¸öÀäÕ½|Äã¾õµÃÐØÒÜÖ®¼ä|Äã¸Ðµ½Ò»¹ÉÇÐ¹ÇÆæº®ÓÉÉË|ÄãºöÈ»¸Ðµ½Ò»¹ÉÄªÃûµÄ¶ñÐÄ|ÄãºöÈ»ÉñÉ«´ó±ä£¬|Äã¼ûÌÏÌìÈÈÀËÆËÃæÓ¿À´£¬Ö»¾õÑÛÇ°Ò»Æ¬Í¨ºì|ÄãÖÐµÄ(.*)·¢×÷ÁË|ÄãÖ»¸ÐÄÚÏ¢¶ÙÖÍ|Äã¾ª»ÅÊ§´ë£¬Á¬Ã¦ºóÍË|ÄãÖ»¾õµÃÉË¿ÚÒ»Õó×ÆÉË|ÄãÖ»¾õÈ«Éí|Äã¸Ðµ½ÐØ¿Ú´¦´«À´ÕóÕó´ÌÍ´|ºöÈ»¾õµÃÒ»ÕóÄÑÊÜ£¬ÐÄÐéÆø¶Ì|ºöÈ»Ò»(Õó|¹É|Ë¿)|ºöÈ»»ëÉíÒ»Õó¾çÍ´£¬Äã|ºöÈ»Äã¾õµÃËÄÖ«°Ùêà|½á¹ûÄãÒ»¸ö²»É÷|½á¹ûÖ»ÌýÆËµÄÒ»Éù£¬Äã±»(.*)Ò»ÕÆÅÄÖÐ|½á¹ûÄãÖ»¾õÆøº£Ñ¨ÉÏÒ»Í´£¬ÑÛÇ°|¡°¿¦À®¡±Ò»ÉùÏì£¬Äã´óÉù²Ò½Ð£¬Á¬ÍËÊý²½|Ö»¾õµÃ×Ô¼º¾«Éñ²»¼Ã£¬Æ£±¹²»¿°|²»ÖªÔõÃ´µÄ£¬ÄãºöÈ»·¢ÏÖ×Ô¼º|Ö»¸Ðµ½Ò»¹ÉÆæº®´ÓÌåÄÚÓÌÈ»¶øÉý|ö®ÄÇ¼äÄãÒÑ±»(.*)Òõº®|È´¼ûÄÇ¶¾Íè(.*)±ÌÑæÆ®È»Ï®ÏòÄã|Ö»¼ûÄã±»(.*)Ò»ÕÆÅÄÖÐ£¬½ô½Ó×ÅÉí×ÓÒ»²ü|Ö»ÌýÄã²Ò½ÐÒ»Éù£¬±»|ÕâÒ»ÕÆÅÄ¸öÕý×Å£¬¶ÙÊ±¶¾Æø¹¥ÐÄ|Í»È»ÄãÖ»¾õµ¤Ìï|½á¹ûÄãÖ»¾õ|ö®Ê±ÄãÐÄÍ·|ö®ÄÇ¼äÄãÒÑ±»|Ö»ÌýàÍµÄÒ»Éù£¬(.*)ÕýÖÐÄãÐØ¿Ú|Ö»¼û(.*)ÕâÒ»ÕÐ¼²Èçµç¡¢ÃÍÈç»ð£¬ÄãÐÄÖÐ¾ªÒÉ"
+   match="ÄãÒ»¸ö²»É÷£¬»ðÐÇ¶ÙÊ±|ÄãÖ»ÎÅÒ»¹É¶ñ³ô´«À´|ÄãÉÔ²»ÁôÉñ|Äã¼ûÕÐÊ½±ä»»Äª²â£¬Ö»ÊÇÎ¢Î¢Ò»ã¶£¬ÒÑ±»|ÄãÉÁ±Ü²»¼°£¬µÇ±»(.*)£¬ÉË¿Ú¾¹|ÄãÖ»¾õó¸¹Æ¶¾¹¥ÐÄ|ÄãÖ»¾õµ¤Ìï´¦ÓÐÈç»ð·Ù|ÄãÖ»¾õ¶¾Æø¹¥ÐÄ|Äã¸Ðµ½ÐØ¿Ú´¦´«À´ÕóÕó´ÌÍ´|Äãºö¾õÐÄ¿ÚÌÛÍ´Íò·Ö|ÄãÖ»¸Ðµ½ÎåÔàÁù¸­·­ÌÚ²»Ö¹£¬¾ç¶¾¹¥ÐÄ|ÄãÖ»¾õ¼«º®¹¥ÐÄ|Äã¾õµÃ¾ÍÏñµôµ½ÁË±ù½ÑÀïÒ»Ñù|Äã¾õµÃÖ«ÌåÄ©¶Ë|ÄãµÄÁ³µ°ÉÕµÃÍ¨ºì|ÄãË»ÑÆ×ÅÉ¤×Ó¿È|Äã´òÁË¸öÀäÕ½|Äã¾õµÃÐØÒÜÖ®¼ä|Äã¸Ðµ½Ò»¹ÉÇÐ¹ÇÆæº®ÓÉÉË|ÄãºöÈ»¸Ðµ½Ò»¹ÉÄªÃûµÄ¶ñÐÄ|ÄãºöÈ»ÉñÉ«´ó±ä£¬|Äã¼ûÌÏÌìÈÈÀËÆËÃæÓ¿À´£¬Ö»¾õÑÛÇ°Ò»Æ¬Í¨ºì|ÄãÖÐµÄ(.*)·¢×÷ÁË|ÄãÖ»¸ÐÄÚÏ¢¶ÙÖÍ|Äã¾ª»ÅÊ§´ë£¬Á¬Ã¦ºóÍË|ÄãÖ»¾õµÃÉË¿ÚÒ»Õó×ÆÉË|ÄãÖ»¾õÈ«Éí|Äã¸Ðµ½ÐØ¿Ú´¦´«À´ÕóÕó´ÌÍ´|ºöÈ»¾õµÃÒ»ÕóÄÑÊÜ£¬ÐÄÐéÆø¶Ì|ºöÈ»Ò»(Õó|¹É|Ë¿)|ºöÈ»»ëÉíÒ»Õó¾çÍ´£¬Äã|ºöÈ»Äã¾õµÃËÄÖ«°Ùêà|½á¹ûÄãÒ»¸ö²»É÷|½á¹ûÖ»ÌýÆËµÄÒ»Éù£¬Äã±»(.*)Ò»ÕÆÅÄÖÐ|½á¹ûÄãÖ»¾õÆøº£Ñ¨ÉÏÒ»Í´£¬ÑÛÇ°|¡°¿¦À®¡±Ò»ÉùÏì£¬Äã´óÉù²Ò½Ð£¬Á¬ÍËÊý²½|Ö»¾õµÃ×Ô¼º¾«Éñ²»¼Ã£¬Æ£±¹²»¿°|²»ÖªÔõÃ´µÄ£¬ÄãºöÈ»·¢ÏÖ×Ô¼º|Ö»¸Ðµ½Ò»¹ÉÆæº®´ÓÌåÄÚÓÌÈ»¶øÉý|ö®ÄÇ¼äÄãÒÑ±»(.*)Òõº®|È´¼ûÄÇ¶¾Íè(.*)±ÌÑæÆ®È»Ï®ÏòÄã|Ö»¼ûÄã±»(.*)Ò»ÕÆÅÄÖÐ£¬½ô½Ó×ÅÉí×ÓÒ»²ü|Ö»ÌýÄã²Ò½ÐÒ»Éù£¬±»|ÕâÒ»ÕÆÅÄ¸öÕý×Å£¬¶ÙÊ±¶¾Æø¹¥ÐÄ|Í»È»ÄãÖ»¾õµ¤Ìï|½á¹ûÄãÖ»¾õ|ö®Ê±ÄãÐÄÍ·|ö®ÄÇ¼äÄãÒÑ±»|Ö»ÌýàÍµÄÒ»Éù£¬(.*)ÕýÖÐÄãÐØ¿Ú|Ö»¼û(.*)ÕâÒ»ÕÐ¼²Èçµç¡¢ÃÍÈç»ð£¬ÄãÐÄÖÐ¾ªÒÉ|ÄãÖ»¾õÈ«Éí±ùÀäÎÞ±È"
    name="yd_dispel"
    regexp="y"
    script="on_dispel"
@@ -2763,7 +2763,7 @@ drink shui dai</send>
 <aliases
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-06-28 13:20:42"
+   date_saved="2018-07-01 14:21:24"
   >
   <alias
    name="kill"
@@ -2859,7 +2859,7 @@ alias pp perform hand.hua</send>
 <timers
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-06-28 13:20:42"
+   date_saved="2018-07-01 14:21:24"
   >
   <timer name="timer1" script="on_timer" second="1.00" offset_second="0.00" active_closed="y" >
 
@@ -2867,7 +2867,7 @@ alias pp perform hand.hua</send>
   <timer name="timer2" script="on_timer" second="1.00" offset_second="0.00" >
 
   </timer>
-  <timer name="timer3" script="on_timer" second="1.00" offset_second="0.00" >
+  <timer name="timer3" script="on_timer" enabled="y" second="1.00" offset_second="0.00" >
 
   </timer>
   <timer name="timer4" script="on_timer" enabled="y" minute="1" second="30.00" offset_second="0.00" >
@@ -2883,7 +2883,7 @@ alias pp perform hand.hua</send>
 <macros
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-06-28 13:20:42"
+   date_saved="2018-07-01 14:21:24"
   >
 
   <macro name="up" type="send_now" >
@@ -2977,7 +2977,7 @@ alias pp perform hand.hua</send>
 <variables
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-06-28 13:20:42"
+   date_saved="2018-07-01 14:21:24"
   >
   <variable name="bool_bunch">true</variable>
   <variable name="bool_dan">true1</variable>
@@ -3024,7 +3024,7 @@ alias pp perform hand.hua</send>
   <variable name="loc_dazuo">4043</variable>
   <variable name="loc_gift">4176</variable>
   <variable name="loc_jiqu">4109</variable>
-  <variable name="loc_ma">2601</variable>
+  <variable name="loc_ma">690</variable>
   <variable name="loc_master">4089</variable>
   <variable name="loc_miss"></variable>
   <variable name="loc_rumor">3095</variable>
@@ -3043,10 +3043,10 @@ alias pp perform hand.hua</send>
   <variable name="name">½£Èý</variable>
   <variable name="name_bunch"></variable>
   <variable name="name_good"></variable>
-  <variable name="name_info">²¨Ë¹ÉÌÈË</variable>
+  <variable name="name_info">Ëï¶þÄï</variable>
   <variable name="name_master">ÔÀ²»Èº</variable>
   <variable name="name_menpai">»ªÉ½</variable>
-  <variable name="name_npc">»Ê¸¦Îý</variable>
+  <variable name="name_npc">±«Ï¦Ë®</variable>
   <variable name="name_pker"></variable>
   <variable name="num_cmds">13</variable>
   <variable name="num_dazuo">200</variable>
@@ -3062,7 +3062,7 @@ alias pp perform hand.hua</send>
 <colours
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-06-28 13:20:42"
+   date_saved="2018-07-01 14:21:24"
   >
 
 <ansi>
@@ -3119,7 +3119,7 @@ alias pp perform hand.hua</send>
 <keypad
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-06-28 13:20:42"
+   date_saved="2018-07-01 14:21:24"
   >
 
   <key name="0" >
@@ -3233,7 +3233,7 @@ alias pp perform hand.hua</send>
 <printing
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-06-28 13:20:42"
+   date_saved="2018-07-01 14:21:24"
   >
 
 <ansi>
