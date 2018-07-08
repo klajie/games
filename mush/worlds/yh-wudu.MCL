@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE muclient>
-<!-- Saved on ÐÇÆÚÈÕ, ÆßÔÂ 08, 2018, 12:36 ÉÏÎç -->
+<!-- Saved on ÐÇÆÚÈÕ, ÆßÔÂ 08, 2018, 8:24 ÏÂÎç -->
 <!-- MuClient version 5.05 -->
 <!-- Written by Nick Gammon -->
 <!-- Home Page: http://www.mushclient.com/ -->
@@ -8,7 +8,7 @@
 <world
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-07-08 00:36:57"
+   date_saved="2018-07-08 20:24:52"
 
    auto_say_override_prefix="-"
    auto_say_string="say "
@@ -119,7 +119,7 @@
 <triggers
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-07-08 00:36:57"
+   date_saved="2018-07-08 20:24:52"
   >
   <trigger
    enabled="y"
@@ -1873,6 +1873,7 @@ drop head</send>
   >
   </trigger>
   <trigger
+   enabled="y"
    group="gpe"
    keep_evaluating="y"
    match="^(&gt; )*Äã¸Ð¾õ×Ô¼ºµÄÊµÕ½¾­Ñé»¹ÓÐÇ·È±£¬»¹ÎÞ·¨Áì»á¸ü¸ß¾³½çµÄ(.*)ÐÞÑø¡£"
@@ -1903,6 +1904,7 @@ drop head</send>
   >
   </trigger>
   <trigger
+   enabled="y"
    group="gpe"
    keep_evaluating="y"
    match="^(&gt; )*Äã½«ÊµÕ½ÖÐ»ñµÃµÄÌå»áÐÄµÃ³ä·ÖµÄÏû»¯ÎüÊÕÁË¡£"
@@ -2750,7 +2752,7 @@ drink shui dai</send>
 <aliases
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-07-08 00:36:57"
+   date_saved="2018-07-08 20:24:52"
   >
   <alias
    name="kill"
@@ -2846,7 +2848,7 @@ alias pp perform hand.hua</send>
 <timers
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-07-08 00:36:57"
+   date_saved="2018-07-08 20:24:52"
   >
   <timer name="timer1" script="on_timer" second="1.00" offset_second="0.00" active_closed="y" >
 
@@ -2870,7 +2872,7 @@ alias pp perform hand.hua</send>
 <macros
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-07-08 00:36:57"
+   date_saved="2018-07-08 20:24:52"
   >
 
   <macro name="up" type="send_now" >
@@ -2964,7 +2966,7 @@ alias pp perform hand.hua</send>
 <variables
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-07-08 00:36:57"
+   date_saved="2018-07-08 20:24:52"
   >
   <variable name="bool_bunch">true</variable>
   <variable name="bool_dan">true</variable>
@@ -2987,7 +2989,7 @@ alias pp perform hand.hua</send>
   <variable name="cmd_npcdie">eatdan1;eatdan2;eatdan3;eatdan4</variable>
   <variable name="cmd_npcfaint"></variable>
   <variable name="cmd_pfm"></variable>
-  <variable name="cmd_pfm2">pp</variable>
+  <variable name="cmd_pfm2">pp1</variable>
   <variable name="cmd_search">hp</variable>
   <variable name="cmd_study">yanjiu</variable>
   <variable name="id">wudu</variable>
@@ -2997,13 +2999,13 @@ alias pp perform hand.hua</send>
   <variable name="id_study">he tieshou</variable>
   <variable name="id_weapon">gold hand</variable>
   <variable name="id_weapon2">jinsi jia</variable>
-  <variable name="lian_sleep">lian dodge 5</variable>
+  <variable name="lian_sleep"></variable>
   <variable name="list_control">klajie</variable>
   <variable name="list_freequest">trace,judge</variable>
   <variable name="list_gift">ò¿ÓÈÖïÔªÏÉµ¤,Éñ¶÷Í¨»ÛÏÉµ¤,Ï´ËèÔÙÔìÏÉµ¤,ÆÆÑôÎÞ¼«ÏÉµ¤,½ð¿é,ôä´ä,ÓñÊ¯,ÕäÖé,Âêè§,×êÊ¯,Ç¬À¤Ê¯,ÑÖÂÞ³ñ,Àë»ðÐþ±ùÓñ,ÐíÔ¸ÎÞ»¨¹û,å¾ÓîÌì¾§,»î¹ÇÁéÒ©,ê»Ììµ¤,ê»Ìì¹û</variable>
   <variable name="list_gift2">ÉñÁ¦Íè,Ôö»Ûµ¤,×³¹Ç·Û,¸£ÊÙ¸à,ò¿ÓÈÖïÔªÏÉµ¤,Éñ¶÷Í¨»ÛÏÉµ¤,Ï´ËèÔÙÔìÏÉµ¤,ÆÆÑôÎÞ¼«ÏÉµ¤,Ê¥ÉáÀû,ÆÐÌá×Ó,Öì¹û,»ðÁú¹û,°ÙÄêÁéÖ¥,°ÙÄêÁéÖ¥Íè,Ç§ÄêÁéÖ¥Íè,Ç§ÄêÁéÖ¥,ê»Ììµ¤,ê»Ìì¹û,ÑªÆÐÌá,ÐÄÆÐÌá,±ùÆÐÌá,ÉáÀû×Ó,·ð×ðÉáÀû,µÛÕßÉáÀû,ÈçÒâÍ¨Ììïã,Îå²ÊÁáççÖé,Ìì²ÐÓñ,ÇàÁúÑÀ,ÇàÓãÑÀ,»ÃµØÉñÖé,µØÂöÑªÈª,Ç§Äê²ÎÐÄµ¤,ÌìÏãÓñÂ¶,°ËÏÉÊ¯,À¥ÂØÊ¯,Ç§Äê²ÎÐÄµ¤,Ç§ÄêÑ©Á«¸à,ºªµ¦Ê¯,±ÌÑªÊ¯,îÑ½ðÖñ,×Ï½ð¿ó,×ÏÏüõû,ÎÚ½ð¿ó,ÕòÁúÊ¯,ÅÌÁúÒø½ÊË¿,¾ÅÀ×ÐþÒôÉ´,ð©ÔÂ½ðÉ°,À×»ðº®¾§,ÒøÖëË¿,Ç¬À¤Ê¯,ÑÖÂÞ³ñ,Àë»ðÐþ±ùÓñ,Ï¢ÈÀ,ÑøÉúµ¤,ÐíÔ¸ÎÞ»¨¹û,å¾ÓîÌì¾§,ÖÜÌìÐÇ¶·Í¼,Å­Ä¿½ð¸ÕÍ¼,ÉñÅ©°Ù²ÝÍ¼,¾ÅÏüÎÆýˆÍ¼,Ç¬À¤Ê¥Ë®,ÐþÎäÖý¹Çµ¤,°×»¢´ÍÔªµ¤,ÖìÈ¸Ááççµ¤,ÇàÁúÁ¶î£µ¤</variable>
   <variable name="list_laji">½ð¿é,ôä´ä,ÓñÊ¯,ÕäÖé,Âêè§,×êÊ¯,ÒøÂÖ</variable>
-  <variable name="list_lian"></variable>
+  <variable name="list_lian">dodge</variable>
   <variable name="list_ma">4141,3726,4142,2601,1137,1049,325,374,415,494,690,974,975,1302,1459,1814,1967,2298,2401,2494,2724,2829,2915,3166,3432,3904</variable>
   <variable name="list_pker"></variable>
   <variable name="list_skill">hand,force,xiuluo-yinshagong,dodge,parry</variable>
@@ -3011,7 +3013,7 @@ alias pp perform hand.hua</send>
   <variable name="loc_dazuo">1364</variable>
   <variable name="loc_gift">4176</variable>
   <variable name="loc_jiqu">1101</variable>
-  <variable name="loc_ma">415</variable>
+  <variable name="loc_ma">1459</variable>
   <variable name="loc_master">1362</variable>
   <variable name="loc_miss"></variable>
   <variable name="loc_rumor">3095</variable>
@@ -3019,7 +3021,7 @@ alias pp perform hand.hua</send>
   <variable name="loc_study">4200</variable>
   <variable name="loc_task">2958</variable>
   <variable name="loc_wenweapon"></variable>
-  <variable name="max_exp">1090000</variable>
+  <variable name="max_exp">1290000</variable>
   <variable name="max_nuqi">4000</variable>
   <variable name="max_pot">500</variable>
   <variable name="max_silver">100</variable>
@@ -3033,7 +3035,7 @@ alias pp perform hand.hua</send>
   <variable name="name_info">µêÐ¡¶þ</variable>
   <variable name="name_master">ºÎÌúÊÖ</variable>
   <variable name="name_menpai">ÌúÕÆ</variable>
-  <variable name="name_npc">ÈîÃì</variable>
+  <variable name="name_npc">Ë¾¿Õ²ý</variable>
   <variable name="name_pker"></variable>
   <variable name="num_cmds">13</variable>
   <variable name="num_dazuo">400</variable>
@@ -3049,7 +3051,7 @@ alias pp perform hand.hua</send>
 <colours
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-07-08 00:36:57"
+   date_saved="2018-07-08 20:24:52"
   >
 
 <ansi>
@@ -3106,7 +3108,7 @@ alias pp perform hand.hua</send>
 <keypad
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-07-08 00:36:57"
+   date_saved="2018-07-08 20:24:52"
   >
 
   <key name="0" >
@@ -3220,7 +3222,7 @@ alias pp perform hand.hua</send>
 <printing
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-07-08 00:36:57"
+   date_saved="2018-07-08 20:24:52"
   >
 
 <ansi>
