@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE muclient>
-<!-- Saved on ÐÇÆÚÈÕ, ÆßÔÂ 08, 2018, 12:08 ÏÂÎç -->
+<!-- Saved on ÐÇÆÚÒ», ÆßÔÂ 09, 2018, 2:23 ÏÂÎç -->
 <!-- MuClient version 5.05 -->
 <!-- Written by Nick Gammon -->
 <!-- Home Page: http://www.mushclient.com/ -->
@@ -8,7 +8,7 @@
 <world
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-07-08 12:08:49"
+   date_saved="2018-07-09 14:23:14"
 
    auto_say_override_prefix="-"
    auto_say_string="say "
@@ -90,7 +90,7 @@
    script_errors_to_output_window="y"
    send_file_delay_per_lines="1"
    spam_line_count="20"
-   speed_walk_delay="3"
+   speed_walk_delay="246"
    start_paused="y"
    tab_completion_lines="200"
    timestamp_input_text_colour="maroon"
@@ -119,7 +119,7 @@
 <triggers
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-07-08 12:08:49"
+   date_saved="2018-07-09 14:23:14"
   >
   <trigger
    enabled="y"
@@ -2754,7 +2754,7 @@ drink shui dai</send>
 <aliases
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-07-08 12:08:49"
+   date_saved="2018-07-09 14:23:14"
   >
   <alias
    name="kill"
@@ -2850,7 +2850,7 @@ alias pp perform hand.hua</send>
 <timers
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-07-08 12:08:49"
+   date_saved="2018-07-09 14:23:14"
   >
   <timer name="timer1" script="on_timer" second="1.00" offset_second="0.00" active_closed="y" >
 
@@ -2874,7 +2874,7 @@ alias pp perform hand.hua</send>
 <macros
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-07-08 12:08:49"
+   date_saved="2018-07-09 14:23:14"
   >
 
   <macro name="up" type="send_now" >
@@ -2968,7 +2968,7 @@ alias pp perform hand.hua</send>
 <variables
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-07-08 12:08:49"
+   date_saved="2018-07-09 14:23:14"
   >
   <variable name="bool_bunch">true</variable>
   <variable name="bool_dan">true</variable>
@@ -3010,12 +3010,12 @@ alias pp perform hand.hua</send>
   <variable name="list_lian">dodge,parry</variable>
   <variable name="list_ma">4141,3726,4142,2601,1137,1049,325,374,415,494,690,974,975,1302,1459,1814,1967,2298,2401,2494,2724,2829,2915,3166,3432,3904</variable>
   <variable name="list_pker"></variable>
-  <variable name="list_skill">tie-zhang,tianlei-shengong,dodge,force,strike,parry,blade,shenzhaojing</variable>
+  <variable name="list_skill">tie-zhang,tianlei-shengong,dodge,force,strike,parry,blade,shenzhaojing,jinzhong-zhao</variable>
   <variable name="list_to"></variable>
   <variable name="loc_dazuo">1725</variable>
   <variable name="loc_gift">4176</variable>
   <variable name="loc_jiqu">1101</variable>
-  <variable name="loc_ma">4141</variable>
+  <variable name="loc_ma">415</variable>
   <variable name="loc_master">1778</variable>
   <variable name="loc_miss"></variable>
   <variable name="loc_rumor">3095</variable>
@@ -3023,7 +3023,7 @@ alias pp perform hand.hua</send>
   <variable name="loc_study">4200</variable>
   <variable name="loc_task">2958</variable>
   <variable name="loc_wenweapon"></variable>
-  <variable name="max_exp">2195200</variable>
+  <variable name="max_exp">2700000</variable>
   <variable name="max_nuqi">5000</variable>
   <variable name="max_pot">500</variable>
   <variable name="max_silver">100</variable>
@@ -3037,7 +3037,7 @@ alias pp perform hand.hua</send>
   <variable name="name_info">µêÐ¡¶þ</variable>
   <variable name="name_master">ôÃÇ§Øð</variable>
   <variable name="name_menpai">ÌúÕÆ</variable>
-  <variable name="name_npc">³ÂÁÖâï</variable>
+  <variable name="name_npc">°ÙÀïäÛ</variable>
   <variable name="name_pker"></variable>
   <variable name="num_cmds">13</variable>
   <variable name="num_dazuo">400</variable>
@@ -3053,7 +3053,7 @@ alias pp perform hand.hua</send>
 <colours
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-07-08 12:08:49"
+   date_saved="2018-07-09 14:23:14"
   >
 
 <ansi>
@@ -3110,7 +3110,7 @@ alias pp perform hand.hua</send>
 <keypad
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-07-08 12:08:49"
+   date_saved="2018-07-09 14:23:14"
   >
 
   <key name="0" >
@@ -3224,7 +3224,7 @@ alias pp perform hand.hua</send>
 <printing
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-07-08 12:08:49"
+   date_saved="2018-07-09 14:23:14"
   >
 
 <ansi>
