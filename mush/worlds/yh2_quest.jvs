@@ -1063,7 +1063,7 @@ function reconnect(cmd)
 	if (query("hp/faint") == "faint")
 		opentimer1(120, "con_delay", null);
 	else
-		opentimer1(3, "con_delay", null);
+		opentimer1(4, "con_delay", null);
 }
 
 function autoconnect()
