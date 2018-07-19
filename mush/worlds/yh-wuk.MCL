@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE muclient>
-<!-- Saved on ÐÇÆÚÒ», ÆßÔÂ 16, 2018, 8:10 ÏÂÎç -->
+<!-- Saved on ÐÇÆÚËÄ, ÆßÔÂ 19, 2018, 12:02 ÏÂÎç -->
 <!-- MuClient version 5.05 -->
 <!-- Written by Nick Gammon -->
 <!-- Home Page: http://www.mushclient.com/ -->
@@ -8,7 +8,7 @@
 <world
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-07-16 20:10:34"
+   date_saved="2018-07-19 12:02:44"
 
    auto_say_override_prefix="-"
    auto_say_string="say "
@@ -107,10 +107,9 @@
    use_mxp="3"
    warn_if_scripting_inactive="y"
    wrap="y"
-   wrap_column="107"
+   wrap_column="113"
    write_world_name_to_log="y"
    > <!-- end of general world attributes -->
-  <connect_text>eat huogu</connect_text>
 
 </world>
 
@@ -119,7 +118,7 @@
 <triggers
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-07-16 20:10:34"
+   date_saved="2018-07-19 12:02:44"
   >
   <trigger
    enabled="y"
@@ -2362,7 +2361,7 @@ drop head</send>
    enabled="y"
    group="gyd0"
    keep_evaluating="y"
-   match="ÄãÒ»¸ö²»É÷£¬»ðÐÇ¶ÙÊ±|ÄãÖ»ÎÅÒ»¹É¶ñ³ô´«À´|ÄãÉÔ²»ÁôÉñ|Äã¼ûÕÐÊ½±ä»»Äª²â£¬Ö»ÊÇÎ¢Î¢Ò»ã¶£¬ÒÑ±»|ÄãÉÁ±Ü²»¼°£¬µÇ±»(.*)£¬ÉË¿Ú¾¹|ÄãÖ»¾õó¸¹Æ¶¾¹¥ÐÄ|ÄãÖ»¾õµ¤Ìï´¦ÓÐÈç»ð·Ù|ÄãÖ»¾õ¶¾Æø¹¥ÐÄ|Äã¸Ðµ½ÐØ¿Ú´¦´«À´ÕóÕó´ÌÍ´|Äãºö¾õÐÄ¿ÚÌÛÍ´Íò·Ö|ÄãÖ»¸Ðµ½ÎåÔàÁù¸­·­ÌÚ²»Ö¹£¬¾ç¶¾¹¥ÐÄ|ÄãÖ»¾õ¼«º®¹¥ÐÄ|Äã¾õµÃ¾ÍÏñµôµ½ÁË±ù½ÑÀïÒ»Ñù|Äã¾õµÃÖ«ÌåÄ©¶Ë|ÄãµÄÁ³µ°ÉÕµÃÍ¨ºì|ÄãË»ÑÆ×ÅÉ¤×Ó¿È|Äã´òÁË¸öÀäÕ½|Äã¾õµÃÐØÒÜÖ®¼ä|Äã¸Ðµ½Ò»¹ÉÇÐ¹ÇÆæº®ÓÉÉË|ÄãºöÈ»¸Ðµ½Ò»¹ÉÄªÃûµÄ¶ñÐÄ|ÄãºöÈ»ÉñÉ«´ó±ä£¬|Äã¼ûÌÏÌìÈÈÀËÆËÃæÓ¿À´£¬Ö»¾õÑÛÇ°Ò»Æ¬Í¨ºì|ÄãÖÐµÄ(.*)·¢×÷ÁË|ÄãÖ»¸ÐÄÚÏ¢¶ÙÖÍ|Äã¾ª»ÅÊ§´ë£¬Á¬Ã¦ºóÍË|ÄãÖ»¾õµÃÉË¿ÚÒ»Õó×ÆÉË|ÄãÖ»¾õÈ«Éí|Äã¸Ðµ½ÐØ¿Ú´¦´«À´ÕóÕó´ÌÍ´|ºöÈ»¾õµÃÒ»ÕóÄÑÊÜ£¬ÐÄÐéÆø¶Ì|ºöÈ»Ò»(Õó|¹É|Ë¿)|ºöÈ»»ëÉíÒ»Õó¾çÍ´£¬Äã|ºöÈ»Äã¾õµÃËÄÖ«°Ùêà|½á¹ûÄãÒ»¸ö²»É÷|½á¹ûÖ»ÌýÆËµÄÒ»Éù£¬Äã±»(.*)Ò»ÕÆÅÄÖÐ|½á¹ûÄãÖ»¾õÆøº£Ñ¨ÉÏÒ»Í´£¬ÑÛÇ°|¡°¿¦À®¡±Ò»ÉùÏì£¬Äã´óÉù²Ò½Ð£¬Á¬ÍËÊý²½|Ö»¾õµÃ×Ô¼º¾«Éñ²»¼Ã£¬Æ£±¹²»¿°|²»ÖªÔõÃ´µÄ£¬ÄãºöÈ»·¢ÏÖ×Ô¼º|Ö»¸Ðµ½Ò»¹ÉÆæº®´ÓÌåÄÚÓÌÈ»¶øÉý|ö®ÄÇ¼äÄãÒÑ±»(.*)Òõº®|È´¼ûÄÇ¶¾Íè(.*)±ÌÑæÆ®È»Ï®ÏòÄã|Ö»¼ûÄã±»(.*)Ò»ÕÆÅÄÖÐ£¬½ô½Ó×ÅÉí×ÓÒ»²ü|Ö»ÌýÄã²Ò½ÐÒ»Éù£¬±»|ÕâÒ»ÕÆÅÄ¸öÕý×Å£¬¶ÙÊ±¶¾Æø¹¥ÐÄ|Í»È»ÄãÖ»¾õµ¤Ìï|½á¹ûÄãÖ»¾õ|ö®Ê±ÄãÐÄÍ·|ö®ÄÇ¼äÄãÒÑ±»|Ö»ÌýàÍµÄÒ»Éù£¬(.*)ÕýÖÐÄãÐØ¿Ú|Ö»¼û(.*)ÕâÒ»ÕÐ¼²Èçµç¡¢ÃÍÈç»ð£¬ÄãÐÄÖÐ¾ªÒÉ|Ö»¼ûÄãÈ«ÉíÒ»²ü£¬×ìÆ¤ÎÚ×Ï|Äã½ÓÏÂ(.*)Ò»ÕÐ£¬ö®Ê±Ö»¸Ðµ½º®·çÏ®Ìå"
+   match="ÄãÒ»¸ö²»É÷£¬»ðÐÇ¶ÙÊ±|ÄãÖ»ÎÅÒ»¹É¶ñ³ô´«À´|ÄãÉÔ²»ÁôÉñ|Äã¼ûÕÐÊ½±ä»»Äª²â£¬Ö»ÊÇÎ¢Î¢Ò»ã¶£¬ÒÑ±»|ÄãÉÁ±Ü²»¼°£¬µÇ±»(.*)£¬ÉË¿Ú¾¹|ÄãÖ»¾õó¸¹Æ¶¾¹¥ÐÄ|ÄãÖ»¾õµ¤Ìï´¦ÓÐÈç»ð·Ù|ÄãÖ»¾õ¶¾Æø¹¥ÐÄ|Äã¸Ðµ½ÐØ¿Ú´¦´«À´ÕóÕó´ÌÍ´|Äãºö¾õÐÄ¿ÚÌÛÍ´Íò·Ö|ÄãÖ»¸Ðµ½ÎåÔàÁù¸­·­ÌÚ²»Ö¹£¬¾ç¶¾¹¥ÐÄ|ÄãÖ»¾õ¼«º®¹¥ÐÄ|Äã¾õµÃ¾ÍÏñµôµ½ÁË±ù½ÑÀïÒ»Ñù|Äã¾õµÃÖ«ÌåÄ©¶Ë|ÄãµÄÁ³µ°ÉÕµÃÍ¨ºì|ÄãË»ÑÆ×ÅÉ¤×Ó¿È|Äã´òÁË¸öÀäÕ½|Äã¾õµÃÐØÒÜÖ®¼ä|Äã¸Ðµ½Ò»¹ÉÇÐ¹ÇÆæº®ÓÉÉË|ÄãºöÈ»¸Ðµ½Ò»¹ÉÄªÃûµÄ¶ñÐÄ|ÄãºöÈ»ÉñÉ«´ó±ä£¬|Äã¼ûÌÏÌìÈÈÀËÆËÃæÓ¿À´£¬Ö»¾õÑÛÇ°Ò»Æ¬Í¨ºì|ÄãÖÐµÄ(.*)·¢×÷ÁË|ÄãÖ»¸ÐÄÚÏ¢¶ÙÖÍ|Äã¾ª»ÅÊ§´ë£¬Á¬Ã¦ºóÍË|ÄãÖ»¾õµÃÉË¿ÚÒ»Õó×ÆÉË|ÄãÖ»¾õÈ«Éí|Äã¸Ðµ½ÐØ¿Ú´¦´«À´ÕóÕó´ÌÍ´|ºöÈ»¾õµÃÒ»ÕóÄÑÊÜ£¬ÐÄÐéÆø¶Ì|ºöÈ»Ò»(Õó|¹É|Ë¿)|ºöÈ»»ëÉíÒ»Õó¾çÍ´£¬Äã|ºöÈ»Äã¾õµÃËÄÖ«°Ùêà|½á¹ûÄãÒ»¸ö²»É÷|½á¹ûÖ»ÌýÆËµÄÒ»Éù£¬Äã±»(.*)Ò»ÕÆÅÄÖÐ|½á¹ûÄãÖ»¾õÆøº£Ñ¨ÉÏÒ»Í´£¬ÑÛÇ°|¡°¿¦À®¡±Ò»ÉùÏì£¬Äã´óÉù²Ò½Ð£¬Á¬ÍËÊý²½|Ö»¾õµÃ×Ô¼º¾«Éñ²»¼Ã£¬Æ£±¹²»¿°|²»ÖªÔõÃ´µÄ£¬ÄãºöÈ»·¢ÏÖ×Ô¼º|Ö»¸Ðµ½Ò»¹ÉÆæº®´ÓÌåÄÚÓÌÈ»¶øÉý|ö®ÄÇ¼äÄãÒÑ±»(.*)Òõº®|È´¼ûÄÇ¶¾Íè(.*)±ÌÑæÆ®È»Ï®ÏòÄã|Ö»¼ûÄã±»(.*)Ò»ÕÆÅÄÖÐ£¬½ô½Ó×ÅÉí×ÓÒ»²ü|Ö»ÌýÄã²Ò½ÐÒ»Éù£¬±»|ÕâÒ»ÕÆÅÄ¸öÕý×Å£¬¶ÙÊ±¶¾Æø¹¥ÐÄ|Í»È»ÄãÖ»¾õµ¤Ìï|½á¹ûÄãÖ»¾õ|ö®Ê±ÄãÐÄÍ·|ö®ÄÇ¼äÄãÒÑ±»|Ö»ÌýàÍµÄÒ»Éù£¬(.*)ÕýÖÐÄãÐØ¿Ú|Ö»¼û(.*)ÕâÒ»ÕÐ¼²Èçµç¡¢ÃÍÈç»ð£¬ÄãÐÄÖÐ¾ªÒÉ|Ö»¼ûÄãÈ«ÉíÒ»²ü£¬×ìÆ¤ÎÚ×Ï|Äã½ÓÏÂ(.*)Ò»ÕÐ£¬ö®Ê±Ö»¸Ðµ½º®·çÏ®Ìå|ÄãºöÈ»¸Ðµ½Ò»¹ÉÄªÃûµÄ¶ñÐÄ|Ö»¸Ðµ½Ò»¹ÉÆæº®´ÓÌåÄÚÓÌÈ»¶øÉý"
    name="yd_dispel"
    regexp="y"
    script="on_dispel"
@@ -2761,7 +2760,7 @@ drink shui dai</send>
 <aliases
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-07-16 20:10:34"
+   date_saved="2018-07-19 12:02:44"
   >
   <alias
    name="kill"
@@ -2857,7 +2856,7 @@ alias pp perform hand.hua</send>
 <timers
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-07-16 20:10:34"
+   date_saved="2018-07-19 12:02:44"
   >
   <timer name="timer1" script="on_timer" second="1.00" offset_second="0.00" active_closed="y" >
 
@@ -2881,7 +2880,7 @@ alias pp perform hand.hua</send>
 <macros
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-07-16 20:10:34"
+   date_saved="2018-07-19 12:02:44"
   >
 
   <macro name="up" type="send_now" >
@@ -2975,7 +2974,7 @@ alias pp perform hand.hua</send>
 <variables
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-07-16 20:10:34"
+   date_saved="2018-07-19 12:02:44"
   >
   <variable name="bool_bunch">true</variable>
   <variable name="bool_dan">true</variable>
@@ -3008,13 +3007,13 @@ alias pp perform hand.hua</send>
   <variable name="id_study">qiu qianren</variable>
   <variable name="id_weapon">tzzhang</variable>
   <variable name="id_weapon2">jinsi jia</variable>
-  <variable name="lian_sleep"></variable>
+  <variable name="lian_sleep">lian dodge 50</variable>
   <variable name="list_control">klajie</variable>
   <variable name="list_freequest">trace,judge</variable>
   <variable name="list_gift">ò¿ÓÈÖïÔªÏÉµ¤,Éñ¶÷Í¨»ÛÏÉµ¤,Ï´ËèÔÙÔìÏÉµ¤,ÆÆÑôÎÞ¼«ÏÉµ¤,½ð¿é,ôä´ä,ÓñÊ¯,ÕäÖé,Âêè§,×êÊ¯,Ç¬À¤Ê¯,ÑÖÂÞ³ñ,Àë»ðÐþ±ùÓñ,ÐíÔ¸ÎÞ»¨¹û,å¾ÓîÌì¾§,»î¹ÇÁéÒ©,ê»Ììµ¤,ê»Ìì¹û</variable>
   <variable name="list_gift2">ÉñÁ¦Íè,Ôö»Ûµ¤,×³¹Ç·Û,¸£ÊÙ¸à,ò¿ÓÈÖïÔªÏÉµ¤,Éñ¶÷Í¨»ÛÏÉµ¤,Ï´ËèÔÙÔìÏÉµ¤,ÆÆÑôÎÞ¼«ÏÉµ¤,Ê¥ÉáÀû,ÆÐÌá×Ó,Öì¹û,»ðÁú¹û,°ÙÄêÁéÖ¥,°ÙÄêÁéÖ¥Íè,Ç§ÄêÁéÖ¥Íè,Ç§ÄêÁéÖ¥,ê»Ììµ¤,ê»Ìì¹û,ÑªÆÐÌá,ÐÄÆÐÌá,±ùÆÐÌá,ÉáÀû×Ó,·ð×ðÉáÀû,µÛÕßÉáÀû,ÈçÒâÍ¨Ììïã,Îå²ÊÁáççÖé,Ìì²ÐÓñ,ÇàÁúÑÀ,ÇàÓãÑÀ,»ÃµØÉñÖé,µØÂöÑªÈª,Ç§Äê²ÎÐÄµ¤,ÌìÏãÓñÂ¶,°ËÏÉÊ¯,À¥ÂØÊ¯,Ç§Äê²ÎÐÄµ¤,Ç§ÄêÑ©Á«¸à,ºªµ¦Ê¯,±ÌÑªÊ¯,îÑ½ðÖñ,×Ï½ð¿ó,×ÏÏüõû,ÎÚ½ð¿ó,ÕòÁúÊ¯,ÅÌÁúÒø½ÊË¿,¾ÅÀ×ÐþÒôÉ´,ð©ÔÂ½ðÉ°,À×»ðº®¾§,ÒøÖëË¿,Ç¬À¤Ê¯,ÑÖÂÞ³ñ,Àë»ðÐþ±ùÓñ,Ï¢ÈÀ,ÑøÉúµ¤,ÐíÔ¸ÎÞ»¨¹û,å¾ÓîÌì¾§,ÖÜÌìÐÇ¶·Í¼,Å­Ä¿½ð¸ÕÍ¼,ÉñÅ©°Ù²ÝÍ¼,¾ÅÏüÎÆýˆÍ¼,Ç¬À¤Ê¥Ë®,ÐþÎäÖý¹Çµ¤,°×»¢´ÍÔªµ¤,ÖìÈ¸Ááççµ¤,ÇàÁúÁ¶î£µ¤</variable>
   <variable name="list_laji">½ð¿é,ôä´ä,ÓñÊ¯,ÕäÖé,Âêè§,×êÊ¯,ÒøÂÖ</variable>
-  <variable name="list_lian">dodge,parry</variable>
+  <variable name="list_lian"></variable>
   <variable name="list_ma">4141,3726,4142,2601,1137,1049,325,374,415,494,690,974,975,1302,1459,1814,1967,2298,2401,2494,2724,2829,2915,3166,3432,3904</variable>
   <variable name="list_pker"></variable>
   <variable name="list_skill">tie-zhang,tie-zhang,tianlei-shengong,dodge,dodge,force,strike,parry,blade,shenzhaojing,jinzhong-zhao,shenzhaojing,jinzhong-zhao</variable>
@@ -3030,7 +3029,7 @@ alias pp perform hand.hua</send>
   <variable name="loc_study">4200</variable>
   <variable name="loc_task">2958</variable>
   <variable name="loc_wenweapon"></variable>
-  <variable name="max_exp">3276800</variable>
+  <variable name="max_exp">3930400</variable>
   <variable name="max_nuqi">5000</variable>
   <variable name="max_pot">500</variable>
   <variable name="max_silver">100</variable>
@@ -3044,7 +3043,7 @@ alias pp perform hand.hua</send>
   <variable name="name_info">µêÐ¡¶þ</variable>
   <variable name="name_master">ôÃÇ§Øð</variable>
   <variable name="name_menpai">ÌúÕÆ</variable>
-  <variable name="name_npc">¹«ËïÎý</variable>
+  <variable name="name_npc">ÎÅÈËÂ¶</variable>
   <variable name="name_pker"></variable>
   <variable name="num_cmds">13</variable>
   <variable name="num_dazuo">800</variable>
@@ -3060,7 +3059,7 @@ alias pp perform hand.hua</send>
 <colours
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-07-16 20:10:34"
+   date_saved="2018-07-19 12:02:44"
   >
 
 <ansi>
@@ -3117,7 +3116,7 @@ alias pp perform hand.hua</send>
 <keypad
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-07-16 20:10:34"
+   date_saved="2018-07-19 12:02:44"
   >
 
   <key name="0" >
@@ -3231,7 +3230,7 @@ alias pp perform hand.hua</send>
 <printing
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-07-16 20:10:34"
+   date_saved="2018-07-19 12:02:44"
   >
 
 <ansi>
