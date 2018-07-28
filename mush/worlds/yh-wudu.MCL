@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE muclient>
-<!-- Saved on ÐÇÆÚ¶þ, ÆßÔÂ 24, 2018, 7:26 ÉÏÎç -->
+<!-- Saved on ÐÇÆÚÁù, ÆßÔÂ 28, 2018, 9:43 ÉÏÎç -->
 <!-- MuClient version 5.05 -->
 <!-- Written by Nick Gammon -->
 <!-- Home Page: http://www.mushclient.com/ -->
@@ -8,7 +8,7 @@
 <world
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-07-24 07:26:23"
+   date_saved="2018-07-28 09:43:12"
 
    auto_say_override_prefix="-"
    auto_say_string="say "
@@ -90,7 +90,7 @@
    script_errors_to_output_window="y"
    send_file_delay_per_lines="1"
    spam_line_count="20"
-   speed_walk_delay="3"
+   speed_walk_delay="302"
    start_paused="y"
    tab_completion_lines="200"
    timestamp_input_text_colour="maroon"
@@ -110,7 +110,6 @@
    wrap_column="94"
    write_world_name_to_log="y"
    > <!-- end of general world attributes -->
-  <connect_text>eat huogu</connect_text>
 
 </world>
 
@@ -119,7 +118,7 @@
 <triggers
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-07-24 07:26:23"
+   date_saved="2018-07-28 09:43:12"
   >
   <trigger
    enabled="y"
@@ -1311,7 +1310,7 @@ drop head</send>
    group="bkl"
    keep_evaluating="y"
    match="^(&gt; )*ËùÓÐÈëÇÖµÄµÐÈË¶¼¸ø´òÍËÁË£¬ÓÉÓÚÄãÒ²²ÎÓëÁËÕ½¶·£¬Òò´ËÏÖÔÚÄãÒ²Ò»Æð·ÖÏíÊ¤Àû¹ûÊµ£¡"
-   name="bk_over1"
+   name="bk_over2"
    regexp="y"
    script="on_bunch"
    sequence="103"
@@ -1321,7 +1320,7 @@ drop head</send>
    group="bkl"
    keep_evaluating="y"
    match="^(&gt; )*ËùÓÐÈëÇÖµÄµÐÈË¶¼¸ø´òÍËÁË£¬ÓÉÓÚÄãÒ²²ÎÓëÁËÕ½¶·£¬Òò´ËÏÖÔÚÄãÒ²Ò»Æð·ÖÏíÊ¤Àû¹ûÊµ£¡"
-   name="bk_over2"
+   name="bk_over1"
    regexp="y"
    script="on_bunch"
    sequence="103"
@@ -1823,6 +1822,7 @@ drop head</send>
   <send>eatjqdan</send>
   </trigger>
   <trigger
+   enabled="y"
    group="gpe"
    keep_evaluating="y"
    match="^(&gt; )*Äã(Ò»¾õÐÑÀ´£¬Ö»¾õ¾«Á¦³äÅæ|ÃÔÃÔºýºýµÄÕö¿ªË«ÑÛ£¬ÅÀÁËÆðÀ´)¡£"
@@ -2013,7 +2013,6 @@ drop head</send>
   >
   </trigger>
   <trigger
-   enabled="y"
    group="gpe"
    keep_evaluating="y"
    match="^(&gt; )*Ìú½³µÀ£º¡°ºÃÁË(.*)¡±ËæÊÖ°Ñ(.*)»¹¸øÁËÄã£¬Äã¿´ÁË¿´£¬ÂúÒâµÄÌÍ³öÁËÒ»Ð©Ç®¸¶ÁËÕÊ¡£"
@@ -2276,21 +2275,21 @@ drop head</send>
   >
   </trigger>
   <trigger
+   enabled="y"
    group="ggl"
    keep_evaluating="y"
    match="^ÄÍ¾Ã¶È£º(.*)%"
-   name="weapon"
+   name="weapon2"
    regexp="y"
    script="on_global"
    sequence="130"
   >
   </trigger>
   <trigger
-   enabled="y"
    group="ggl"
    keep_evaluating="y"
    match="^ÄÍ¾Ã¶È£º(.*)%"
-   name="weapon2"
+   name="weapon"
    regexp="y"
    script="on_global"
    sequence="130"
@@ -2761,7 +2760,7 @@ drink shui dai</send>
 <aliases
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-07-24 07:26:23"
+   date_saved="2018-07-28 09:43:12"
   >
   <alias
    name="kill"
@@ -2857,7 +2856,7 @@ alias pp perform hand.hua</send>
 <timers
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-07-24 07:26:23"
+   date_saved="2018-07-28 09:43:12"
   >
   <timer name="timer1" script="on_timer" second="1.00" offset_second="0.00" active_closed="y" >
 
@@ -2881,7 +2880,7 @@ alias pp perform hand.hua</send>
 <macros
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-07-24 07:26:23"
+   date_saved="2018-07-28 09:43:12"
   >
 
   <macro name="up" type="send_now" >
@@ -2975,7 +2974,7 @@ alias pp perform hand.hua</send>
 <variables
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-07-24 07:26:23"
+   date_saved="2018-07-28 09:43:12"
   >
   <variable name="bool_bunch">true</variable>
   <variable name="bool_dan">true</variable>
@@ -3022,7 +3021,7 @@ alias pp perform hand.hua</send>
   <variable name="loc_dazuo">1364</variable>
   <variable name="loc_gift">4176</variable>
   <variable name="loc_jiqu">1101</variable>
-  <variable name="loc_ma">2298</variable>
+  <variable name="loc_ma">374</variable>
   <variable name="loc_master">1362</variable>
   <variable name="loc_miss"></variable>
   <variable name="loc_rumor">3095</variable>
@@ -3030,21 +3029,21 @@ alias pp perform hand.hua</send>
   <variable name="loc_study">4200</variable>
   <variable name="loc_task">2958</variable>
   <variable name="loc_wenweapon"></variable>
-  <variable name="max_exp">2195200</variable>
+  <variable name="max_exp">2700000</variable>
   <variable name="max_nuqi">4000</variable>
   <variable name="max_pot">500</variable>
   <variable name="max_silver">100</variable>
   <variable name="max_th">200</variable>
   <variable name="min_gold">31</variable>
   <variable name="min_jingli">0</variable>
-  <variable name="min_neili">1100</variable>
+  <variable name="min_neili">1500</variable>
   <variable name="name">¶¾Íõ</variable>
   <variable name="name_bunch"></variable>
   <variable name="name_good"></variable>
-  <variable name="name_info">µêÐ¡¶þ</variable>
+  <variable name="name_info">Ð¡··</variable>
   <variable name="name_master">ºÎÌúÊÖ</variable>
   <variable name="name_menpai">ÌúÕÆ</variable>
-  <variable name="name_npc">ÑòÖñ</variable>
+  <variable name="name_npc">¹«Ñò²Ùì­</variable>
   <variable name="name_pker"></variable>
   <variable name="num_cmds">13</variable>
   <variable name="num_dazuo">800</variable>
@@ -3060,7 +3059,7 @@ alias pp perform hand.hua</send>
 <colours
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-07-24 07:26:23"
+   date_saved="2018-07-28 09:43:12"
   >
 
 <ansi>
@@ -3117,7 +3116,7 @@ alias pp perform hand.hua</send>
 <keypad
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-07-24 07:26:23"
+   date_saved="2018-07-28 09:43:12"
   >
 
   <key name="0" >
@@ -3231,7 +3230,7 @@ alias pp perform hand.hua</send>
 <printing
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-07-24 07:26:23"
+   date_saved="2018-07-28 09:43:12"
   >
 
 <ansi>
