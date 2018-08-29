@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE muclient>
-<!-- Saved on ÐÇÆÚÈý, °ËÔÂ 29, 2018, 8:18 ÏÂÎç -->
+<!-- Saved on ÐÇÆÚËÄ, °ËÔÂ 30, 2018, 1:05 ÉÏÎç -->
 <!-- MuClient version 5.05 -->
 <!-- Written by Nick Gammon -->
 <!-- Home Page: http://www.mushclient.com/ -->
@@ -8,16 +8,16 @@
 <world
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-08-29 20:18:17"
+   date_saved="2018-08-30 01:05:05"
 
    auto_say_override_prefix="-"
    auto_say_string="say "
    chat_name="dans"
    command_stack_character=";"
-   id="8a46b8af2131ed4aa42d0fd7"
+   id="5fe9d82f55a9b88bca9fbe60"
    input_font_name="ÐÂËÎÌå"
    mapping_failure="Alas, you cannot go that way."
-   name="wuk"
+   name="klajih"
    new_activity_sound="(No sound)"
    on_world_connect="atconnect"
    on_world_disconnect="atdisconnect"
@@ -26,7 +26,7 @@
    output_font_name="YaHei Consolas Hybrid"
    password_base64="y"
    password="cTEyMzQ1"
-   player="wuk"
+   player="klajih"
    proxy_server="116.196.70.101"
    script_editor="C:\Program Files\Notepad++\notepad++.exe"
    script_filename="D:\games\mush\worlds\yh2_quest.jvs"
@@ -118,7 +118,7 @@
 <triggers
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-08-29 20:18:17"
+   date_saved="2018-08-30 01:05:05"
   >
   <trigger
    enabled="y"
@@ -194,7 +194,7 @@ var give_pass_id = wcs[0].toLowerCase()</send>
    script="on_prepare"
    sequence="3"
   >
-  <send>tell wuk no pass</send>
+  <send>tell vvvv no pass</send>
   </trigger>
   <trigger
    enabled="y"
@@ -227,9 +227,13 @@ do_quest("start")</send>
   >
   </trigger>
   <trigger
+   enabled="y"
    keep_evaluating="y"
    match="^    ÕâÀï(Î¨Ò»µÄ³ö¿ÚÊÇ|Ã÷ÏÔµÄ³ö¿ÚÊÇ|Ã»ÓÐÈÎºÎÃ÷ÏÔµÄ³öÂ·)(.*)"
-   name="trace"
+   match_bold="y"
+   match_inverse="y"
+   match_italic="y"
+   name="step"
    omit_from_output="y"
    regexp="y"
    script="on_step"
@@ -239,10 +243,7 @@ do_quest("start")</send>
   <trigger
    keep_evaluating="y"
    match="^    ÕâÀï(Î¨Ò»µÄ³ö¿ÚÊÇ|Ã÷ÏÔµÄ³ö¿ÚÊÇ|Ã»ÓÐÈÎºÎÃ÷ÏÔµÄ³öÂ·)(.*)"
-   match_bold="y"
-   match_inverse="y"
-   match_italic="y"
-   name="step"
+   name="trace"
    omit_from_output="y"
    regexp="y"
    script="on_step"
@@ -416,6 +417,7 @@ do_quest("start")</send>
   <send>halt</send>
   </trigger>
   <trigger
+   enabled="y"
    group="gwk"
    keep_evaluating="y"
    match="^Çë²»Òª×°±¸ÎäÆ÷¡£|^ÄãÉåÓÚÎäµ±É½¹æ£¬²»¸ÒÓ²Õù£¬Ö»µÃÍËÁËÒ»²½¡£|^(&gt; )*ÀäÇ«À¹×¡ÄãËµµÀ£ºÕâÎ»(.*)Çë·ÅÏÂ±øÈÐ¡£"
@@ -449,6 +451,7 @@ do_quest("start")</send>
   <send>Doafter(1,"look")</send>
   </trigger>
   <trigger
+   enabled="y"
    group="gwk"
    keep_evaluating="y"
    match="^(&gt; )*(ÄãÍ»È»·¢ÏÖÑÛÇ°µÄ¾°ÏóÓÐÐ©ÃÔÂÒ|Äã×ÝÉí¶øÆð£¬Àë|ÄãÊ¹¾¢¶ùÒ»±Ä£¬Àë|Äã·ÜÁ¦Ò»Ô¾£¬È´Àë)"
@@ -469,6 +472,7 @@ do_quest("start")</send>
   >
   </trigger>
   <trigger
+   enabled="y"
    group="gwk"
    keep_evaluating="y"
    match="^(&gt; )*(Õâ¸ö·½ÏòÃ»ÓÐ³öÂ·¡£|ÄãÎÞ·¨ÔÚ·¿¼äÀïºô»½×øÆï½øÀ´£¡)"
@@ -499,6 +503,7 @@ do_quest("start")</send>
   >
   </trigger>
   <trigger
+   enabled="y"
    group="gwk"
    keep_evaluating="y"
    match="^(&gt; )*Äã(ÒÑ¾­ÓÐ×ùÆïÁË£¡|Ò»Â·Âí²»Í£Ìã£¬·ç³¾ÆÍÆÍµÄ¸Ïµ½ÁË)"
@@ -539,6 +544,7 @@ do_quest("start")</send>
   >
   </trigger>
   <trigger
+   enabled="y"
    group="gwk"
    keep_evaluating="y"
    match="^(&gt; )*Í»È»¼äÄã·¢ÏÖÑÛÇ°µÄ¾°ÏóÓÐÐ©ÃÔÂÒ"
@@ -583,7 +589,7 @@ do_quest("start")</send>
    enabled="y"
    group="ghp"
    keep_evaluating="y"
-   match="^¡¾ ·ß Å­ ¡¿  (Å­»ðÖÐÉÕ|Êú·¢³å¹Ú)"
+   match="^¡¾ ·ß Å­ ¡¿  Å­»ðÖÐÉÕ"
    name="hp_8"
    regexp="y"
    script="on_hp"
@@ -1175,6 +1181,13 @@ drop head</send>
   <send>drop yinlun;get head</send>
   </trigger>
   <trigger
+   enabled="y"
+   match="³øÄïËµµÀ£ºÄúÌ«¿ÍÆøÁË£¬ÕâÔõÃ´¸Òµ±£¿"
+   sequence="100"
+  >
+  <send>give chu 1 gold</send>
+  </trigger>
+  <trigger
    group="gkl1"
    keep_evaluating="y"
    match="^(&gt; )*(Í·ÒÑ¾­±»¸î×ßÁË|ÄãÃ»ÓÐµØ·½ÏÂÊÖ|Äã¸½½üÃ»ÓÐÕâÑù¶«Î÷|ÄãÉíÉÏµÄ¶«Î÷ÊµÔÚÊÇÌ«¶àÁË£¬Ã»·¨ÔÙÄÃ¶«Î÷ÁË)¡£"
@@ -1751,7 +1764,6 @@ drop head</send>
   >
   </trigger>
   <trigger
-   enabled="y"
    group="gpe"
    keep_evaluating="y"
    match="^(&gt; )*(Éè¶¨»·¾³±äÊý£ºno_teach = &quot;study&quot;|ÄãÒªÏòË­Çó½Ì£¿)"
@@ -1810,7 +1822,7 @@ drop head</send>
    script="on_prepare"
    sequence="120"
   >
-  <send>eatjqdan</send>
+  <send>eatnldan</send>
   </trigger>
   <trigger
    group="gpe"
@@ -2351,7 +2363,7 @@ drop head</send>
    enabled="y"
    group="gyd0"
    keep_evaluating="y"
-   match="ÄãÒ»¸ö²»É÷£¬»ðÐÇ¶ÙÊ±|ÄãÖ»ÎÅÒ»¹É¶ñ³ô´«À´|ÄãÉÔ²»ÁôÉñ|Äã¼ûÕÐÊ½±ä»»Äª²â£¬Ö»ÊÇÎ¢Î¢Ò»ã¶£¬ÒÑ±»|ÄãÉÁ±Ü²»¼°£¬µÇ±»(.*)£¬ÉË¿Ú¾¹|ÄãÖ»¾õó¸¹Æ¶¾¹¥ÐÄ|ÄãÖ»¾õµ¤Ìï´¦ÓÐÈç»ð·Ù|ÄãÖ»¾õ¶¾Æø¹¥ÐÄ|Äã¸Ðµ½ÐØ¿Ú´¦´«À´ÕóÕó´ÌÍ´|Äãºö¾õÐÄ¿ÚÌÛÍ´Íò·Ö|ÄãÖ»¸Ðµ½ÎåÔàÁù¸­·­ÌÚ²»Ö¹£¬¾ç¶¾¹¥ÐÄ|ÄãÖ»¾õ¼«º®¹¥ÐÄ|Äã¾õµÃ¾ÍÏñµôµ½ÁË±ù½ÑÀïÒ»Ñù|Äã¾õµÃÖ«ÌåÄ©¶Ë|ÄãµÄÁ³µ°ÉÕµÃÍ¨ºì|ÄãË»ÑÆ×ÅÉ¤×Ó¿È|Äã´òÁË¸öÀäÕ½|Äã¾õµÃÐØÒÜÖ®¼ä|Äã¸Ðµ½Ò»¹ÉÇÐ¹ÇÆæº®ÓÉÉË|ÄãºöÈ»¸Ðµ½Ò»¹ÉÄªÃûµÄ¶ñÐÄ|ÄãºöÈ»ÉñÉ«´ó±ä£¬|Äã¼ûÌÏÌìÈÈÀËÆËÃæÓ¿À´£¬Ö»¾õÑÛÇ°Ò»Æ¬Í¨ºì|ÄãÖÐµÄ(.*)·¢×÷ÁË|ÄãÖ»¸ÐÄÚÏ¢¶ÙÖÍ|Äã¾ª»ÅÊ§´ë£¬Á¬Ã¦ºóÍË|ÄãÖ»¾õµÃÉË¿ÚÒ»Õó×ÆÉË|ÄãÖ»¾õÈ«Éí|Äã¸Ðµ½ÐØ¿Ú´¦´«À´ÕóÕó´ÌÍ´|ºöÈ»¾õµÃÒ»ÕóÄÑÊÜ£¬ÐÄÐéÆø¶Ì|ºöÈ»Ò»(Õó|¹É|Ë¿)|ºöÈ»»ëÉíÒ»Õó¾çÍ´£¬Äã|ºöÈ»Äã¾õµÃËÄÖ«°Ùêà|½á¹ûÄãÒ»¸ö²»É÷|½á¹ûÖ»ÌýÆËµÄÒ»Éù£¬Äã±»(.*)Ò»ÕÆÅÄÖÐ|½á¹ûÄãÖ»¾õÆøº£Ñ¨ÉÏÒ»Í´£¬ÑÛÇ°|¡°¿¦À®¡±Ò»ÉùÏì£¬Äã´óÉù²Ò½Ð£¬Á¬ÍËÊý²½|Ö»¾õµÃ×Ô¼º¾«Éñ²»¼Ã£¬Æ£±¹²»¿°|²»ÖªÔõÃ´µÄ£¬ÄãºöÈ»·¢ÏÖ×Ô¼º|Ö»¸Ðµ½Ò»¹ÉÆæº®´ÓÌåÄÚÓÌÈ»¶øÉý|ö®ÄÇ¼äÄãÒÑ±»(.*)Òõº®|È´¼ûÄÇ¶¾Íè(.*)±ÌÑæÆ®È»Ï®ÏòÄã|Ö»¼ûÄã±»(.*)Ò»ÕÆÅÄÖÐ£¬½ô½Ó×ÅÉí×ÓÒ»²ü|Ö»ÌýÄã²Ò½ÐÒ»Éù£¬±»|ÕâÒ»ÕÆÅÄ¸öÕý×Å£¬¶ÙÊ±¶¾Æø¹¥ÐÄ|Í»È»ÄãÖ»¾õµ¤Ìï|½á¹ûÄãÖ»¾õ|ö®Ê±ÄãÐÄÍ·|ö®ÄÇ¼äÄãÒÑ±»|Ö»ÌýàÍµÄÒ»Éù£¬(.*)ÕýÖÐÄãÐØ¿Ú|Ö»¼û(.*)ÕâÒ»ÕÐ¼²Èçµç¡¢ÃÍÈç»ð£¬ÄãÐÄÖÐ¾ªÒÉ|Ö»¼ûÄãÈ«ÉíÒ»²ü£¬×ìÆ¤ÎÚ×Ï|Äã½ÓÏÂ(.*)Ò»ÕÐ£¬ö®Ê±Ö»¸Ðµ½º®·çÏ®Ìå|ÄãºöÈ»¸Ðµ½Ò»¹ÉÄªÃûµÄ¶ñÐÄ|Ö»¸Ðµ½Ò»¹ÉÆæº®´ÓÌåÄÚÓÌÈ»¶øÉý"
+   match="ÄãÒ»¸ö²»É÷£¬»ðÐÇ¶ÙÊ±|ÄãÖ»ÎÅÒ»¹É¶ñ³ô´«À´|ÄãÉÔ²»ÁôÉñ|Äã¼ûÕÐÊ½±ä»»Äª²â£¬Ö»ÊÇÎ¢Î¢Ò»ã¶£¬ÒÑ±»|ÄãÉÁ±Ü²»¼°£¬µÇ±»(.*)£¬ÉË¿Ú¾¹|ÄãÖ»¾õó¸¹Æ¶¾¹¥ÐÄ|ÄãÖ»¾õµ¤Ìï´¦ÓÐÈç»ð·Ù|ÄãÖ»¾õ¶¾Æø¹¥ÐÄ|Äã¸Ðµ½ÐØ¿Ú´¦´«À´ÕóÕó´ÌÍ´|Äãºö¾õÐÄ¿ÚÌÛÍ´Íò·Ö|ÄãÖ»¸Ðµ½ÎåÔàÁù¸­·­ÌÚ²»Ö¹£¬¾ç¶¾¹¥ÐÄ|ÄãÖ»¾õ¼«º®¹¥ÐÄ|Äã¾õµÃ¾ÍÏñµôµ½ÁË±ù½ÑÀïÒ»Ñù|Äã¾õµÃÖ«ÌåÄ©¶Ë|ÄãµÄÁ³µ°ÉÕµÃÍ¨ºì|ÄãË»ÑÆ×ÅÉ¤×Ó¿È|Äã´òÁË¸öÀäÕ½|Äã¾õµÃÐØÒÜÖ®¼ä|Äã¸Ðµ½Ò»¹ÉÇÐ¹ÇÆæº®ÓÉÉË|ÄãºöÈ»¸Ðµ½Ò»¹ÉÄªÃûµÄ¶ñÐÄ|ÄãºöÈ»ÉñÉ«´ó±ä£¬|Äã¼ûÌÏÌìÈÈÀËÆËÃæÓ¿À´£¬Ö»¾õÑÛÇ°Ò»Æ¬Í¨ºì|ÄãÖÐµÄ(.*)·¢×÷ÁË|ÄãÖ»¸ÐÄÚÏ¢¶ÙÖÍ|Äã¾ª»ÅÊ§´ë£¬Á¬Ã¦ºóÍË|ÄãÖ»¾õµÃÉË¿ÚÒ»Õó×ÆÉË|ÄãÖ»¾õÈ«Éí|Äã¸Ðµ½ÐØ¿Ú´¦´«À´ÕóÕó´ÌÍ´|ºöÈ»¾õµÃÒ»ÕóÄÑÊÜ£¬ÐÄÐéÆø¶Ì|ºöÈ»Ò»(Õó|¹É|Ë¿)|ºöÈ»»ëÉíÒ»Õó¾çÍ´£¬Äã|ºöÈ»Äã¾õµÃËÄÖ«°Ùêà|½á¹ûÄãÒ»¸ö²»É÷|½á¹ûÖ»ÌýÆËµÄÒ»Éù£¬Äã±»(.*)Ò»ÕÆÅÄÖÐ|½á¹ûÄãÖ»¾õÆøº£Ñ¨ÉÏÒ»Í´£¬ÑÛÇ°|¡°¿¦À®¡±Ò»ÉùÏì£¬Äã´óÉù²Ò½Ð£¬Á¬ÍËÊý²½|Ö»¾õµÃ×Ô¼º¾«Éñ²»¼Ã£¬Æ£±¹²»¿°|²»ÖªÔõÃ´µÄ£¬ÄãºöÈ»·¢ÏÖ×Ô¼º|Ö»¸Ðµ½Ò»¹ÉÆæº®´ÓÌåÄÚÓÌÈ»¶øÉý|ö®ÄÇ¼äÄãÒÑ±»(.*)Òõº®|È´¼ûÄÇ¶¾Íè(.*)±ÌÑæÆ®È»Ï®ÏòÄã|Ö»¼ûÄã±»(.*)Ò»ÕÆÅÄÖÐ£¬½ô½Ó×ÅÉí×ÓÒ»²ü|Ö»ÌýÄã²Ò½ÐÒ»Éù£¬±»|ÕâÒ»ÕÆÅÄ¸öÕý×Å£¬¶ÙÊ±¶¾Æø¹¥ÐÄ|Í»È»ÄãÖ»¾õµ¤Ìï|½á¹ûÄãÖ»¾õ|ö®Ê±ÄãÐÄÍ·|ö®ÄÇ¼äÄãÒÑ±»|Ö»ÌýàÍµÄÒ»Éù£¬(.*)ÕýÖÐÄãÐØ¿Ú|Ö»¼û(.*)ÕâÒ»ÕÐ¼²Èçµç¡¢ÃÍÈç»ð£¬ÄãÐÄÖÐ¾ªÒÉ|ÄãÖ»¾õÈ«Éí±ùÀäÎÞ±È"
    name="yd_dispel"
    regexp="y"
    script="on_dispel"
@@ -2750,7 +2762,7 @@ drink shui dai</send>
 <aliases
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-08-29 20:18:17"
+   date_saved="2018-08-30 01:05:05"
   >
   <alias
    name="kill"
@@ -2846,15 +2858,15 @@ alias pp perform hand.hua</send>
 <timers
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-08-29 20:18:17"
+   date_saved="2018-08-30 01:05:05"
   >
-  <timer name="timer1" script="on_timer" second="1.00" offset_second="0.00" active_closed="y" >
+  <timer name="timer1" script="on_timer" enabled="y" second="1.00" offset_second="0.00" active_closed="y" >
 
   </timer>
   <timer name="timer2" script="on_timer" second="1.00" offset_second="0.00" >
 
   </timer>
-  <timer name="timer3" script="on_timer" second="1.00" offset_second="0.00" >
+  <timer name="timer3" script="on_timer" enabled="y" second="1.00" offset_second="0.00" >
 
   </timer>
   <timer name="timer4" script="on_timer" enabled="y" minute="1" second="30.00" offset_second="0.00" >
@@ -2870,7 +2882,7 @@ alias pp perform hand.hua</send>
 <macros
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-08-29 20:18:17"
+   date_saved="2018-08-30 01:05:05"
   >
 
   <macro name="up" type="send_now" >
@@ -2964,14 +2976,14 @@ alias pp perform hand.hua</send>
 <variables
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-08-29 20:18:17"
+   date_saved="2018-08-30 01:05:05"
   >
   <variable name="bool_bunch">true</variable>
-  <variable name="bool_dan">true</variable>
+  <variable name="bool_dan">true1</variable>
   <variable name="bool_echo">true1</variable>
   <variable name="bool_gift">true</variable>
   <variable name="bool_info">true</variable>
-  <variable name="bool_jcyao">true1</variable>
+  <variable name="bool_jcyao">true</variable>
   <variable name="bool_menpai">false</variable>
   <variable name="bool_miss">false</variable>
   <variable name="bool_multistep">false</variable>
@@ -2979,70 +2991,69 @@ alias pp perform hand.hua</send>
   <variable name="bool_pking">false</variable>
   <variable name="bool_task">false</variable>
   <variable name="bool_waidi">false</variable>
-  <variable name="cmd_exert">yun powerup</variable>
-  <variable name="cmd_exert2">pjz</variable>
-  <variable name="cmd_kill">unwield jianz;s1;crattack;jiali max;p1;jiali none</variable>
-  <variable name="cmd_lian">lian dodge 5</variable>
+  <variable name="cmd_exert"></variable>
+  <variable name="cmd_exert2"></variable>
+  <variable name="cmd_kill"></variable>
+  <variable name="cmd_lian"></variable>
   <variable name="cmd_miss"></variable>
-  <variable name="cmd_npcdie">eatdan1;eatdan2;eatdan3;eatdan4;unwield jianz</variable>
-  <variable name="cmd_npcfaint">wield jianz</variable>
+  <variable name="cmd_npcdie"></variable>
+  <variable name="cmd_npcfaint"></variable>
   <variable name="cmd_pfm"></variable>
   <variable name="cmd_pfm2">pp</variable>
   <variable name="cmd_search">hp</variable>
   <variable name="cmd_study">xue</variable>
-  <variable name="id">wuk</variable>
+  <variable name="id">klajih</variable>
   <variable name="id_dummy">dans</variable>
-  <variable name="id_family">tz</variable>
-  <variable name="id_master">qiu qianren</variable>
-  <variable name="id_study">zhou botong</variable>
-  <variable name="id_weapon">goldtz</variable>
-  <variable name="id_weapon2">jianz</variable>
-  <variable name="lian_sleep">lian dodge 50</variable>
-  <variable name="list_control">klajie</variable>
+  <variable name="id_family">hs</variable>
+  <variable name="id_master">yue buqun</variable>
+  <variable name="id_study">chu niang</variable>
+  <variable name="id_weapon">jianz</variable>
+  <variable name="id_weapon2">jinsi jia</variable>
+  <variable name="lian_sleep"></variable>
+  <variable name="list_control">hong</variable>
   <variable name="list_freequest">trace,judge</variable>
-  <variable name="list_gift">ò¿ÓÈÖïÔªÏÉµ¤,Éñ¶÷Í¨»ÛÏÉµ¤,Ï´ËèÔÙÔìÏÉµ¤,ÆÆÑôÎÞ¼«ÏÉµ¤,½ð¿é,ôä´ä,ÓñÊ¯,ÕäÖé,Âêè§,×êÊ¯,Ç¬À¤Ê¯,ÑÖÂÞ³ñ,Àë»ðÐþ±ùÓñ,ÐíÔ¸ÎÞ»¨¹û,å¾ÓîÌì¾§,»î¹ÇÁéÒ©,ê»Ììµ¤,ê»Ìì¹û</variable>
-  <variable name="list_gift2">ò¿ÓÈÖïÔªÏÉµ¤,Éñ¶÷Í¨»ÛÏÉµ¤,Ï´ËèÔÙÔìÏÉµ¤,ÆÆÑôÎÞ¼«ÏÉµ¤,Öì¹û,»ðÁú¹û,ê»Ìì¹û,ÐÄÆÐÌá,·ð×ðÉáÀû,Ç¬À¤Ê¯,ÑÖÂÞ³ñ,Àë»ðÐþ±ùÓñ,ÑøÉúµ¤,ÐíÔ¸ÎÞ»¨¹û,å¾ÓîÌì¾§,Ç¬À¤Ê¥Ë®,ÐþÎäÖý¹Çµ¤,°×»¢´ÍÔªµ¤,ÖìÈ¸Ááççµ¤,ÇàÁúÁ¶î£µ¤</variable>
+  <variable name="list_gift">ò¿ÓÈÖïÔªÏÉµ¤,Éñ¶÷Í¨»ÛÏÉµ¤,Ï´ËèÔÙÔìÏÉµ¤,ÆÆÑôÎÞ¼«ÏÉµ¤,½ð¿é,ôä´ä,ÓñÊ¯,ÕäÖé,Âêè§,×êÊ¯,Ç¬À¤Ê¯,ÑÖÂÞ³ñ,Àë»ðÐþ±ùÓñ,ÐíÔ¸ÎÞ»¨¹û,å¾ÓîÌì¾§,»î¹ÇÁéÒ©,ê»Ììµ¤,ê»Ìì¹û,ÉñÅ©µ¤,ÒõÑô¾Å×ªµ¤,æÏ¶ðÏÉµ¤,ÐùÔ¯²¹ÐÄµ¤</variable>
+  <variable name="list_gift2">ÉñÁ¦Íè,Ôö»Ûµ¤,×³¹Ç·Û,¸£ÊÙ¸à,ò¿ÓÈÖïÔªÏÉµ¤,Éñ¶÷Í¨»ÛÏÉµ¤,Ï´ËèÔÙÔìÏÉµ¤,ÆÆÑôÎÞ¼«ÏÉµ¤,Ê¥ÉáÀû,ÆÐÌá×Ó,Öì¹û,»ðÁú¹û,°ÙÄêÁéÖ¥,°ÙÄêÁéÖ¥Íè,Ç§ÄêÁéÖ¥Íè,Ç§ÄêÁéÖ¥,ê»Ììµ¤,ê»Ìì¹û,ÑªÆÐÌá,ÐÄÆÐÌá,±ùÆÐÌá,ÉáÀû×Ó,·ð×ðÉáÀû,µÛÕßÉáÀû,ÈçÒâÍ¨Ììïã,Îå²ÊÁáççÖé,Ìì²ÐÓñ,ÇàÁúÑÀ,ÇàÓãÑÀ,»ÃµØÉñÖé,µØÂöÑªÈª,Ç§Äê²ÎÐÄµ¤,ÌìÏãÓñÂ¶,°ËÏÉÊ¯,À¥ÂØÊ¯,Ç§Äê²ÎÐÄµ¤,Ç§ÄêÑ©Á«¸à,ºªµ¦Ê¯,±ÌÑªÊ¯,îÑ½ðÖñ,×Ï½ð¿ó,×ÏÏüõû,ÎÚ½ð¿ó,ÕòÁúÊ¯,ÅÌÁúÒø½ÊË¿,¾ÅÀ×ÐþÒôÉ´,ð©ÔÂ½ðÉ°,À×»ðº®¾§,ÒøÖëË¿,Ç¬À¤Ê¯,ÑÖÂÞ³ñ,Àë»ðÐþ±ùÓñ,Ï¢ÈÀ,ÑøÉúµ¤,ÐíÔ¸ÎÞ»¨¹û,å¾ÓîÌì¾§,ÖÜÌìÐÇ¶·Í¼,Å­Ä¿½ð¸ÕÍ¼,ÉñÅ©°Ù²ÝÍ¼,¾ÅÏüÎÆýˆÍ¼,Ç¬À¤Ê¥Ë®,»î¹ÇÁéÒ©,ÐþÎäÖý¹Çµ¤,°×»¢´ÍÔªµ¤,ÖìÈ¸Ááççµ¤,ÇàÁúÁ¶î£µ¤,ÉñÅ©µ¤,ÒõÑô¾Å×ªµ¤,æÏ¶ðÏÉµ¤,ÐùÔ¯²¹ÐÄµ¤</variable>
   <variable name="list_laji">½ð¿é,ôä´ä,ÓñÊ¯,ÕäÖé,Âêè§,×êÊ¯,ÒøÂÖ</variable>
   <variable name="list_lian"></variable>
   <variable name="list_ma">4141,3726,4142,2601,1137,1049,325,374,415,494,690,974,975,1302,1459,1814,1967,2298,2401,2494,2724,2829,2915,3166,3432,3904</variable>
   <variable name="list_pker"></variable>
-  <variable name="list_skill">zuoyou-hubo</variable>
-  <variable name="list_skill1">force,dodge,strike,parry,tianlei-shengong,tie-zhang,shenzhaojing,jinzhong-zhao,dodge,tie-zhang,jinzhong-zhao</variable>
+  <variable name="list_skill">chuancai-jiyi</variable>
   <variable name="list_to"></variable>
-  <variable name="loc_dazuo">1725</variable>
+  <variable name="loc_dazuo">4043</variable>
   <variable name="loc_gift">4176</variable>
-  <variable name="loc_jiqu">1101</variable>
-  <variable name="loc_ma">2724</variable>
-  <variable name="loc_master">1778</variable>
+  <variable name="loc_jiqu">4109</variable>
+  <variable name="loc_ma">325</variable>
+  <variable name="loc_master">4089</variable>
   <variable name="loc_miss"></variable>
   <variable name="loc_rumor">3095</variable>
   <variable name="loc_sleep">591</variable>
-  <variable name="loc_study">682</variable>
+  <variable name="loc_study">1447</variable>
   <variable name="loc_task">2958</variable>
   <variable name="loc_wenweapon"></variable>
-  <variable name="max_exp">11059200</variable>
-  <variable name="max_nuqi">5000</variable>
-  <variable name="max_pot">500</variable>
+  <variable name="max_exp">110000</variable>
+  <variable name="max_nuqi"></variable>
+  <variable name="max_pot">1009999999</variable>
   <variable name="max_silver">100</variable>
-  <variable name="max_th">200</variable>
-  <variable name="min_gold">31</variable>
+  <variable name="max_th">100</variable>
+  <variable name="min_gold">23</variable>
   <variable name="min_jingli">0</variable>
-  <variable name="min_neili">2000</variable>
-  <variable name="name">Îò¿Õ</variable>
+  <variable name="min_neili">300</variable>
+  <variable name="name">½£ËÄ</variable>
   <variable name="name_bunch"></variable>
   <variable name="name_good"></variable>
-  <variable name="name_info">×¿Âê</variable>
-  <variable name="name_master">ôÃÇ§Øð</variable>
-  <variable name="name_menpai">ÌúÕÆ</variable>
-  <variable name="name_npc">½¯È¼ìÂ</variable>
+  <variable name="name_info">µêÐ¡¶þ</variable>
+  <variable name="name_master">ÔÀ²»Èº</variable>
+  <variable name="name_menpai">»ªÉ½</variable>
+  <variable name="name_npc">½­Àñ</variable>
   <variable name="name_pker"></variable>
   <variable name="num_cmds">13</variable>
-  <variable name="num_dazuo">800</variable>
+  <variable name="num_dazuo">200</variable>
   <variable name="num_fangqi">1</variable>
   <variable name="num_step">12</variable>
   <variable name="num_tuna">10</variable>
   <variable name="passw">q12345</variable>
-  <variable name="pet">mini hou</variable>
+  <variable name="pet"></variable>
 </variables>
 
 <!-- colours -->
@@ -3050,7 +3061,7 @@ alias pp perform hand.hua</send>
 <colours
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-08-29 20:18:17"
+   date_saved="2018-08-30 01:05:05"
   >
 
 <ansi>
@@ -3107,7 +3118,7 @@ alias pp perform hand.hua</send>
 <keypad
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-08-29 20:18:17"
+   date_saved="2018-08-30 01:05:05"
   >
 
   <key name="0" >
@@ -3221,7 +3232,7 @@ alias pp perform hand.hua</send>
 <printing
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-08-29 20:18:17"
+   date_saved="2018-08-30 01:05:05"
   >
 
 <ansi>
