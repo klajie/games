@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE muclient>
-<!-- Saved on ÐÇÆÚÈÕ, ÆßÔÂ 15, 2018, 11:04 ÏÂÎç -->
+<!-- Saved on ÐÇÆÚ¶þ, Ê®ÔÂ 16, 2018, 8:09 ÏÂÎç -->
 <!-- MuClient version 5.05 -->
 <!-- Written by Nick Gammon -->
 <!-- Home Page: http://www.mushclient.com/ -->
@@ -8,7 +8,7 @@
 <world
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-07-15 23:04:14"
+   date_saved="2018-10-16 20:09:43"
 
    auto_say_override_prefix="-"
    auto_say_string="say "
@@ -107,7 +107,7 @@
    use_mxp="3"
    warn_if_scripting_inactive="y"
    wrap="y"
-   wrap_column="107"
+   wrap_column="109"
    write_world_name_to_log="y"
    > <!-- end of general world attributes -->
   <connect_text>hp</connect_text>
@@ -119,7 +119,7 @@
 <triggers
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-07-15 23:04:14"
+   date_saved="2018-10-16 20:09:43"
   >
   <trigger
    enabled="y"
@@ -230,10 +230,7 @@ do_quest("start")</send>
   <trigger
    keep_evaluating="y"
    match="^    ÕâÀï(Î¨Ò»µÄ³ö¿ÚÊÇ|Ã÷ÏÔµÄ³ö¿ÚÊÇ|Ã»ÓÐÈÎºÎÃ÷ÏÔµÄ³öÂ·)(.*)"
-   match_bold="y"
-   match_inverse="y"
-   match_italic="y"
-   name="step"
+   name="trace"
    omit_from_output="y"
    regexp="y"
    script="on_step"
@@ -243,7 +240,10 @@ do_quest("start")</send>
   <trigger
    keep_evaluating="y"
    match="^    ÕâÀï(Î¨Ò»µÄ³ö¿ÚÊÇ|Ã÷ÏÔµÄ³ö¿ÚÊÇ|Ã»ÓÐÈÎºÎÃ÷ÏÔµÄ³öÂ·)(.*)"
-   name="trace"
+   match_bold="y"
+   match_inverse="y"
+   match_italic="y"
+   name="step"
    omit_from_output="y"
    regexp="y"
    script="on_step"
@@ -1305,7 +1305,7 @@ drop head</send>
    group="bkl"
    keep_evaluating="y"
    match="^(&gt; )*ËùÓÐÈëÇÖµÄµÐÈË¶¼¸ø´òÍËÁË£¬ÓÉÓÚÄãÒ²²ÎÓëÁËÕ½¶·£¬Òò´ËÏÖÔÚÄãÒ²Ò»Æð·ÖÏíÊ¤Àû¹ûÊµ£¡"
-   name="bk_over1"
+   name="bk_over2"
    regexp="y"
    script="on_bunch"
    sequence="103"
@@ -1315,7 +1315,7 @@ drop head</send>
    group="bkl"
    keep_evaluating="y"
    match="^(&gt; )*ËùÓÐÈëÇÖµÄµÐÈË¶¼¸ø´òÍËÁË£¬ÓÉÓÚÄãÒ²²ÎÓëÁËÕ½¶·£¬Òò´ËÏÖÔÚÄãÒ²Ò»Æð·ÖÏíÊ¤Àû¹ûÊµ£¡"
-   name="bk_over2"
+   name="bk_over1"
    regexp="y"
    script="on_bunch"
    sequence="103"
@@ -2753,7 +2753,7 @@ drink shui dai</send>
 <aliases
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-07-15 23:04:14"
+   date_saved="2018-10-16 20:09:43"
   >
   <alias
    name="kill"
@@ -2849,7 +2849,7 @@ alias pp perform hand.hua</send>
 <timers
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-07-15 23:04:14"
+   date_saved="2018-10-16 20:09:43"
   >
   <timer name="timer1" script="on_timer" second="1.00" offset_second="0.00" active_closed="y" >
 
@@ -2873,7 +2873,7 @@ alias pp perform hand.hua</send>
 <macros
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-07-15 23:04:14"
+   date_saved="2018-10-16 20:09:43"
   >
 
   <macro name="up" type="send_now" >
@@ -2967,7 +2967,7 @@ alias pp perform hand.hua</send>
 <variables
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-07-15 23:04:14"
+   date_saved="2018-10-16 20:09:43"
   >
   <variable name="bool_bunch">true</variable>
   <variable name="bool_dan">false</variable>
@@ -3052,7 +3052,7 @@ alias pp perform hand.hua</send>
 <colours
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-07-15 23:04:14"
+   date_saved="2018-10-16 20:09:43"
   >
 
 <ansi>
@@ -3109,7 +3109,7 @@ alias pp perform hand.hua</send>
 <keypad
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-07-15 23:04:14"
+   date_saved="2018-10-16 20:09:43"
   >
 
   <key name="0" >
@@ -3223,7 +3223,7 @@ alias pp perform hand.hua</send>
 <printing
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-07-15 23:04:14"
+   date_saved="2018-10-16 20:09:43"
   >
 
 <ansi>
