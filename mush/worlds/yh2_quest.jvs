@@ -1510,7 +1510,7 @@ function do_prepare()
 		set("next_step/cmds", "#t+ pe_buy;#t+ pe_rebuy;buy 99 gan liang from xiao er;eat gan liang");
 		tl = coor_list["food"];
 	} else
-	if (query("item/shuidai") < 1) {
+	if (query("item/shuidai") < 2) {
 		set("item/buy", "shui dai from xiao er");
 		set("next_step/cmds", "#t+ pe_buy;#t+ pe_rebuy;buy shui dai from xiao er;drink shui dai");
 		tl = coor_list["food"];
