@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE muclient>
-<!-- Saved on ÐÇÆÚ¶þ, Ê®Ò»ÔÂ 13, 2018, 1:53 ÉÏÎç -->
+<!-- Saved on ÐÇÆÚÈý, Ê®Ò»ÔÂ 14, 2018, 2:35 ÉÏÎç -->
 <!-- MuClient version 5.05 -->
 <!-- Written by Nick Gammon -->
 <!-- Home Page: http://www.mushclient.com/ -->
@@ -8,7 +8,7 @@
 <world
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-11-13 01:53:43"
+   date_saved="2018-11-14 02:35:43"
 
    auto_say_override_prefix="-"
    auto_say_string="say "
@@ -90,6 +90,7 @@
    script_errors_to_output_window="y"
    send_file_delay_per_lines="1"
    spam_line_count="20"
+   speed_walk_delay="3"
    start_paused="y"
    tab_completion_lines="200"
    timestamp_input_text_colour="maroon"
@@ -117,7 +118,7 @@
 <triggers
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-11-13 01:53:43"
+   date_saved="2018-11-14 02:35:43"
   >
   <trigger
    enabled="y"
@@ -843,6 +844,7 @@ drop head</send>
   <send>give 10 gold to bei chou</send>
   </trigger>
   <trigger
+   enabled="y"
    group="gqt"
    keep_evaluating="y"
    match="^(&gt; )*±±³óÔÚÄãµÄ¶ú±ßÇÄÉùËµµÀ£º¾Ý¿É¿¿ÏûÏ¢£¬Õâ¸öÈË¸Õ²ÅÔÚ(.*)¡£"
@@ -1871,7 +1873,6 @@ drop head</send>
   >
   </trigger>
   <trigger
-   enabled="y"
    group="gpe"
    keep_evaluating="y"
    match="^(&gt; )*Äã¸Ð¾õ×Ô¼ºµÄÊµÕ½¾­Ñé»¹ÓÐÇ·È±£¬»¹ÎÞ·¨Áì»á¸ü¸ß¾³½çµÄ(.*)ÐÞÑø¡£"
@@ -1902,7 +1903,6 @@ drop head</send>
   >
   </trigger>
   <trigger
-   enabled="y"
    group="gpe"
    keep_evaluating="y"
    match="^(&gt; )*Äã½«ÊµÕ½ÖÐ»ñµÃµÄÌå»áÐÄµÃ³ä·ÖµÄÏû»¯ÎüÊÕÁË¡£"
@@ -2607,7 +2607,7 @@ wield @id_weapon</send>
    enabled="y"
    expand_variables="y"
    keep_evaluating="y"
-   match="^(&gt; )*Äã(ËùÊ¹ÓÃµÄÎäÆ÷²»¶Ô£¬ÄÑÒÔÊ©Õ¹|Ã»ÓÐÊ¹ÓÃ±øÆ÷£¬ÎÞ·¨Ê©Õ¹)"
+   match="^(&gt; )*Äã(ËùÊ¹ÓÃµÄÎäÆ÷²»¶Ô£¬ÄÑÒÔÊ©Õ¹|Ã»ÓÐÊ¹ÓÃ±øÆ÷£¬ÎÞ·¨Ê©Õ¹|Ê¹ÓÃµÄÎäÆ÷²»¶Ô£¬ÄÑÒÔÊ©Õ¹)"
    regexp="y"
    sequence="300"
   >
@@ -2750,7 +2750,7 @@ drink shui dai</send>
 <aliases
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-11-13 01:53:43"
+   date_saved="2018-11-14 02:35:43"
   >
   <alias
    name="kill"
@@ -2846,7 +2846,7 @@ alias pp perform hand.hua</send>
 <timers
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-11-13 01:53:43"
+   date_saved="2018-11-14 02:35:43"
   >
   <timer name="timer1" script="on_timer" second="1.00" offset_second="0.00" active_closed="y" >
 
@@ -2857,7 +2857,7 @@ alias pp perform hand.hua</send>
   <timer name="timer3" script="on_timer" second="1.00" offset_second="0.00" >
 
   </timer>
-  <timer name="timer4" script="on_timer" enabled="y" minute="1" second="30.00" offset_second="0.00" >
+  <timer name="timer4" script="on_timer" minute="1" second="30.00" offset_second="0.00" >
 
   </timer>
   <timer name="timer5" script="on_timer" second="15.00" offset_second="0.00" active_closed="y" >
@@ -2870,7 +2870,7 @@ alias pp perform hand.hua</send>
 <macros
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-11-13 01:53:43"
+   date_saved="2018-11-14 02:35:43"
   >
 
   <macro name="up" type="send_now" >
@@ -2964,7 +2964,7 @@ alias pp perform hand.hua</send>
 <variables
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-11-13 01:53:43"
+   date_saved="2018-11-14 02:35:43"
   >
   <variable name="bool_bunch">true</variable>
   <variable name="bool_dan">true</variable>
@@ -2984,7 +2984,7 @@ alias pp perform hand.hua</send>
   <variable name="cmd_kill">special power;special hatred</variable>
   <variable name="cmd_lian">lian dodge 5</variable>
   <variable name="cmd_miss"></variable>
-  <variable name="cmd_npcdie">eatdan1;eatdan3;eatdan4</variable>
+  <variable name="cmd_npcdie">eatdan1;eatdan2;eatdan3;eatdan4</variable>
   <variable name="cmd_npcfaint"></variable>
   <variable name="cmd_pfm"></variable>
   <variable name="cmd_pfm2">pp</variable>
@@ -2994,7 +2994,7 @@ alias pp perform hand.hua</send>
   <variable name="id_dummy">dans</variable>
   <variable name="id_family">tz</variable>
   <variable name="id_master">qiu qianren</variable>
-  <variable name="id_study">situ fen</variable>
+  <variable name="id_study">qiu</variable>
   <variable name="id_weapon">wkdao</variable>
   <variable name="id_weapon2"></variable>
   <variable name="lian_sleep">lian dodge 50</variable>
@@ -3006,21 +3006,21 @@ alias pp perform hand.hua</send>
   <variable name="list_lian"></variable>
   <variable name="list_ma">4141,3726,4142,2601,1137,1049,325,374,415,494,690,974,975,1302,1459,1814,1967,2298,2401,2494,2724,2829,2915,3166,3432,3904</variable>
   <variable name="list_pker"></variable>
-  <variable name="list_skill">force,dodge,tiezhang-xinfa</variable>
+  <variable name="list_skill">force,tianlei-shengong,dodge,parry,blade,strike</variable>
   <variable name="list_skill1">force,dodge,strike,parry,tianlei-shengong,xianglong-zhang,jinzhong-zhao,dodge,xianglong-zhang,jinzhong-zhao</variable>
   <variable name="list_to"></variable>
   <variable name="loc_dazuo">1725</variable>
   <variable name="loc_gift">4176</variable>
   <variable name="loc_jiqu">1101</variable>
-  <variable name="loc_ma">974</variable>
+  <variable name="loc_ma">1459</variable>
   <variable name="loc_master">1778</variable>
   <variable name="loc_miss"></variable>
   <variable name="loc_rumor">3095</variable>
   <variable name="loc_sleep">591</variable>
-  <variable name="loc_study">1725</variable>
+  <variable name="loc_study">1778</variable>
   <variable name="loc_task">2958</variable>
   <variable name="loc_wenweapon"></variable>
-  <variable name="max_exp">590000</variable>
+  <variable name="max_exp">800000</variable>
   <variable name="max_nuqi"></variable>
   <variable name="max_pot">200</variable>
   <variable name="max_silver">100</variable>
@@ -3031,10 +3031,10 @@ alias pp perform hand.hua</send>
   <variable name="name">Îò¿Õ</variable>
   <variable name="name_bunch"></variable>
   <variable name="name_good"></variable>
-  <variable name="name_info">µêÐ¡¶þ</variable>
+  <variable name="name_info">¾ÅÒíµÀÈË</variable>
   <variable name="name_master">ôÃÇ§Øð</variable>
   <variable name="name_menpai">ÌúÕÆ</variable>
-  <variable name="name_npc">Öì»¯ëÐ</variable>
+  <variable name="name_npc">ÍêÑÕ²ÔÍ¯</variable>
   <variable name="name_pker"></variable>
   <variable name="num_cmds">13</variable>
   <variable name="num_dazuo">1000</variable>
@@ -3050,7 +3050,7 @@ alias pp perform hand.hua</send>
 <colours
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-11-13 01:53:43"
+   date_saved="2018-11-14 02:35:43"
   >
 
 <ansi>
@@ -3107,7 +3107,7 @@ alias pp perform hand.hua</send>
 <keypad
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-11-13 01:53:43"
+   date_saved="2018-11-14 02:35:43"
   >
 
   <key name="0" >
@@ -3221,7 +3221,7 @@ alias pp perform hand.hua</send>
 <printing
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-11-13 01:53:43"
+   date_saved="2018-11-14 02:35:43"
   >
 
 <ansi>
