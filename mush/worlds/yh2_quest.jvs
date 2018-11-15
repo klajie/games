@@ -327,7 +327,7 @@ function getpath(fl, tl)
 
 	if (tl < 0)
 		return m_FAIL;
-
+	
 	var fm = world.GetVariable("id_family");
 //	var exp = query("hp/exp") - 0;
 	if (query("item/ma") != "null" && !(query("rumor/flag") && (query("rumor/type") == "trace2" || query("rumor/type") == "judge")))
@@ -657,6 +657,13 @@ function goto(tl)
 	var fl = query("room/id");
 	if ((fl == 2831 || fl == 2838) && fl != tl)
 		fl = 4178;
+	
+	var masterloc = world.GetVariable("loc_master");
+	if ((tl == masterloc) && query("hp/exp") > 805000) {
+		var pa = "rideto family";
+		do_walk(pa.split(";"))
+		return;
+	}
 
 	var pa = getpath(fl, tl);
 	if(pa == m_FAIL)
