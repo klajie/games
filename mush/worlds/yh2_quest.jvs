@@ -329,11 +329,7 @@ function getpath(fl, tl)
 		return m_FAIL;
 	
 	var fm = world.GetVariable("id_family");
-//	var exp = query("hp/exp") - 0;
 	if (query("item/ma") != "null" && !(query("rumor/flag") && (query("rumor/type") == "trace2" || query("rumor/type") == "judge")))
-//		if (exp > 805000)
-//		fm += ",mq,family,center";
-//		else
 		fm += ",mq,center";
 	else if (fl == -1)
 		return m_FAIL;
