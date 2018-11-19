@@ -38,7 +38,8 @@ var dbase_data = {
 	"hp"         : {"exp" : 1, "pot" : 1, "neili" : 1, "qi" : 1, "max_qi" : 100, "eff_qi" : 100,
 			"food" : 1, "water" : 1, "jing" : 1, "max_jing" : 100, "eff_jing" : 100, "th" : 1, "nq" : 0,
 			"jingli" : 1, "max_neili" : 1, "max_jingli" : 1, "dispel" : false, "faint" : "null",
-			"jiali" : 0}
+			"jiali" : 0},
+	"lg_help"    : {"name" : "", "flag" : false, "dragon" : false, "loc" : 0, "find" : ""}
 	};
 
 var npc_id       = new Array();
@@ -804,8 +805,11 @@ function tokill()
 
 	set("npc/status", "start");
 	set("next_step/flag", "SEARCH");
-	if (loc == "很远" || loc == "大理" || loc == "西域")
+	if (loc == "很远" || loc == "大理" || loc == "西域") {
 		set("other/xiyu", 1);
+		set("lg_help/flag", true);
+		send("bill Help find：" + query("npc/name"));
+	}
 
 	if (loc == "很远")
 		tl = loc_list[far_list[0]]["id"];
@@ -2682,6 +2686,8 @@ function on_quest(name, output, wildcards)
 				set("askyou/index", 0);
 				set("askyou/flag", false);
 				set("npc/loc", "很远");
+				//set("lg_help/flag", true);
+				//send("bill Help find：" + query("npc/name"));
 				tokill();
 				return;
 			}
@@ -2712,6 +2718,8 @@ function on_quest(name, output, wildcards)
 				set("askyou/index", 0);
 				set("askyou/flag", false);
 				set("npc/loc", "很远");
+				//set("lg_help/flag", true);
+				//send("bill Help find：" + query("npc/name"));
 				tokill();
 				return;
 			}
@@ -4695,6 +4703,118 @@ function on_shangci(name, output, wildcards)
 				send("set no_teach prepare");
 			}
 
+			break;
+	}
+}
+//以下是帮助寻找npc的2个函数
+function leaguehelp(loc)
+{
+	if (loc == -1)
+		return;
+
+	var rn = query("room/name");
+	var wk = query("walk");
+	if (rn == "大沙漠" || rn == "南疆沙漠" 
+	|| rn == "戈壁滩" || rn == "沙漠" || wk == "find") {
+		stopall();
+	} else {
+		stopall();
+		world.EnableTrigger("trace", true);
+	}
+
+	set("lg_help/flag", false);
+	set("lg_help/loc", loc);
+	world.note("目标地点:"+loc);
+	send("halt;set no_teach league start");
+}
+
+function on_league(name, output, wildcards)
+{
+	var wcs = VBArray(wildcards).toArray();
+	switch (name) {
+		case "lg_help":	// ^(> )*【(@league)】(.*)Help find：(.*)
+			var ne = wcs[3];
+			if (ne.length > 4 || ne.length < 2)
+				return;
+
+			if (ne == query("npc/name"))
+				return;
+
+			var nl = query("lg_help/name");
+			var tmp = "|" + nl + "|";
+			if (tmp.indexOf("|" + ne + "|") != -1)
+				return;
+
+			tmp = nl.split("|");
+			if (tmp.length > 20)
+				nl = "";
+
+			if (nl == "")
+				nl = ne;
+			else
+				nl = nl + "|" + ne;
+
+			set("lg_help/name", nl);
+			var mt = "^  (" + nl + ")";
+			world.DeleteTrigger("lg_npc");
+			world.AddTriggerEx("lg_npc", mt, "", 1|8|32, 14, 0, "",  "on_league", 0, 101);
+			break;
+		case "lg_find":	// ^(> )*【(@league)】(.*)(@npc_name)：(.*)\.(.*)
+			world.note("发现帮助kill信息")
+			if (!query("lg_help/flag"))
+			{
+				world.note("没有需要帮助")
+				return;
+			}
+			//if (query("quest/flagquest/flag") != "kill")
+			//{
+			//	world.note("flagquest no kill")
+			//	return;
+			//	}
+			if (query("npc/find") == 1) {
+				world.note("已经找到")
+				return;
+				}
+			if (query("npc/status")== "dead") {
+				world.note("已经死亡")
+				return
+				}
+			if (query("dragon/flag") == "fight") {
+				world.note("dragon flag ")
+				return;
+			}
+			var lc = wcs[5];
+			if (isNaN(lc)){
+				world.note("league: lc为无效地点！");
+				addlog(output);
+				return;
+			}
+
+			lc = lc - 0;
+			if (lc < 0) {
+				world.note("lc<0")
+				return;
+			}
+			leaguehelp(lc);
+			break;
+		case "lg_start":	// ^(> )*设定环境变数：no_teach = "league start"
+			var rn = query("room/name");
+			if (rn == "马车" || rn == "渡船" || rn == "小舟") {
+				opentimer1(1, "busy", "set no_teach league start");
+				return;
+			}
+
+			set("npc/find", 0);
+			set("next_step/flag", "AUTOSEARCH2");
+			addlog("league start: lg_help/loc="+query("lg_help/loc")+" room:"+query("room/name")+" name:"+query("npc/name")+" loc:"+query("npc/loc"));
+			goto(query("lg_help/loc"));
+			break;
+		case "lg_npc":	// ^  (name1|name2|name3....)
+			if (output.indexOf("人头") != -1 || output.indexOf("尸体") != -1)
+				return;
+
+			var cmd = "bill " + wcs[0] + "：" + query("npc/loc") + "." + query("room/id");
+			send(cmd);
 			break;
 	}
 }
