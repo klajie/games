@@ -808,7 +808,7 @@ function tokill()
 	if (loc == "很远" || loc == "大理" || loc == "西域") {
 		set("other/xiyu", 1);
 		set("lg_help/flag", true);
-		send("bill Help find：" + query("npc/name"));
+		send("inter Help find：" + query("npc/name"));
 	}
 
 	if (loc == "很远")
@@ -4813,7 +4813,7 @@ function on_league(name, output, wildcards)
 			if (output.indexOf("人头") != -1 || output.indexOf("尸体") != -1)
 				return;
 
-			var cmd = "bill " + wcs[0] + "：" + query("npc/loc") + "." + query("room/id");
+			var cmd = "inter " + wcs[0] + "：" + query("npc/loc") + "." + query("room/id");
 			send(cmd);
 			break;
 	}
