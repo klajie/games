@@ -806,11 +806,16 @@ function tokill()
 	set("npc/status", "start");
 	set("next_step/flag", "SEARCH");
 	if (loc == "很远" || loc == "大理" || loc == "西域") {
-		set("other/xiyu", 1);
-		set("lg_help/flag", true);
-		send("inter Help find：" + query("npc/name"));
+		if (world.GetVariable("bool_guibian") == "true") {
+			do_quest("cancel");
+			return;
+		}
+		else {
+			set("other/xiyu", 1);
+			set("lg_help/flag", true);
+			send("inter Help find：" + query("npc/name"));
+		}
 	}
-
 	if (loc == "很远")
 		tl = loc_list[far_list[0]]["id"];
 	else {
