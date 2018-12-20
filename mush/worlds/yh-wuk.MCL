@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE muclient>
-<!-- Saved on ÐÇÆÚÈý, Ê®¶þÔÂ 19, 2018, 10:31 ÏÂÎç -->
+<!-- Saved on ÐÇÆÚËÄ, Ê®¶þÔÂ 20, 2018, 9:37 ÏÂÎç -->
 <!-- MuClient version 5.05 -->
 <!-- Written by Nick Gammon -->
 <!-- Home Page: http://www.mushclient.com/ -->
@@ -8,7 +8,7 @@
 <world
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-12-19 22:31:03"
+   date_saved="2018-12-20 21:37:19"
 
    auto_say_override_prefix="-"
    auto_say_string="say "
@@ -90,7 +90,7 @@
    script_errors_to_output_window="y"
    send_file_delay_per_lines="1"
    spam_line_count="20"
-   speed_walk_delay="3"
+   speed_walk_delay="485"
    start_paused="y"
    tab_completion_lines="200"
    timestamp_input_text_colour="maroon"
@@ -118,7 +118,7 @@
 <triggers
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-12-19 22:31:03"
+   date_saved="2018-12-20 21:37:19"
   >
   <trigger
    enabled="y"
@@ -227,6 +227,7 @@ do_quest("start")</send>
   >
   </trigger>
   <trigger
+   enabled="y"
    keep_evaluating="y"
    match="^    ÕâÀï(Î¨Ò»µÄ³ö¿ÚÊÇ|Ã÷ÏÔµÄ³ö¿ÚÊÇ|Ã»ÓÐÈÎºÎÃ÷ÏÔµÄ³öÂ·)(.*)"
    name="trace"
@@ -1031,6 +1032,7 @@ drop head</send>
   >
   </trigger>
   <trigger
+   enabled="y"
    expand_variables="y"
    group="gkl"
    keep_evaluating="y"
@@ -1043,6 +1045,7 @@ drop head</send>
   </trigger>
   <trigger
    custom_colour="9"
+   enabled="y"
    expand_variables="y"
    group="gkl"
    keep_evaluating="y"
@@ -1054,6 +1057,7 @@ drop head</send>
   >
   </trigger>
   <trigger
+   enabled="y"
    expand_variables="y"
    group="gkl"
    keep_evaluating="y"
@@ -1065,6 +1069,7 @@ drop head</send>
   >
   </trigger>
   <trigger
+   enabled="y"
    expand_variables="y"
    group="gkl"
    keep_evaluating="y"
@@ -1076,6 +1081,7 @@ drop head</send>
   >
   </trigger>
   <trigger
+   enabled="y"
    expand_variables="y"
    group="gkl"
    keep_evaluating="y"
@@ -1119,6 +1125,7 @@ drop head</send>
   >
   </trigger>
   <trigger
+   enabled="y"
    expand_variables="y"
    group="gkl"
    keep_evaluating="y"
@@ -1140,6 +1147,7 @@ drop head</send>
   <send>ride @pet</send>
   </trigger>
   <trigger
+   enabled="y"
    group="gkl"
    keep_evaluating="y"
    match="^(&gt; )*Äã¾ÙÆðÊÖ(.*)À´£¬Ò»ÏÂ×Ó¾Í°Ñ(.*)µÄÊ¬ÌåµÄÍ·¸ø¿³ÏÂÀ´¡£"
@@ -1149,6 +1157,7 @@ drop head</send>
   >
   </trigger>
   <trigger
+   enabled="y"
    group="gkl"
    keep_evaluating="y"
    match="^(&gt; )*ÄãÏÖÔÚÃ»ÓÐÁ¦ÆøÕ½¶·ÁË¡£"
@@ -1159,6 +1168,7 @@ drop head</send>
   >
   </trigger>
   <trigger
+   enabled="y"
    group="gkl"
    keep_evaluating="y"
    match="^(&gt; )*ÄãÕýÔÚºÍÈË¼ÒÉúËÀÏàÆËÄØ¡£"
@@ -1191,6 +1201,7 @@ drop head</send>
   <send>quest @id_master</send>
   </trigger>
   <trigger
+   enabled="y"
    group="gkl"
    keep_evaluating="y"
    match="^Äã¼ðÆðÒ»¿Å(.*)µÄÈËÍ·¡£"
@@ -1214,7 +1225,7 @@ drop head</send>
    custom_colour="15"
    enabled="y"
    keep_evaluating="y"
-   match="^  (ÀîÃì|ÉÛ½à|ÄÏ¹ùÖì|ÕÔÍ®|Áõì®|¼¾³ãÆ¬|ÂÞË®Óì|Â¬Íò|¹«Á¼èÝ³ß|Îâè¨È»|Ïîæ¼|ÅáóÃ|¸£Õêºç|ÅË×Î)"
+   match="^  (»ÆÖÓÎ³|ÁÖ¼½|ÉÐ×åáï|ÉÌÍ®|ÑòÏå|³ð«o|ÌÆÁ¦|Ã·»¨|ÖÙËïÖì²Ý|É³æ¦)"
    name="lg_npc"
    regexp="y"
    script="on_league"
@@ -1920,7 +1931,6 @@ drop head</send>
   >
   </trigger>
   <trigger
-   enabled="y"
    group="gpe"
    keep_evaluating="y"
    match="^(&gt; )*Äã¸Ð¾õ×Ô¼ºµÄÊµÕ½¾­Ñé»¹ÓÐÇ·È±£¬»¹ÎÞ·¨Áì»á¸ü¸ß¾³½çµÄ(.*)ÐÞÑø¡£"
@@ -1951,7 +1961,6 @@ drop head</send>
   >
   </trigger>
   <trigger
-   enabled="y"
    group="gpe"
    keep_evaluating="y"
    match="^(&gt; )*Äã½«ÊµÕ½ÖÐ»ñµÃµÄÌå»áÐÄµÃ³ä·ÖµÄÏû»¯ÎüÊÕÁË¡£"
@@ -2314,7 +2323,6 @@ drop head</send>
   >
   </trigger>
   <trigger
-   enabled="y"
    group="ggl"
    keep_evaluating="y"
    match="^ÄÍ¾Ã¶È£º(.*)%"
@@ -2325,6 +2333,7 @@ drop head</send>
   >
   </trigger>
   <trigger
+   enabled="y"
    group="ggl"
    keep_evaluating="y"
    match="^ÄÍ¾Ã¶È£º(.*)%"
@@ -2799,7 +2808,7 @@ drink shui dai</send>
 <aliases
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-12-19 22:31:03"
+   date_saved="2018-12-20 21:37:19"
   >
   <alias
    name="kill"
@@ -2895,7 +2904,7 @@ alias pp perform hand.hua</send>
 <timers
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-12-19 22:31:03"
+   date_saved="2018-12-20 21:37:19"
   >
   <timer name="timer1" script="on_timer" second="1.00" offset_second="0.00" active_closed="y" >
 
@@ -2919,7 +2928,7 @@ alias pp perform hand.hua</send>
 <macros
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-12-19 22:31:03"
+   date_saved="2018-12-20 21:37:19"
   >
 
   <macro name="up" type="send_now" >
@@ -3013,7 +3022,7 @@ alias pp perform hand.hua</send>
 <variables
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-12-19 22:31:03"
+   date_saved="2018-12-20 21:37:19"
   >
   <variable name="bool_bunch">true</variable>
   <variable name="bool_dan">true</variable>
@@ -3056,12 +3065,12 @@ alias pp perform hand.hua</send>
   <variable name="list_lian"></variable>
   <variable name="list_ma">4141,3726,4142,2601,1137,1049,325,374,415,494,690,974,975,1302,1459,1814,1967,2298,2401,2494,2724,2829,2915,3166,3432,3904</variable>
   <variable name="list_pker"></variable>
-  <variable name="list_skill">force,xiaowuxiang,strike,parry,dodge,hand,shenzhaojing</variable>
+  <variable name="list_skill">force,xiaowuxiang,strike,parry,dodge,hand,dodge</variable>
   <variable name="list_to"></variable>
   <variable name="loc_dazuo">298</variable>
   <variable name="loc_gift">4176</variable>
   <variable name="loc_jiqu">1101</variable>
-  <variable name="loc_ma">3726</variable>
+  <variable name="loc_ma">4141</variable>
   <variable name="loc_master">303</variable>
   <variable name="loc_miss"></variable>
   <variable name="loc_rumor">3095</variable>
@@ -3076,7 +3085,7 @@ alias pp perform hand.hua</send>
   <variable name="max_th">200</variable>
   <variable name="min_gold">31</variable>
   <variable name="min_jingli">0</variable>
-  <variable name="min_neili">1000</variable>
+  <variable name="min_neili">2000</variable>
   <variable name="name">Îò¿Õ</variable>
   <variable name="name_bunch"></variable>
   <variable name="name_good"></variable>
@@ -3084,7 +3093,7 @@ alias pp perform hand.hua</send>
   <variable name="name_league">ÈÎÎñ·ÖÏí</variable>
   <variable name="name_master">ËÕÐÇºÓ</variable>
   <variable name="name_menpai">åÐÒ£</variable>
-  <variable name="name_npc">Îääî</variable>
+  <variable name="name_npc">ñ¼Þ±ÃÈ</variable>
   <variable name="name_pker"></variable>
   <variable name="num_cmds">13</variable>
   <variable name="num_dazuo">1000</variable>
@@ -3100,7 +3109,7 @@ alias pp perform hand.hua</send>
 <colours
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-12-19 22:31:03"
+   date_saved="2018-12-20 21:37:19"
   >
 
 <ansi>
@@ -3157,7 +3166,7 @@ alias pp perform hand.hua</send>
 <keypad
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-12-19 22:31:03"
+   date_saved="2018-12-20 21:37:19"
   >
 
   <key name="0" >
@@ -3271,7 +3280,7 @@ alias pp perform hand.hua</send>
 <printing
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2018-12-19 22:31:03"
+   date_saved="2018-12-20 21:37:19"
   >
 
 <ansi>
