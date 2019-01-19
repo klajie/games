@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE muclient>
-<!-- Saved on ÐÇÆÚÈý, Ò»ÔÂ 09, 2019, 10:05 ÏÂÎç -->
+<!-- Saved on ÐÇÆÚÁù, Ò»ÔÂ 19, 2019, 11:02 ÏÂÎç -->
 <!-- MuClient version 5.05 -->
 <!-- Written by Nick Gammon -->
 <!-- Home Page: http://www.mushclient.com/ -->
@@ -8,7 +8,7 @@
 <world
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2019-01-09 22:05:29"
+   date_saved="2019-01-19 23:02:46"
 
    auto_say_override_prefix="-"
    auto_say_string="say "
@@ -90,7 +90,7 @@
    script_errors_to_output_window="y"
    send_file_delay_per_lines="1"
    spam_line_count="20"
-   speed_walk_delay="3"
+   speed_walk_delay="45"
    start_paused="y"
    tab_completion_lines="200"
    timestamp_input_text_colour="maroon"
@@ -107,7 +107,7 @@
    use_mxp="3"
    warn_if_scripting_inactive="y"
    wrap="y"
-   wrap_column="78"
+   wrap_column="72"
    write_world_name_to_log="y"
    > <!-- end of general world attributes -->
 
@@ -118,7 +118,7 @@
 <triggers
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2019-01-09 22:05:29"
+   date_saved="2019-01-19 23:02:46"
   >
   <trigger
    enabled="y"
@@ -237,7 +237,6 @@ do_quest("start")</send>
   >
   </trigger>
   <trigger
-   enabled="y"
    keep_evaluating="y"
    match="^    ÕâÀï(Î¨Ò»µÄ³ö¿ÚÊÇ|Ã÷ÏÔµÄ³ö¿ÚÊÇ|Ã»ÓÐÈÎºÎÃ÷ÏÔµÄ³öÂ·)(.*)"
    match_bold="y"
@@ -417,7 +416,6 @@ do_quest("start")</send>
   <send>halt</send>
   </trigger>
   <trigger
-   enabled="y"
    group="gwk"
    keep_evaluating="y"
    match="^Çë²»Òª×°±¸ÎäÆ÷¡£|^ÄãÉåÓÚÎäµ±É½¹æ£¬²»¸ÒÓ²Õù£¬Ö»µÃÍËÁËÒ»²½¡£|^(&gt; )*ÀäÇ«À¹×¡ÄãËµµÀ£ºÕâÎ»(.*)Çë·ÅÏÂ±øÈÐ¡£"
@@ -451,7 +449,6 @@ do_quest("start")</send>
   <send>Doafter(1,"look")</send>
   </trigger>
   <trigger
-   enabled="y"
    group="gwk"
    keep_evaluating="y"
    match="^(&gt; )*(ÄãÍ»È»·¢ÏÖÑÛÇ°µÄ¾°ÏóÓÐÐ©ÃÔÂÒ|Äã×ÝÉí¶øÆð£¬Àë|ÄãÊ¹¾¢¶ùÒ»±Ä£¬Àë|Äã·ÜÁ¦Ò»Ô¾£¬È´Àë)"
@@ -472,7 +469,6 @@ do_quest("start")</send>
   >
   </trigger>
   <trigger
-   enabled="y"
    group="gwk"
    keep_evaluating="y"
    match="^(&gt; )*(Õâ¸ö·½ÏòÃ»ÓÐ³öÂ·¡£|ÄãÎÞ·¨ÔÚ·¿¼äÀïºô»½×øÆï½øÀ´£¡)"
@@ -503,7 +499,6 @@ do_quest("start")</send>
   >
   </trigger>
   <trigger
-   enabled="y"
    group="gwk"
    keep_evaluating="y"
    match="^(&gt; )*Äã(ÒÑ¾­ÓÐ×ùÆïÁË£¡|Ò»Â·Âí²»Í£Ìã£¬·ç³¾ÆÍÆÍµÄ¸Ïµ½ÁË)"
@@ -544,7 +539,6 @@ do_quest("start")</send>
   >
   </trigger>
   <trigger
-   enabled="y"
    group="gwk"
    keep_evaluating="y"
    match="^(&gt; )*Í»È»¼äÄã·¢ÏÖÑÛÇ°µÄ¾°ÏóÓÐÐ©ÃÔÂÒ"
@@ -1220,7 +1214,7 @@ drop head</send>
    custom_colour="15"
    enabled="y"
    keep_evaluating="y"
-   match="^  (Áº½àÍ®|Îäã¡)"
+   match="^  (Öìóû¼»|ÉÌìÂ|¹«Ëï÷Éä°|Ò®ÂÉÚÏ|Çñã¡|Çñìë|Å·Ñô·å|ÉÌñº|Î÷ÃÅ²Ô|Âí±êÉÏ|ÎÅÈËÖé)"
    name="lg_npc"
    regexp="y"
    script="on_league"
@@ -2803,7 +2797,7 @@ drink shui dai</send>
 <aliases
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2019-01-09 22:05:29"
+   date_saved="2019-01-19 23:02:46"
   >
   <alias
    name="kill"
@@ -2899,15 +2893,15 @@ alias pp perform hand.hua</send>
 <timers
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2019-01-09 22:05:29"
+   date_saved="2019-01-19 23:02:46"
   >
-  <timer name="timer1" script="on_timer" enabled="y" second="1.00" offset_second="0.00" active_closed="y" >
+  <timer name="timer1" script="on_timer" second="1.00" offset_second="0.00" active_closed="y" >
 
   </timer>
   <timer name="timer2" script="on_timer" second="1.00" offset_second="0.00" >
 
   </timer>
-  <timer name="timer3" script="on_timer" enabled="y" second="1.00" offset_second="0.00" >
+  <timer name="timer3" script="on_timer" second="1.00" offset_second="0.00" >
 
   </timer>
   <timer name="timer4" script="on_timer" enabled="y" minute="1" second="30.00" offset_second="0.00" >
@@ -2923,7 +2917,7 @@ alias pp perform hand.hua</send>
 <macros
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2019-01-09 22:05:29"
+   date_saved="2019-01-19 23:02:46"
   >
 
   <macro name="up" type="send_now" >
@@ -3017,7 +3011,7 @@ alias pp perform hand.hua</send>
 <variables
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2019-01-09 22:05:29"
+   date_saved="2019-01-19 23:02:46"
   >
   <variable name="bool_bunch">true</variable>
   <variable name="bool_dan">true</variable>
@@ -3065,7 +3059,7 @@ alias pp perform hand.hua</send>
   <variable name="loc_dazuo">298</variable>
   <variable name="loc_gift">4176</variable>
   <variable name="loc_jiqu">1101</variable>
-  <variable name="loc_ma">2601</variable>
+  <variable name="loc_ma">325</variable>
   <variable name="loc_master">303</variable>
   <variable name="loc_miss"></variable>
   <variable name="loc_rumor">3095</variable>
@@ -3077,7 +3071,7 @@ alias pp perform hand.hua</send>
   <variable name="max_nuqi">6000</variable>
   <variable name="max_pot">1000</variable>
   <variable name="max_silver">100</variable>
-  <variable name="max_th">200</variable>
+  <variable name="max_th">500</variable>
   <variable name="min_gold">31</variable>
   <variable name="min_jingli">0</variable>
   <variable name="min_neili">2000</variable>
@@ -3088,7 +3082,7 @@ alias pp perform hand.hua</send>
   <variable name="name_league">ÈÎÎñ·ÖÏí</variable>
   <variable name="name_master">ËÕÐÇºÓ</variable>
   <variable name="name_menpai">åÐÒ£</variable>
-  <variable name="name_npc">ÄÉÀ¼±ß</variable>
+  <variable name="name_npc">°ÙÀïôíèë</variable>
   <variable name="name_pker"></variable>
   <variable name="num_cmds">13</variable>
   <variable name="num_dazuo">1000</variable>
@@ -3104,7 +3098,7 @@ alias pp perform hand.hua</send>
 <colours
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2019-01-09 22:05:29"
+   date_saved="2019-01-19 23:02:46"
   >
 
 <ansi>
@@ -3161,7 +3155,7 @@ alias pp perform hand.hua</send>
 <keypad
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2019-01-09 22:05:29"
+   date_saved="2019-01-19 23:02:46"
   >
 
   <key name="0" >
@@ -3275,7 +3269,7 @@ alias pp perform hand.hua</send>
 <printing
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2019-01-09 22:05:29"
+   date_saved="2019-01-19 23:02:46"
   >
 
 <ansi>
