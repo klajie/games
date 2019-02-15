@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE muclient>
-<!-- Saved on ÐÇÆÚËÄ, ¶þÔÂ 14, 2019, 1:50 ÏÂÎç -->
+<!-- Saved on ÐÇÆÚÎå, ¶þÔÂ 15, 2019, 10:01 ÏÂÎç -->
 <!-- MuClient version 5.05 -->
 <!-- Written by Nick Gammon -->
 <!-- Home Page: http://www.mushclient.com/ -->
@@ -8,7 +8,7 @@
 <world
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2019-02-14 13:50:11"
+   date_saved="2019-02-15 22:01:14"
 
    auto_say_override_prefix="-"
    auto_say_string="say "
@@ -90,7 +90,7 @@
    script_errors_to_output_window="y"
    send_file_delay_per_lines="1"
    spam_line_count="20"
-   speed_walk_delay="326"
+   speed_walk_delay="3"
    start_paused="y"
    tab_completion_lines="200"
    timestamp_input_text_colour="maroon"
@@ -107,7 +107,7 @@
    use_mxp="3"
    warn_if_scripting_inactive="y"
    wrap="y"
-   wrap_column="89"
+   wrap_column="92"
    write_world_name_to_log="y"
    > <!-- end of general world attributes -->
 
@@ -118,7 +118,7 @@
 <triggers
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2019-02-14 13:50:11"
+   date_saved="2019-02-15 22:01:14"
   >
   <trigger
    enabled="y"
@@ -227,7 +227,6 @@ do_quest("start")</send>
   >
   </trigger>
   <trigger
-   enabled="y"
    keep_evaluating="y"
    match="^    ÕâÀï(Î¨Ò»µÄ³ö¿ÚÊÇ|Ã÷ÏÔµÄ³ö¿ÚÊÇ|Ã»ÓÐÈÎºÎÃ÷ÏÔµÄ³öÂ·)(.*)"
    name="trace"
@@ -530,6 +529,7 @@ do_quest("start")</send>
   >
   </trigger>
   <trigger
+   enabled="y"
    group="gwk"
    keep_evaluating="y"
    match="^(&gt; )*Éè¶¨»·¾³±äÊý£ºno_teach = &quot;walk start&quot;"
@@ -1032,7 +1032,6 @@ drop head</send>
   >
   </trigger>
   <trigger
-   enabled="y"
    expand_variables="y"
    group="gkl"
    keep_evaluating="y"
@@ -1045,7 +1044,6 @@ drop head</send>
   </trigger>
   <trigger
    custom_colour="9"
-   enabled="y"
    expand_variables="y"
    group="gkl"
    keep_evaluating="y"
@@ -1057,7 +1055,6 @@ drop head</send>
   >
   </trigger>
   <trigger
-   enabled="y"
    expand_variables="y"
    group="gkl"
    keep_evaluating="y"
@@ -1069,7 +1066,6 @@ drop head</send>
   >
   </trigger>
   <trigger
-   enabled="y"
    expand_variables="y"
    group="gkl"
    keep_evaluating="y"
@@ -1081,7 +1077,6 @@ drop head</send>
   >
   </trigger>
   <trigger
-   enabled="y"
    expand_variables="y"
    group="gkl"
    keep_evaluating="y"
@@ -1125,7 +1120,6 @@ drop head</send>
   >
   </trigger>
   <trigger
-   enabled="y"
    expand_variables="y"
    group="gkl"
    keep_evaluating="y"
@@ -1147,7 +1141,6 @@ drop head</send>
   <send>ride @pet</send>
   </trigger>
   <trigger
-   enabled="y"
    group="gkl"
    keep_evaluating="y"
    match="^(&gt; )*Äã¾ÙÆðÊÖ(.*)À´£¬Ò»ÏÂ×Ó¾Í°Ñ(.*)µÄÊ¬ÌåµÄÍ·¸ø¿³ÏÂÀ´¡£"
@@ -1157,7 +1150,6 @@ drop head</send>
   >
   </trigger>
   <trigger
-   enabled="y"
    group="gkl"
    keep_evaluating="y"
    match="^(&gt; )*ÄãÏÖÔÚÃ»ÓÐÁ¦ÆøÕ½¶·ÁË¡£"
@@ -1168,7 +1160,6 @@ drop head</send>
   >
   </trigger>
   <trigger
-   enabled="y"
    group="gkl"
    keep_evaluating="y"
    match="^(&gt; )*ÄãÕýÔÚºÍÈË¼ÒÉúËÀÏàÆËÄØ¡£"
@@ -1201,7 +1192,6 @@ drop head</send>
   <send>quest @id_master</send>
   </trigger>
   <trigger
-   enabled="y"
    group="gkl"
    keep_evaluating="y"
    match="^Äã¼ðÆðÒ»¿Å(.*)µÄÈËÍ·¡£"
@@ -2323,6 +2313,7 @@ drop head</send>
   >
   </trigger>
   <trigger
+   enabled="y"
    group="ggl"
    keep_evaluating="y"
    match="^ÄÍ¾Ã¶È£º(.*)%"
@@ -2333,7 +2324,6 @@ drop head</send>
   >
   </trigger>
   <trigger
-   enabled="y"
    group="ggl"
    keep_evaluating="y"
    match="^ÄÍ¾Ã¶È£º(.*)%"
@@ -2808,7 +2798,7 @@ drink shui dai</send>
 <aliases
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2019-02-14 13:50:11"
+   date_saved="2019-02-15 22:01:14"
   >
   <alias
    name="kill"
@@ -2904,7 +2894,7 @@ alias pp perform hand.hua</send>
 <timers
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2019-02-14 13:50:11"
+   date_saved="2019-02-15 22:01:14"
   >
   <timer name="timer1" script="on_timer" second="1.00" offset_second="0.00" active_closed="y" >
 
@@ -2928,7 +2918,7 @@ alias pp perform hand.hua</send>
 <macros
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2019-02-14 13:50:11"
+   date_saved="2019-02-15 22:01:14"
   >
 
   <macro name="up" type="send_now" >
@@ -3022,7 +3012,7 @@ alias pp perform hand.hua</send>
 <variables
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2019-02-14 13:50:11"
+   date_saved="2019-02-15 22:01:14"
   >
   <variable name="bool_bunch">true</variable>
   <variable name="bool_dan">true</variable>
@@ -3070,7 +3060,7 @@ alias pp perform hand.hua</send>
   <variable name="loc_dazuo">2383</variable>
   <variable name="loc_gift">4176</variable>
   <variable name="loc_jiqu">1101</variable>
-  <variable name="loc_ma">1459</variable>
+  <variable name="loc_ma">2601</variable>
   <variable name="loc_master">2384</variable>
   <variable name="loc_miss"></variable>
   <variable name="loc_rumor">3095</variable>
@@ -3089,11 +3079,11 @@ alias pp perform hand.hua</send>
   <variable name="name">ºú¿Õ</variable>
   <variable name="name_bunch"></variable>
   <variable name="name_good"></variable>
-  <variable name="name_info">²¨Ë¹ÉÌÈË</variable>
+  <variable name="name_info">µêÐ¡¶þ</variable>
   <variable name="name_league"></variable>
   <variable name="name_master">Àî°×</variable>
   <variable name="name_menpai">ÎÞÃÅÎÞÅÉ</variable>
-  <variable name="name_npc">Ò®ÂÉæÈ</variable>
+  <variable name="name_npc">Ë¾Í½Ìï²Ü</variable>
   <variable name="name_pker"></variable>
   <variable name="num_cmds">13</variable>
   <variable name="num_dazuo">800</variable>
@@ -3109,7 +3099,7 @@ alias pp perform hand.hua</send>
 <colours
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2019-02-14 13:50:11"
+   date_saved="2019-02-15 22:01:14"
   >
 
 <ansi>
@@ -3166,7 +3156,7 @@ alias pp perform hand.hua</send>
 <keypad
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2019-02-14 13:50:11"
+   date_saved="2019-02-15 22:01:14"
   >
 
   <key name="0" >
@@ -3280,7 +3270,7 @@ alias pp perform hand.hua</send>
 <printing
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2019-02-14 13:50:11"
+   date_saved="2019-02-15 22:01:14"
   >
 
 <ansi>
