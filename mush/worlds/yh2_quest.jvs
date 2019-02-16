@@ -862,7 +862,7 @@ function etdk()
 	var cmd, tmp;
 
 	cmd = "";
-	if (query("hp/eff_jing") < 70)
+	if (query("hp/eff_jing") < 80)
 		cmd = "eatjqdan;mdan1;";
 
 	if (query("hp/maxfood") > query("hp/food") + 100)
@@ -2642,7 +2642,7 @@ function on_quest(name, output, wildcards)
 			break;
 		case "qt_give":	// ^(> )*(@master_name)(.*)，(对|看了看)你道：“(又除了一害，很好！|好极了！......
 			world.EnableTrigger("qt_nobody", false);
-			if (output.indexOf("算了") != -1)
+			if (output.indexOf("算了") != -1 && world.GetVariable("bool_guibian") != "true")
 				addlog("count(" + query("quest/count") + "):" + output);
 
 			send("hp;i;set no_teach quest end");
@@ -4287,7 +4287,7 @@ function on_dispel(name, output, wildcards)
 					set("dispel/count", ct);
 					var eq = query("hp/eff_qi");
 					var ej = query("hp/eff_jing");
-					if (eq < 20 || ej < 70) {
+					if (eq < 20 || ej < 80) {
 						var ct1 = query("dispel/count1") - 0;
 						if (ct1 < 3) {
 							if (eq < 20)
