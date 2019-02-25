@@ -1477,6 +1477,11 @@ function do_prepare()
 		set("next_step/cmds", cmd);
 		tl = world.GetVariable("loc_ma");
     } else
+	if (query("hp/heal_qi") > 800 && world.GetVariable("bool_rumo") == "true") {
+		cmd = "#t+ pe_getjcyao;mdanheal;hp;set no_teach getjcyao";
+		tl = world.GetVariable("loc_dazuo");
+		set("next_step/cmds", cmd);
+	} else
 	if (query("hp/eff_qi") < 85) {
 		cmd = "#t+ pe_heal;#t+ pe_healf;yun heal";
 		tl = world.GetVariable("loc_dazuo");
@@ -1514,7 +1519,7 @@ function do_prepare()
 		//set("item/buy", "jinchuang yao from huoji");
 		//set("next_step/cmds", "#t+ pe_buy;#t+ pe_rebuy;buy jinchuang yao from huoji");
 		//tl = coor_list["yao"];
-		set("next_step/cmds", "#t+ pe_getjcyao;get 2 huanhun dan from budai;set no_teach getjcyao");
+		set("next_step/cmds", "#t+ pe_getjcyao;get 5 huanhun dan from budai;set no_teach getjcyao");
 		tl = world.GetVariable("loc_gift");
 	} else
 	if (query("item/food") < 50) {
@@ -3790,6 +3795,7 @@ function on_hp(name, output, wildcards)
 			set("hp/qi", (wcs[0] - 0));
 			set("hp/max_qi", (wcs[1] - 0));
 			set("hp/eff_qi", (wcs[2]) - 0);
+			set("hp/heal_qi", (100 * wcs[1] / wcs[2] - wcs[1]) - 0);
 			set("hp/neili", (wcs[4] - 0));
 			set("hp/max_neili", (wcs[5] - 0));
 			if (query("pk/flag") && query("hp/neili") < query("hp/max_neili") - 3000)
