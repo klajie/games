@@ -34,7 +34,7 @@ var dbase_data = {
 	"item"       : {"buy" : "null", "silver" : 0, "gold" : 0, "money" : 0, "arrow" : 0,
 			"weapon" : 100, "weapon2" : 100, "gift" : "null", "pass" : 0, "flag" : false, "budai" : 0,
 			"food" : 0, "water" : 0, "shuidai" : 0, "laji" : "null", "ma" : "null",
-			"san" : false, "task" : "null", "taskid" : "null", "xh" : 0, "bow" : "null", "jcyao" : 0},
+			"san" : false, "task" : "null", "taskid" : "null", "xh" : 0, "bow" : "null", "jcyao" : "null"},
 	"hp"         : {"exp" : 1, "pot" : 1, "neili" : 1, "qi" : 1, "max_qi" : 100, "eff_qi" : 100,
 			"food" : 1, "water" : 1, "jing" : 1, "max_jing" : 100, "eff_jing" : 100, "th" : 1, "nq" : 0,
 			"jingli" : 1, "max_neili" : 1, "max_jingli" : 1, "dispel" : false, "faint" : "null",
@@ -1515,11 +1515,11 @@ function do_prepare()
 		set("next_step/cmds", "#t+ pe_buy;#t+ pe_rebuy;buy xionghuang from huoji");
 		tl = coor_list["yao"];
 		} else
-	if (query("item/jcyao") < 5 && world.GetVariable("bool_jcyao") == "true") {
+	if (query("item/jcyao") != "jcyao" && world.GetVariable("bool_jcyao") == "true") {
 		//set("item/buy", "jinchuang yao from huoji");
 		//set("next_step/cmds", "#t+ pe_buy;#t+ pe_rebuy;buy jinchuang yao from huoji");
 		//tl = coor_list["yao"];
-		set("next_step/cmds", "#t+ pe_getjcyao;get 8 huanhun dan from budai;i;set no_teach getjcyao");
+		set("next_step/cmds", "#t+ pe_getjcyao;get 5 huanhun dan from budai;set no_teach getjcyao");
 		tl = world.GetVariable("loc_gift");
 	} else
 	if (query("item/food") < 50) {
@@ -3499,7 +3499,7 @@ function on_prepare(name, output, wildcards)
 			break;
 		case "pe_getjcyao":		// 来取还魂丹
 			world.EnableTrigger("pe_getjcyao", false);
-			//set("item/jcyao", "jcyao");
+			set("item/jcyao", "jcyao");
 			do_prepare();
 			break;
 		case "pe_arrow":	// ^(> )*你从(铁匠|药铺伙计)那里买下了(.*)(根狼牙箭|包雄黄)
@@ -3842,7 +3842,7 @@ function on_item(name, output, wildcards)
 			set("item/food", 0);
 			set("item/xh", 0);
 			set("item/bow", "null");
-			set("item/jcyao", 0);
+			set("item/jcyao", "null");
 			set("item/shuidai", 0);
 			set("item/gift", "null");
 			set("item/gift2", "null");
@@ -3886,7 +3886,7 @@ function on_item(name, output, wildcards)
 			else if (output.indexOf("雄黄") != -1)
 				set("item/xh", num);
 			else if (output.indexOf("还魂丹") != -1)
-				set("item/jcyao", num);
+				set("item/jcyao", "jcyao");
 			else if (output.indexOf("射日弓") != -1)
 				set("item/bow", "bow");
 			else if (output.indexOf("枣红马") != -1)
