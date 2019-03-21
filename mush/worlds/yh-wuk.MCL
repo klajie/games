@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE muclient>
-<!-- Saved on ÐÇÆÚÈÕ, ÈýÔÂ 17, 2019, 3:17 ÏÂÎç -->
+<!-- Saved on ÐÇÆÚËÄ, ÈýÔÂ 21, 2019, 10:35 ÏÂÎç -->
 <!-- MuClient version 5.05 -->
 <!-- Written by Nick Gammon -->
 <!-- Home Page: http://www.mushclient.com/ -->
@@ -8,7 +8,7 @@
 <world
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2019-03-17 15:17:42"
+   date_saved="2019-03-21 22:35:55"
 
    auto_say_override_prefix="-"
    auto_say_string="say "
@@ -118,7 +118,7 @@
 <triggers
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2019-03-17 15:17:42"
+   date_saved="2019-03-21 22:35:55"
   >
   <trigger
    enabled="y"
@@ -2798,7 +2798,7 @@ drink shui dai</send>
 <aliases
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2019-03-17 15:17:42"
+   date_saved="2019-03-21 22:35:55"
   >
   <alias
    name="kill"
@@ -2894,7 +2894,7 @@ alias pp perform hand.hua</send>
 <timers
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2019-03-17 15:17:42"
+   date_saved="2019-03-21 22:35:55"
   >
   <timer name="timer1" script="on_timer" second="1.00" offset_second="0.00" active_closed="y" >
 
@@ -2918,7 +2918,7 @@ alias pp perform hand.hua</send>
 <macros
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2019-03-17 15:17:42"
+   date_saved="2019-03-21 22:35:55"
   >
 
   <macro name="up" type="send_now" >
@@ -3012,7 +3012,7 @@ alias pp perform hand.hua</send>
 <variables
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2019-03-17 15:17:42"
+   date_saved="2019-03-21 22:35:55"
   >
   <variable name="bool_bunch">true</variable>
   <variable name="bool_dan">true</variable>
@@ -3056,12 +3056,12 @@ alias pp perform hand.hua</send>
   <variable name="list_lian"></variable>
   <variable name="list_ma">4141,3726,4142,2601,1137,1049,325,374,415,494,690,974,975,1302,1459,1814,1967,2298,2401,2494,2724,2829,2915,3166,3432,3904</variable>
   <variable name="list_pker"></variable>
-  <variable name="list_skill">claw,yijin-duangu</variable>
+  <variable name="list_skill">claw,yijin-duangu,shexing-lifan</variable>
   <variable name="list_to"></variable>
   <variable name="loc_dazuo">2383</variable>
   <variable name="loc_gift">4176</variable>
   <variable name="loc_jiqu">1101</variable>
-  <variable name="loc_ma">1137</variable>
+  <variable name="loc_ma">1049</variable>
   <variable name="loc_master">2384</variable>
   <variable name="loc_miss"></variable>
   <variable name="loc_rumor">3095</variable>
@@ -3080,11 +3080,11 @@ alias pp perform hand.hua</send>
   <variable name="name">ºú¿Õ</variable>
   <variable name="name_bunch"></variable>
   <variable name="name_good"></variable>
-  <variable name="name_info">µêÐ¡¶þ</variable>
+  <variable name="name_info">·ïÆß</variable>
   <variable name="name_league"></variable>
   <variable name="name_master">Àî°×</variable>
   <variable name="name_menpai">ÎÞÃÅÎÞÅÉ</variable>
-  <variable name="name_npc">ÖÙËï´Ë</variable>
+  <variable name="name_npc">¶Å²Ô</variable>
   <variable name="name_pker"></variable>
   <variable name="num_cmds">13</variable>
   <variable name="num_dazuo">1500</variable>
@@ -3100,7 +3100,7 @@ alias pp perform hand.hua</send>
 <colours
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2019-03-17 15:17:42"
+   date_saved="2019-03-21 22:35:55"
   >
 
 <ansi>
@@ -3157,7 +3157,7 @@ alias pp perform hand.hua</send>
 <keypad
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2019-03-17 15:17:42"
+   date_saved="2019-03-21 22:35:55"
   >
 
   <key name="0" >
@@ -3271,7 +3271,7 @@ alias pp perform hand.hua</send>
 <printing
    muclient_version="5.05"
    world_file_version="15"
-   date_saved="2019-03-17 15:17:42"
+   date_saved="2019-03-21 22:35:55"
   >
 
 <ansi>
